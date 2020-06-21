@@ -2,11 +2,9 @@ module github.com/devingen/kimlik-api
 
 go 1.12
 
-replace github.com/devingen/api-core => ../api-core
-
 require (
 	github.com/aws/aws-lambda-go v1.16.0
-	github.com/devingen/api-core v0.0.4
+	github.com/devingen/api-core v0.0.5
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gorilla/mux v1.7.4
 	github.com/stretchr/testify v1.4.0
