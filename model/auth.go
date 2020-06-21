@@ -1,6 +1,7 @@
 package model
 
 import (
+	coremodel "github.com/devingen/api-core/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -15,5 +16,5 @@ type Auth struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	Password string             `json:"password"`
 	Type     AuthType           `json:"type"`
-	User     *DBRef             `json:"user"`
+	User     *coremodel.DBRef   `json:"user"`
 }

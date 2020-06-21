@@ -1,6 +1,9 @@
 package model
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	coremodel "github.com/devingen/api-core/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type User struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
@@ -9,8 +12,8 @@ type User struct {
 	Email     string             `json:"email"`
 }
 
-func (u *User) DBRef(database string) *DBRef {
-	return &DBRef{
+func (u *User) DBRef(database string) *coremodel.DBRef {
+	return &coremodel.DBRef{
 		Ref:      CollectionUsers,
 		ID:       u.ID,
 		Database: database,

@@ -1,6 +1,7 @@
 package model
 
 import (
+	coremodel "github.com/devingen/api-core/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -14,7 +15,7 @@ const (
 
 type Session struct {
 	ID           primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	User         *DBRef             `json:"user"`
+	User         *coremodel.DBRef   `json:"user"`
 	UserAgent    string             `json:"userAgent"`
 	Client       string             `json:"client"`
 	SessionCount float64            `json:"sessionCount"`
