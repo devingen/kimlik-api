@@ -3,6 +3,7 @@
 build:
 	export GO111MODULE=on
 	env GOOS=linux go build -ldflags="-s -w" -o bin/register-with-email aws/register-with-email/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/login-with-email aws/login-with-email/main.go
 
 clean:
 	rm -rf ./bin ./vendor Gopkg.lock

@@ -6,11 +6,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (service DatabaseService) FindUserUserWithEmail(base, email string) ([]*model.User, error) {
+func (service DatabaseService) FindUserUserWithEmail(base, email string) (*model.User, error) {
 	result := make([]*model.User, 0)
-	query := bson.M{"$or": bson.A{
-		bson.M{"email": bson.M{"$regex": `^` + email + `$`, "$options": "i"}},
-	}}
+	query := bson.M{"email": bson.M{"$regex": `^` + email + `$`, "$options": "i"}}
 
 	err := service.Database.Query(base, model.CollectionUsers, query, func(cur *mongo.Cursor) error {
 
@@ -22,5 +20,8 @@ func (service DatabaseService) FindUserUserWithEmail(base, email string) ([]*mod
 		result = append(result, &data)
 		return nil
 	})
-	return result, err
+	if len(result) > 0 {
+		return result[0], err
+	}
+	return nil, err
 }

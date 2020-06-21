@@ -119,3 +119,25 @@ func (suite *RegistrationTestSuite) TestRegisterWithInvalidEmail() {
 
 	util.SaveResultFile("register-conflict-invalid-email", err)
 }
+
+func (suite *RegistrationTestSuite) TestRegisterSuccessful() {
+	response, err := suite.controller.RegisterWithEmail(
+		suite.base,
+		"",
+		"",
+		"",
+		&dto.RegisterWithEmailRequest{
+			Email:     "user2@devingen.io",
+			FirstName: "User",
+			LastName:  "Second",
+			Password:  "selam",
+		},
+	)
+
+	assert.Nil(suite.T(), err)
+	assert.NotNil(suite.T(), response)
+	assert.NotEmpty(suite.T(), response.UserID)
+	assert.NotEmpty(suite.T(), response.JWT)
+
+	util.SaveResultFile("register-successful", err)
+}

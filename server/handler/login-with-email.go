@@ -9,11 +9,11 @@ import (
 	"net/http"
 )
 
-func (handler ServerHandler) RegisterWithEmail(w http.ResponseWriter, r *http.Request) {
+func (handler ServerHandler) loginWithEmail(w http.ResponseWriter, r *http.Request) {
 	pathVariables := mux.Vars(r)
 	base := pathVariables["base"]
 
-	var body dto.RegisterWithEmailRequest
+	var body dto.LoginWithEmailRequest
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -24,7 +24,7 @@ func (handler ServerHandler) RegisterWithEmail(w http.ResponseWriter, r *http.Re
 	userAgent := r.Header.Get("User-Agent")
 	client := r.Header.Get("Client")
 
-	result, err := handler.Controller.RegisterWithEmail(base, client, userAgent, ip, &body)
-	response, err := util.BuildResponse(http.StatusCreated, result, err)
+	result, err := handler.Controller.LoginWithEmail(base, client, userAgent, ip, &body)
+	response, err := util.BuildResponse(http.StatusOK, result, err)
 	server.ReturnResponse(w, response, err)
 }

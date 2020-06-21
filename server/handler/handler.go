@@ -16,6 +16,7 @@ func NewHttpServiceHandler(controller controller.ServiceController) ServerHandle
 
 	handler.Router = mux.NewRouter()
 	handler.Router.HandleFunc("/{base}/register/email", handler.RegisterWithEmail).Methods(http.MethodPost)
+	handler.Router.HandleFunc("/{base}/login/email", handler.loginWithEmail).Methods(http.MethodPost)
 
 	return handler
 }

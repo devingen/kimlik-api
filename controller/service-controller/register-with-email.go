@@ -15,12 +15,12 @@ func (controller ServiceController) RegisterWithEmail(base, client, userAgent, i
 		return nil, coremodel.NewError(http.StatusBadRequest, "invalid-email")
 	}
 
-	usersWithSameEmail, err := controller.Service.FindUserUserWithEmail(base, email)
+	userWithSameEmail, err := controller.Service.FindUserUserWithEmail(base, email)
 	if err != nil {
 		return nil, err
 	}
 
-	if usersWithSameEmail != nil && len(usersWithSameEmail) > 0 {
+	if userWithSameEmail != nil {
 		return nil, coremodel.NewStatusError(http.StatusConflict)
 	}
 

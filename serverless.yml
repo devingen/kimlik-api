@@ -24,7 +24,19 @@ functions:
     handler: bin/register-with-email
     events:
       - http:
-          path: /{base}/register-with-email
+          path: /{base}/register/email
+          method: post
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+
+  login-with-email:
+    handler: bin/login-with-email
+    events:
+      - http:
+          path: /{base}/login/email
           method: post
           cors: true
           request:

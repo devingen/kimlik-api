@@ -22,7 +22,7 @@ func main() {
 
 	lambda.Start(func(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-		var body dto.RegisterWithEmailRequest
+		var body dto.LoginWithEmailRequest
 		err := json.Unmarshal([]byte(req.Body), &body)
 		if err != nil {
 			return events.APIGatewayProxyResponse{}, err
@@ -33,8 +33,8 @@ func main() {
 		client := req.Headers["Client"]
 		base := req.PathParameters["base"]
 
-		result, err := serviceController.RegisterWithEmail(base, client, userAgent, ip, &body)
-		response, err := util.BuildResponse(http.StatusCreated, result, err)
+		result, err := serviceController.LoginWithEmail(base, client, userAgent, ip, &body)
+		response, err := util.BuildResponse(http.StatusOK, result, err)
 		return coreaws.AdaptResponse(response, err)
 	})
 }
