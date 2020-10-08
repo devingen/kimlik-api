@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func (handler ServerHandler) RegisterWithEmail(w http.ResponseWriter, r *http.Request) {
+func (handler ServerHandler) registerWithEmail(w http.ResponseWriter, r *http.Request) {
 	pathVariables := mux.Vars(r)
 	base := pathVariables["base"]
 

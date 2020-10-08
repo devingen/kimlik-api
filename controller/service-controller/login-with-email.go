@@ -44,7 +44,7 @@ func (controller ServiceController) LoginWithEmail(base, client, userAgent, ip s
 		return nil, err
 	}
 
-	jwt, err := controller.GenerateToken(user.ID.String(), session.ID.String(), []Scope{ScopeAll}, 240)
+	jwt, err := controller.GenerateToken(user.ID.Hex(), session.ID.Hex(), []Scope{ScopeAll}, 240)
 	if err != nil {
 		return nil, err
 	}

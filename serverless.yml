@@ -43,3 +43,15 @@ functions:
             parameters:
               paths:
                 base: true
+
+  get-session:
+    handler: bin/get-session
+    events:
+      - http:
+          path: /{base}/session
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
