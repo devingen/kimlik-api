@@ -9,6 +9,8 @@ github.com/devingen/api-core v0.0.10 h1:XU0JaLvJtdls3Zugc4vHdzuT3r/cGE3sJ3zOUuN4
 github.com/devingen/api-core v0.0.10/go.mod h1:q1y8jEOu21IS4aTdDB/L463V6vG9+uXK+TcedeAhr04=
 github.com/devingen/api-core v0.0.11 h1:+bIXpC9sfTGApBXmpbU78jvFZkEYy3xa0LkIM14Pbec=
 github.com/devingen/api-core v0.0.11/go.mod h1:q1y8jEOu21IS4aTdDB/L463V6vG9+uXK+TcedeAhr04=
+github.com/devingen/api-core v0.0.12 h1:PoK2080VynXuWP+RXr3hcCSMOpb5Hz/NU0H4egrr+pA=
+github.com/devingen/api-core v0.0.12/go.mod h1:q1y8jEOu21IS4aTdDB/L463V6vG9+uXK+TcedeAhr04=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/go-playground/assert/v2 v2.0.1/go.mod h1:VDjEfimB/XKnb+ZQfWdccd7VUvScMdVu0Titje2rxJ4=

@@ -51,8 +51,8 @@ func (controller ServiceController) RegisterWithEmail(ctx context.Context, req d
 	}
 
 	jwt, err := controller.TokenService.GenerateToken(
-		user.ID.String(),
-		session.ID.String(),
+		user.ID.Hex(),
+		session.ID.Hex(),
 		[]token_service.Scope{ScopeAll},
 		240,
 	)

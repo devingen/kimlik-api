@@ -1,7 +1,6 @@
 package model
 
 import (
-	coremodel "github.com/devingen/api-core/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -15,14 +14,19 @@ const (
 )
 
 type Auth struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	CreatedAt time.Time          `json:"_created" bson:"_created"`
-	UpdatedAt time.Time          `json:"_updated" bson:"_updated"`
-	Revision  int                `json:"_revision" bson:"_revision,omitempty"`
+	// DBRef fields
+	Ref      string             `bson:"_ref,omitempty" json:"ref,omitempty"`
+	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	Database string             `bson:"_db,omitempty" json:"db,omitempty"`
 
-	Password string           `json:"password" bson:"password,omitempty"`
-	Type     AuthType         `json:"type" bson:"type,omitempty"`
-	User     *coremodel.DBRef `json:"user" bson:"user,omitempty"`
+	// common model fields
+	CreatedAt *time.Time `json:"_created,omitempty" bson:"_created,omitempty"`
+	UpdatedAt *time.Time `json:"_updated,omitempty" bson:"_updated,omitempty"`
+	Revision  int        `json:"_revision,omitempty" bson:"_revision,omitempty"`
+
+	Password string   `json:"password" bson:"password,omitempty"`
+	Type     AuthType `json:"type" bson:"type,omitempty"`
+	User     *User    `json:"user" bson:"user,omitempty"`
 }
 
 func (auth *Auth) HashPassword() error {
@@ -40,8 +44,9 @@ func (auth *Auth) HashPassword() error {
 
 func (auth *Auth) AddCreationFields() {
 	auth.ID = primitive.NewObjectID()
-	auth.CreatedAt = time.Now()
-	auth.UpdatedAt = time.Now()
+	now := time.Now()
+	auth.CreatedAt = &now
+	auth.UpdatedAt = &now
 	auth.Revision = 1
 }
 
@@ -49,5 +54,6 @@ func (auth *Auth) AddCreationFields() {
 // ignoring the revision field in $set function. It's incremented by the $inc command
 func (auth *Auth) PrepareUpdateFields() {
 	auth.Revision = 0
-	auth.UpdatedAt = time.Now()
+	now := time.Now()
+	auth.UpdatedAt = &now
 }

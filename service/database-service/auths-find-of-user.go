@@ -15,7 +15,7 @@ func (service DatabaseService) FindAuthOfUser(base, userId string, authType mode
 
 	result := make([]*model.Auth, 0)
 	query := bson.M{"$and": bson.A{
-		bson.M{"user.$id": id},
+		bson.M{"user._id": id},
 		bson.M{"type": authType},
 	}}
 

@@ -28,5 +28,5 @@ func (service DatabaseService) UpdateAuth(base string, auth *model.Auth) (*time.
 		return nil, 0, err
 	}
 
-	return &result.UpdatedAt, result.Revision + 1, nil
+	return result.UpdatedAt, result.Revision + 1, nil
 }

@@ -20,6 +20,7 @@ func (service DatabaseService) CreateSession(base, client, userAgent, ip string,
 		Status:       model.SessionStatusSuccessful,
 		IP:           ip,
 	}
+	item.AddCreationFields()
 
 	result, err := collection.InsertOne(context.TODO(), item)
 	if err != nil {
