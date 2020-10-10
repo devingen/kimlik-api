@@ -8,7 +8,6 @@ import (
 	"github.com/devingen/kimlik-api/kimlikruntime"
 	token_service "github.com/devingen/kimlik-api/token-service"
 	"net/http"
-	"strings"
 )
 
 func (controller ServiceController) RegisterWithEmail(ctx context.Context, req dvnruntime.Request) (interface{}, int, error) {
@@ -19,12 +18,7 @@ func (controller ServiceController) RegisterWithEmail(ctx context.Context, req d
 		return nil, 0, err
 	}
 
-	email := strings.TrimSpace(body.Email)
-	if !IsValidEmail(email) {
-		return nil, 0, coremodel.NewError(http.StatusBadRequest, "invalid-email")
-	}
-
-	userWithSameEmail, err := controller.Service.FindUserUserWithEmail(base, email)
+	userWithSameEmail, err := controller.Service.FindUserUserWithEmail(base, body.Email)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -37,13 +31,13 @@ func (controller ServiceController) RegisterWithEmail(ctx context.Context, req d
 		base,
 		body.FirstName,
 		body.LastName,
-		email,
+		body.Email,
 	)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	_, err = controller.Service.CreateAuth(base, body.Password, user)
+	_, err = controller.Service.CreateAuthWithPassword(base, body.Password, user)
 	if err != nil {
 		return nil, 0, err
 	}

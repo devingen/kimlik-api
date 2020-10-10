@@ -4,27 +4,27 @@ import (
 	"context"
 	"github.com/devingen/kimlik-api/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"golang.org/x/crypto/bcrypt"
 )
 
-func (service DatabaseService) CreateAuth(base, password string, user *model.User) (*model.Auth, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, err
-	}
-
+func (service DatabaseService) CreateAuthWithPassword(base, password string, user *model.User) (*model.Auth, error) {
 	collection, err := service.Database.ConnectToCollection(base, model.CollectionAuths)
 	if err != nil {
 		return nil, err
 	}
 
 	item := &model.Auth{
-		Password: string(hashedPassword),
+		Password: password,
 		Type:     model.AuthTypePassword,
 		User:     user.DBRef(base),
 	}
+	item.AddCreationFields()
 
-	result, err := collection.InsertOne(context.TODO(), item)
+	err = item.HashPassword()
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := collection.InsertOne(context.Background(), item)
 	if err != nil {
 		return nil, err
 	}

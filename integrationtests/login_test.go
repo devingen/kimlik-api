@@ -48,7 +48,7 @@ func (suite *LoginTestSuite) TestLoginWithNonExistingEmail() {
 			PathParameters: map[string]string{
 				"base": suite.base,
 			},
-			Body: "{\"email\": \"user-thats-not-in-system@devingen.io\", \"password\": \"selam\" }",
+			Body: "{\"email\": \"user-thats-not-in-system@devingen.io\", \"password\": \"123456\" }",
 		},
 	)
 
@@ -82,7 +82,7 @@ func (suite *LoginTestSuite) TestLoginSuccessful() {
 			PathParameters: map[string]string{
 				"base": suite.base,
 			},
-			Body: "{\"email\": \"user1@devingen.io\", \"password\": \"selam\" }",
+			Body: "{\"email\": \"user1@devingen.io\", \"password\": \"123456\" }",
 		},
 	)
 
@@ -102,7 +102,7 @@ func (suite *LoginTestSuite) TestLoginSuccessfulCaseInsensitive() {
 			PathParameters: map[string]string{
 				"base": suite.base,
 			},
-			Body: "{\"email\": \"USER1@DEVINGEN.IO\", \"password\": \"selam\" }",
+			Body: "{\"email\": \"USER1@DEVINGEN.IO\", \"password\": \"123456\" }",
 		},
 	)
 
@@ -114,24 +114,4 @@ func (suite *LoginTestSuite) TestLoginSuccessfulCaseInsensitive() {
 	assert.NotEmpty(suite.T(), loginResponse.JWT)
 
 	util.SaveResultFile("login-successful-case-insensitive", response)
-}
-
-func (suite *LoginTestSuite) TestLoginSuccessfulWhiteSpaces() {
-	response, _, err := suite.controller.LoginWithEmail(context.Background(),
-		dvnruntime.Request{
-			PathParameters: map[string]string{
-				"base": suite.base,
-			},
-			Body: "{\"email\": \"  user1@DEVINGEN.IO \", \"password\": \"selam\" }",
-		},
-	)
-
-	assert.Nil(suite.T(), err)
-	assert.NotNil(suite.T(), response)
-
-	loginResponse := response.(*dto.LoginWithEmailResponse)
-	assert.Equal(suite.T(), loginResponse.UserID, "507f191e810c19729de860ea")
-	assert.NotEmpty(suite.T(), loginResponse.JWT)
-
-	util.SaveResultFile("login-successful-white-spaces", response)
 }

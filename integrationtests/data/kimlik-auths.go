@@ -8,7 +8,8 @@ import (
 
 var Auths = []interface{}{
 	model.Auth{
-		Password: "$2a$10$UVN567IGdcUPXRIUuII3HeWY6ZnJ/tT7h1DX2VjbdHuna1UDaUQlu",
+		// encrypted version of '123456'
+		Password: "$2a$10$2HzFa8e0kYLm20RrGTRg.uADleRhs393FdTugRZW0c/8cFQsc022W",
 		Type:     "password",
 		User: &coremodel.DBRef{
 			Ref:      "kimlik-users",

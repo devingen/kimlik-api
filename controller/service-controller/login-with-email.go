@@ -10,7 +10,6 @@ import (
 	token_service "github.com/devingen/kimlik-api/token-service"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	"strings"
 )
 
 func (controller ServiceController) LoginWithEmail(ctx context.Context, req dvnruntime.Request) (interface{}, int, error) {
@@ -21,12 +20,7 @@ func (controller ServiceController) LoginWithEmail(ctx context.Context, req dvnr
 		return nil, 0, err
 	}
 
-	email := strings.TrimSpace(body.Email)
-	if !IsValidEmail(email) {
-		return nil, 0, coremodel.NewError(http.StatusBadRequest, "invalid-email")
-	}
-
-	user, err := controller.Service.FindUserUserWithEmail(base, email)
+	user, err := controller.Service.FindUserUserWithEmail(base, body.Email)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -35,7 +29,7 @@ func (controller ServiceController) LoginWithEmail(ctx context.Context, req dvnr
 		return nil, 0, coremodel.NewStatusError(http.StatusNotFound)
 	}
 
-	auth, err := controller.Service.FindAuthOfUser(base, user, model.AuthTypePassword)
+	auth, err := controller.Service.FindAuthOfUser(base, user.ID.Hex(), model.AuthTypePassword)
 	if err != nil {
 		return nil, 0, err
 	}

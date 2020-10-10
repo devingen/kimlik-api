@@ -17,8 +17,9 @@ func (service DatabaseService) CreateUser(base, firstName, lastName, email strin
 		LastName:  lastName,
 		Email:     email,
 	}
+	item.AddCreationFields()
 
-	result, err := collection.InsertOne(context.TODO(), item)
+	result, err := collection.InsertOne(context.Background(), item)
 	if err != nil {
 		return nil, err
 	}

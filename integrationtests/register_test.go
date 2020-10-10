@@ -47,7 +47,7 @@ func (suite *RegistrationTestSuite) TestRegisterWithExistingEmail() {
 			PathParameters: map[string]string{
 				"base": suite.base,
 			},
-			Body: "{ \"firstName\": \"User\", \"lastName\": \"New\", \"email\": \"user1@devingen.io\", \"password\": \"selam\"}",
+			Body: "{ \"firstName\": \"User\", \"lastName\": \"New\", \"email\": \"user1@devingen.io\", \"password\": \"123456\"}",
 		},
 	)
 
@@ -64,7 +64,7 @@ func (suite *RegistrationTestSuite) TestRegisterWithExistingEmailCaseSensitive()
 			PathParameters: map[string]string{
 				"base": suite.base,
 			},
-			Body: "{ \"firstName\": \"User\", \"lastName\": \"New\", \"email\": \"USER1@DEVINGEN.IO\", \"password\": \"selam\"}",
+			Body: "{ \"firstName\": \"User\", \"lastName\": \"New\", \"email\": \"USER1@DEVINGEN.IO\", \"password\": \"123456\"}",
 		},
 	)
 
@@ -73,23 +73,6 @@ func (suite *RegistrationTestSuite) TestRegisterWithExistingEmailCaseSensitive()
 	assert.Equal(suite.T(), http.StatusConflict, err.(*coremodel.DVNError).StatusCode)
 
 	util.SaveResultFile("register-conflict-case-sensitive", err)
-}
-
-func (suite *RegistrationTestSuite) TestRegisterWithExistingEmailWhiteSpaces() {
-	response, _, err := suite.controller.RegisterWithEmail(context.Background(),
-		dvnruntime.Request{
-			PathParameters: map[string]string{
-				"base": suite.base,
-			},
-			Body: "{ \"firstName\": \"User\", \"lastName\": \"New\", \"email\": \" user1@DEVINGEN.IO  \", \"password\": \"selam\"}",
-		},
-	)
-
-	assert.Nil(suite.T(), response)
-	assert.NotNil(suite.T(), err)
-	assert.Equal(suite.T(), http.StatusConflict, err.(*coremodel.DVNError).StatusCode)
-
-	util.SaveResultFile("register-conflict-white-spaces", err)
 }
 
 func (suite *RegistrationTestSuite) TestRegisterWithInvalidEmail() {
@@ -105,7 +88,6 @@ func (suite *RegistrationTestSuite) TestRegisterWithInvalidEmail() {
 	assert.Nil(suite.T(), response)
 	assert.NotNil(suite.T(), err)
 	assert.Equal(suite.T(), http.StatusBadRequest, err.(*coremodel.DVNError).StatusCode)
-	assert.Equal(suite.T(), "invalid-email", err.(*coremodel.DVNError).Message)
 
 	util.SaveResultFile("register-conflict-invalid-email", err)
 }
@@ -116,7 +98,7 @@ func (suite *RegistrationTestSuite) TestRegisterSuccessful() {
 			PathParameters: map[string]string{
 				"base": suite.base,
 			},
-			Body: "{ \"firstName\": \"User\", \"lastName\": \"Second\", \"email\": \"user2@devingen.io\", \"password\": \"selam\"}",
+			Body: "{ \"firstName\": \"User\", \"lastName\": \"Second\", \"email\": \"user2@devingen.io\", \"password\": \"123456\"}",
 		},
 	)
 	assert.Nil(suite.T(), err)

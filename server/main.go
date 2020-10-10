@@ -28,6 +28,7 @@ func main() {
 	router.HandleFunc("/{base}/register", wrappers.WithLog(wrappers.WithAuth(serviceController.RegisterWithEmail))).Methods(http.MethodPost)
 	router.HandleFunc("/{base}/login", wrappers.WithLog(wrappers.WithAuth(serviceController.LoginWithEmail))).Methods(http.MethodPost)
 	router.HandleFunc("/{base}/session", wrappers.WithLog(wrappers.WithAuth(serviceController.GetSession))).Methods(http.MethodGet)
+	router.HandleFunc("/{base}/auth/password", wrappers.WithLog(wrappers.WithAuth(serviceController.ChangePassword))).Methods(http.MethodPut)
 
 	http.Handle("/", &server.CORSRouterDecorator{R: router})
 	err = http.ListenAndServe(":1001", &server.CORSRouterDecorator{R: router})
