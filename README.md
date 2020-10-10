@@ -38,8 +38,13 @@ go test ./integrationtests/...
 
 This commands executes the command in `Makefile` which clears the previous builds,
 generates executables and deploys the AWS Functions through Serverless Framework.
+
 ```
-make deploy-prod
+# dev
+make deploy-devingen-dev
+
+# prod
+make deploy-devingen
 ```
 
 ## Development
@@ -57,6 +62,12 @@ replace github.com/devingen/api-core => ../api-core
 Create a git tag with the desired version and push the tag.
 
 ```
-git tag -a v0.0.1 -m "initial version"
-git push origin v0.0.1
+# see tags
+git tag --list
+
+# create new tag
+git tag -a v0.0.1 -m "refactor whole architecture"
+
+# push new tag
+git push origin v0.0.8
 ```

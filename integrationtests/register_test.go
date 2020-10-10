@@ -1,12 +1,15 @@
 package integrationtests
 
 import (
+	"context"
 	"github.com/devingen/api-core/database"
+	"github.com/devingen/api-core/dvnruntime"
 	coremodel "github.com/devingen/api-core/model"
 	"github.com/devingen/api-core/util"
 	"github.com/devingen/kimlik-api/controller"
 	"github.com/devingen/kimlik-api/dto"
 	"github.com/devingen/kimlik-api/service"
+	json_web_token_service "github.com/devingen/kimlik-api/token-service/json-web-token-service"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"log"
@@ -16,7 +19,7 @@ import (
 
 type RegistrationTestSuite struct {
 	suite.Suite
-	controller controller.ServiceController
+	controller controller.IServiceController
 	base       string
 }
 
@@ -26,8 +29,11 @@ func TestRegistration(t *testing.T) {
 		log.Fatalf("Database connection failed %s", err.Error())
 	}
 	testSuite := &RegistrationTestSuite{
-		controller: controller.NewServiceController(service.NewDatabaseService(db)),
-		base:       "dvn-kimlik-api-integration-test",
+		controller: controller.NewServiceController(
+			service.NewDatabaseService(db),
+			json_web_token_service.NewTokenService(),
+		),
+		base: "dvn-kimlik-api-integration-test",
 	}
 
 	InsertTestData(db, testSuite.base)
@@ -36,16 +42,12 @@ func TestRegistration(t *testing.T) {
 }
 
 func (suite *RegistrationTestSuite) TestRegisterWithExistingEmail() {
-	response, err := suite.controller.RegisterWithEmail(
-		suite.base,
-		"",
-		"",
-		"",
-		&dto.RegisterWithEmailRequest{
-			Email:     "user1@devingen.io",
-			FirstName: "User",
-			LastName:  "New",
-			Password:  "selam",
+	response, _, err := suite.controller.RegisterWithEmail(context.Background(),
+		dvnruntime.Request{
+			PathParameters: map[string]string{
+				"base": suite.base,
+			},
+			Body: "{ \"firstName\": \"User\", \"lastName\": \"New\", \"email\": \"user1@devingen.io\", \"password\": \"selam\"}",
 		},
 	)
 
@@ -57,16 +59,12 @@ func (suite *RegistrationTestSuite) TestRegisterWithExistingEmail() {
 }
 
 func (suite *RegistrationTestSuite) TestRegisterWithExistingEmailCaseSensitive() {
-	response, err := suite.controller.RegisterWithEmail(
-		suite.base,
-		"",
-		"",
-		"",
-		&dto.RegisterWithEmailRequest{
-			Email:     "USER1@DEVINGEN.IO",
-			FirstName: "User",
-			LastName:  "New",
-			Password:  "selam",
+	response, _, err := suite.controller.RegisterWithEmail(context.Background(),
+		dvnruntime.Request{
+			PathParameters: map[string]string{
+				"base": suite.base,
+			},
+			Body: "{ \"firstName\": \"User\", \"lastName\": \"New\", \"email\": \"USER1@DEVINGEN.IO\", \"password\": \"selam\"}",
 		},
 	)
 
@@ -78,16 +76,12 @@ func (suite *RegistrationTestSuite) TestRegisterWithExistingEmailCaseSensitive()
 }
 
 func (suite *RegistrationTestSuite) TestRegisterWithExistingEmailWhiteSpaces() {
-	response, err := suite.controller.RegisterWithEmail(
-		suite.base,
-		"",
-		"",
-		"",
-		&dto.RegisterWithEmailRequest{
-			Email:     " user1@DEVINGEN.IO  ",
-			FirstName: "User",
-			LastName:  "New",
-			Password:  "selam",
+	response, _, err := suite.controller.RegisterWithEmail(context.Background(),
+		dvnruntime.Request{
+			PathParameters: map[string]string{
+				"base": suite.base,
+			},
+			Body: "{ \"firstName\": \"User\", \"lastName\": \"New\", \"email\": \" user1@DEVINGEN.IO  \", \"password\": \"selam\"}",
 		},
 	)
 
@@ -99,16 +93,12 @@ func (suite *RegistrationTestSuite) TestRegisterWithExistingEmailWhiteSpaces() {
 }
 
 func (suite *RegistrationTestSuite) TestRegisterWithInvalidEmail() {
-	response, err := suite.controller.RegisterWithEmail(
-		suite.base,
-		"",
-		"",
-		"",
-		&dto.RegisterWithEmailRequest{
-			Email:     "user1 @devingen.io",
-			FirstName: "User",
-			LastName:  "New",
-			Password:  "selam",
+	response, _, err := suite.controller.RegisterWithEmail(context.Background(),
+		dvnruntime.Request{
+			PathParameters: map[string]string{
+				"base": suite.base,
+			},
+			Body: "{ \"firstName\": \"User\", \"lastName\": \"New\", \"email\": \"user1 @devingen.io\", \"password\": \"selam\"}",
 		},
 	)
 
@@ -121,23 +111,20 @@ func (suite *RegistrationTestSuite) TestRegisterWithInvalidEmail() {
 }
 
 func (suite *RegistrationTestSuite) TestRegisterSuccessful() {
-	response, err := suite.controller.RegisterWithEmail(
-		suite.base,
-		"",
-		"",
-		"",
-		&dto.RegisterWithEmailRequest{
-			Email:     "user2@devingen.io",
-			FirstName: "User",
-			LastName:  "Second",
-			Password:  "selam",
+	response, _, err := suite.controller.RegisterWithEmail(context.Background(),
+		dvnruntime.Request{
+			PathParameters: map[string]string{
+				"base": suite.base,
+			},
+			Body: "{ \"firstName\": \"User\", \"lastName\": \"Second\", \"email\": \"user2@devingen.io\", \"password\": \"selam\"}",
 		},
 	)
-
 	assert.Nil(suite.T(), err)
-	assert.NotNil(suite.T(), response)
-	assert.NotEmpty(suite.T(), response.UserID)
-	assert.NotEmpty(suite.T(), response.JWT)
+	registerResponse := response.(*dto.RegisterWithEmailResponse)
+
+	assert.NotNil(suite.T(), registerResponse)
+	assert.NotEmpty(suite.T(), registerResponse.UserID)
+	assert.NotEmpty(suite.T(), registerResponse.JWT)
 
 	util.SaveResultFile("register-successful", err)
 }

@@ -1,5 +1,5 @@
 org: devingen
-app: khanguru
+app: devingen-io
 service: kimlik-api
 
 frameworkVersion: '>=1.28.0 <2.0.0'
@@ -24,7 +24,7 @@ functions:
     handler: bin/register-with-email
     events:
       - http:
-          path: /{base}/register/email
+          path: /{base}/register
           method: post
           cors: true
           request:
@@ -36,7 +36,7 @@ functions:
     handler: bin/login-with-email
     events:
       - http:
-          path: /{base}/login/email
+          path: /{base}/login
           method: post
           cors: true
           request:

@@ -1,26 +1,29 @@
 package service_controller
 
 import (
+	"context"
+	"github.com/devingen/api-core/dvnruntime"
 	coremodel "github.com/devingen/api-core/model"
 	"github.com/devingen/kimlik-api/dto"
+	"github.com/devingen/kimlik-api/kimlikruntime"
 	"net/http"
 )
 
-func (controller ServiceController) GetSession(base, jwt string) (*dto.GetSessionResponse, error) {
+func (controller ServiceController) GetSession(ctx context.Context, req dvnruntime.Request) (interface{}, int, error) {
 
-	tokenData, tokenError := controller.ParseToken(jwt)
-	if tokenError != nil {
-		return nil, tokenError
+	base, token, err := kimlikruntime.AssertAuthentication(ctx, req)
+	if err != nil {
+		return nil, 0, err
 	}
 
-	user, err := controller.Service.FindUserUserWithId(base, tokenData.UserId)
+	user, err := controller.Service.FindUserUserWithId(base, token.UserId)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	if user == nil {
-		return nil, coremodel.NewStatusError(http.StatusNotFound)
+		return nil, 0, coremodel.NewStatusError(http.StatusNotFound)
 	}
 
-	return &dto.GetSessionResponse{User: user}, err
+	return &dto.GetSessionResponse{User: user}, http.StatusOK, err
 }
