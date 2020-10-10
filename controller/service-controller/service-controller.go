@@ -11,7 +11,7 @@ const (
 
 // ServiceController implements IServiceController interface by using KimlikService
 type ServiceController struct {
-	Service      service.KimlikService
+	Service      service.IKimlikService
 	TokenService token_service.ITokenService
 }
 

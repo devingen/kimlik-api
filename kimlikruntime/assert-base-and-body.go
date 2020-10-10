@@ -13,6 +13,10 @@ func AssertBaseAndBody(ctx context.Context, req dvnruntime.Request, bodyValue in
 		return "", core_model.NewError(http.StatusBadRequest, "base-missing")
 	}
 
+	if req.Body == "" {
+		return "", core_model.NewError(http.StatusBadRequest, "body-missing")
+	}
+
 	err := dvnruntime.ParseBody(req.Body, &bodyValue)
 	if err != nil {
 		return base, err

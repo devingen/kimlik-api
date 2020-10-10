@@ -13,6 +13,8 @@ github.com/devingen/api-core v0.0.8 h1:Vzt7L4bw62hHL1UaeQA3AljevNPtV7p0plOR9/cRs
 github.com/devingen/api-core v0.0.8/go.mod h1:q1y8jEOu21IS4aTdDB/L463V6vG9+uXK+TcedeAhr04=
 github.com/devingen/api-core v0.0.9 h1:NOK7QB2vyf7Xq34Vxyc6dZYK1cgWIID7oVCc3SPL2CY=
 github.com/devingen/api-core v0.0.9/go.mod h1:q1y8jEOu21IS4aTdDB/L463V6vG9+uXK+TcedeAhr04=
+github.com/devingen/api-core v0.0.10 h1:XU0JaLvJtdls3Zugc4vHdzuT3r/cGE3sJ3zOUuN4pG4=
+github.com/devingen/api-core v0.0.10/go.mod h1:q1y8jEOu21IS4aTdDB/L463V6vG9+uXK+TcedeAhr04=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/go-stack/stack v1.8.0 h1:5SgMzNM5HxrEjV0ww2lTmX6E2Izsfxas4+YHWRs3Lsk=

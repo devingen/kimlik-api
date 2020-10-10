@@ -2,14 +2,14 @@ package wrappers
 
 import (
 	"context"
+	"github.com/devingen/api-core/dvnruntime"
 	"github.com/devingen/api-core/server"
 	"github.com/devingen/api-core/util"
-	"github.com/devingen/kimlik-api/controller"
 	"github.com/devingen/kimlik-api/kimlikruntime"
 	"net/http"
 )
 
-func WithAuth(f controller.ControllerFunc) func(http.ResponseWriter, *http.Request) {
+func WithAuth(f dvnruntime.ControllerFunc) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, httpReq *http.Request) {
 
 		// convert http request to our custom request
