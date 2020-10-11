@@ -15,9 +15,9 @@ const (
 
 type Auth struct {
 	// DBRef fields
-	Ref      string             `bson:"_ref,omitempty" json:"ref,omitempty"`
-	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-	Database string             `bson:"_db,omitempty" json:"db,omitempty"`
+	Ref      string             `bson:"_ref,omitempty" json:"_ref,omitempty"`
+	ID       primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	Database string             `bson:"_db,omitempty" json:"_db,omitempty"`
 
 	// common model fields
 	CreatedAt *time.Time `json:"_created,omitempty" bson:"_created,omitempty"`
