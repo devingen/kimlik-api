@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/aws/aws-lambda-go/events"
 	coreaws "github.com/devingen/api-core/aws"
+	"github.com/devingen/api-core/dvnruntime"
 	"github.com/devingen/api-core/util"
 	"github.com/devingen/kimlik-api/controller"
 	service_controller "github.com/devingen/kimlik-api/controller/service-controller"
@@ -19,7 +20,7 @@ func GenerateController() *service_controller.ServiceController {
 	return controller.NewServiceController(databaseService, tokenService)
 }
 
-func GenerateHandler(f controller.ControllerFunc) func(ctx context.Context, awsReq events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func GenerateHandler(f dvnruntime.ControllerFunc) func(ctx context.Context, awsReq events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	return func(ctx context.Context, awsReq events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 		req := coreaws.AdaptRequest(awsReq)

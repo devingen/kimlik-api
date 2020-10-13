@@ -55,3 +55,15 @@ functions:
             parameters:
               paths:
                 base: true
+
+  change-password:
+    handler: bin/change-password
+    events:
+      - http:
+          path: /{base}/auth/password
+          method: put
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
