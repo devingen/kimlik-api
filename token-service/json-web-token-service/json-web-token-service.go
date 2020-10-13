@@ -5,7 +5,9 @@ import (
 	token_service "github.com/devingen/kimlik-api/token-service"
 	"github.com/devingen/kimlik-api/util"
 	"github.com/dgrijalva/jwt-go"
+	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -17,7 +19,18 @@ const (
 	JWTScopes    = "scopes"
 )
 
+const envJWTSignKey = "KIMLIK_JWT_SIGN_KEY"
+
 type JWTService struct {
+	signKey string
+}
+
+func (jwtService *JWTService) Init() {
+	signKey, hasVar := os.LookupEnv(envJWTSignKey)
+	if !hasVar {
+		log.Fatalf("Missing environment variable %s", envJWTSignKey)
+	}
+	jwtService.signKey = signKey
 }
 
 func (jwtService *JWTService) GenerateToken(userId, sessionId string, scopes []token_service.Scope, duration int32) (string, error) {
@@ -31,7 +44,7 @@ func (jwtService *JWTService) GenerateToken(userId, sessionId string, scopes []t
 	mapClaims[JWTSessionID] = sessionId
 	mapClaims[JWTScopes] = scopes
 
-	tokenString, err := token.SignedString([]byte("a.SignKey"))
+	tokenString, err := token.SignedString([]byte(jwtService.signKey))
 	if err != nil {
 		return tokenString, err
 	}
@@ -40,7 +53,7 @@ func (jwtService *JWTService) GenerateToken(userId, sessionId string, scopes []t
 
 func (jwtService *JWTService) ParseToken(accessToken string) (*token_service.TokenPayload, error) {
 	token, tokenErr := jwt.Parse(accessToken, func(t *jwt.Token) (interface{}, error) {
-		return []byte("a.SignKey"), nil
+		return []byte(jwtService.signKey), nil
 	})
 
 	if tokenErr != nil {

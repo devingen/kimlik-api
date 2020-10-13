@@ -11,6 +11,7 @@ provider:
     MONGO_ADDRESS: ${param:MONGO_ADDRESS}
     MONGO_USERNAME: ${param:MONGO_USERNAME}
     MONGO_PASSWORD: ${param:MONGO_PASSWORD}
+    KIMLIK_JWT_SIGN_KEY: ${param:KIMLIK_JWT_SIGN_KEY}
 
 package:
   exclude:

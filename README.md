@@ -66,8 +66,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.5 -m "change ref json names"
+git tag -a v0.0.6 -m "add jwt sign key env"
 
 # push new tag
-git push origin v0.0.5
+git push origin v0.0.6
 ```
