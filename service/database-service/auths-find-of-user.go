@@ -19,7 +19,7 @@ func (service DatabaseService) FindAuthOfUser(base, userId string, authType mode
 		bson.M{"type": authType},
 	}}
 
-	err = service.Database.Query(base, model.CollectionAuths, query, func(cur *mongo.Cursor) error {
+	err = service.Database.Query(base, model.CollectionAuths, query, 0, func(cur *mongo.Cursor) error {
 		var data model.Auth
 		err := cur.Decode(&data)
 		if err != nil {

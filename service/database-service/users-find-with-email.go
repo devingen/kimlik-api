@@ -10,7 +10,7 @@ func (service DatabaseService) FindUserUserWithEmail(base, email string) (*model
 	result := make([]*model.User, 0)
 	query := bson.M{"email": bson.M{"$regex": `^` + email + `$`, "$options": "i"}}
 
-	err := service.Database.Query(base, model.CollectionUsers, query, func(cur *mongo.Cursor) error {
+	err := service.Database.Query(base, model.CollectionUsers, query, 0, func(cur *mongo.Cursor) error {
 
 		var data model.User
 		err := cur.Decode(&data)

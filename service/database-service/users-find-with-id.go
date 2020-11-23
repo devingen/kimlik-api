@@ -16,7 +16,7 @@ func (service DatabaseService) FindUserUserWithId(base, id string) (*model.User,
 	}
 	query := bson.M{"_id": mId}
 
-	err := service.Database.Query(base, model.CollectionUsers, query, func(cur *mongo.Cursor) error {
+	err := service.Database.Query(base, model.CollectionUsers, query, 0, func(cur *mongo.Cursor) error {
 
 		var data model.User
 		err := cur.Decode(&data)

@@ -66,8 +66,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.6 -m "add jwt sign key env"
+git tag -a v0.0.7 -m "add limit to db query"
 
 # push new tag
-git push origin v0.0.6
+git push origin v0.0.7
 ```
