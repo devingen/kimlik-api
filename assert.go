@@ -3,6 +3,7 @@ package kimlik
 import (
 	"context"
 	core "github.com/devingen/api-core"
+	"github.com/devingen/kimlik-api/model"
 	token_service "github.com/devingen/kimlik-api/token-service"
 	"github.com/go-playground/validator/v10"
 	"net/http"
@@ -20,7 +21,7 @@ func AssertAuthentication(ctx context.Context) (*token_service.TokenPayload, err
 	return tokenPayload, nil
 }
 
-func AssertApiKey(ctx context.Context) (*ApiKeyPayload, error) {
+func AssertApiKey(ctx context.Context) (*model.ApiKeyPayload, error) {
 	apiKeyPayload := OfApiKey(ctx)
 	if apiKeyPayload == nil {
 		return nil, core.NewStatusError(http.StatusUnauthorized)

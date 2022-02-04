@@ -2,11 +2,10 @@ package kimlik
 
 import (
 	"context"
-	"encoding/base64"
 	core "github.com/devingen/api-core"
+	"github.com/devingen/kimlik-api/model"
 	token_service "github.com/devingen/kimlik-api/token-service"
 	"net/http"
-	"strings"
 )
 
 // tokenKey type is an opaque type for the token lookup in a given context.
@@ -36,11 +35,6 @@ func Of(ctx context.Context) *token_service.TokenPayload {
 	return token
 }
 
-type ApiKeyPayload struct {
-	Name  string
-	Value string
-}
-
 func WithAPIKeyAuth(ctx context.Context, req core.Request) (context.Context, error) {
 
 	apiKey, hasApiKey := req.Headers["Api-Key"]
@@ -48,21 +42,17 @@ func WithAPIKeyAuth(ctx context.Context, req core.Request) (context.Context, err
 		return ctx, nil
 	}
 
-	decodedKey, err := base64.StdEncoding.DecodeString(apiKey)
+	apiKeyPayload, err := VerifyApiKey(apiKey)
 	if err != nil {
 		return nil, core.NewError(http.StatusBadRequest, "invalid-api-key")
 	}
 
-	keyParts := strings.Split(string(decodedKey), ":")
-	return context.WithValue(ctx, apiKeyKey{}, &ApiKeyPayload{
-		Name:  keyParts[0],
-		Value: keyParts[1],
-	}), nil
+	return context.WithValue(ctx, apiKeyKey{}, apiKeyPayload), nil
 }
 
 // OfApiKey function extracts a valid ApiKeyPayload object from a given context.
-func OfApiKey(ctx context.Context) *ApiKeyPayload {
-	token, ok := ctx.Value(apiKeyKey{}).(*ApiKeyPayload)
+func OfApiKey(ctx context.Context) *model.ApiKeyPayload {
+	token, ok := ctx.Value(apiKeyKey{}).(*model.ApiKeyPayload)
 	if !ok {
 		return nil
 	}
