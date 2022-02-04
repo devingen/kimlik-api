@@ -9,6 +9,7 @@ import (
 	"github.com/devingen/kimlik-api/config"
 	service_controller "github.com/devingen/kimlik-api/controller/service-controller"
 	mongods "github.com/devingen/kimlik-api/data-service/mongo-data-service"
+	json_web_token_service "github.com/devingen/kimlik-api/token-service/json-web-token-service"
 	kimlikwrapper "github.com/devingen/kimlik-api/wrapper"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
@@ -23,7 +24,8 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	srv := &http.Server{Addr: ":" + appConfig.Port}
 
 	dataService := mongods.New(appConfig.Mongo.Database, db)
-	serviceController := service_controller.New(dataService)
+	jwtService := json_web_token_service.New(appConfig.JWTSignKey)
+	serviceController := service_controller.New(dataService, jwtService)
 
 	wrap := generateWrapper(appConfig)
 
@@ -45,7 +47,7 @@ func generateWrapper(appConfig config.App) func(f core.Controller) func(http.Res
 		// add logger and auth handler
 		withLogger := wrapper.WithLogger(
 			appConfig.LogLevel,
-			kimlikwrapper.WithAuth(f),
+			kimlikwrapper.WithAuth(f, appConfig.JWTSignKey),
 		)
 
 		// convert to HTTP handler

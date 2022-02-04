@@ -8,6 +8,7 @@ import (
 	"github.com/devingen/kimlik-api/controller"
 	service_controller "github.com/devingen/kimlik-api/controller/service-controller"
 	mongods "github.com/devingen/kimlik-api/data-service/mongo-data-service"
+	json_web_token_service "github.com/devingen/kimlik-api/token-service/json-web-token-service"
 	"github.com/kelseyhightower/envconfig"
 	"log"
 
@@ -25,7 +26,8 @@ func InitDeps() (controller.IServiceController, func(f core.Controller) wrapper.
 	}
 
 	dataService := mongods.New(appConfig.Mongo.Database, getDatabase(appConfig))
-	serviceController := service_controller.New(dataService)
+	jwtService := json_web_token_service.New(appConfig.JWTSignKey)
+	serviceController := service_controller.New(dataService, jwtService)
 
 	wrap := generateWrapper(appConfig)
 	return serviceController, wrap
