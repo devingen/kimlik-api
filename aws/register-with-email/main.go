@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	serviceController := aws.GenerateController()
-	lambda.Start(aws.GenerateHandler(serviceController.RegisterWithEmail))
+	serviceController, wrap := aws.InitDeps()
+	lambda.Start(wrap(serviceController.RegisterWithEmail))
 }

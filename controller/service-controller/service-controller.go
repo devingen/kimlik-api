@@ -1,7 +1,8 @@
 package service_controller
 
 import (
-	"github.com/devingen/kimlik-api/service"
+	"github.com/devingen/kimlik-api/controller"
+	ds "github.com/devingen/kimlik-api/data-service"
 	token_service "github.com/devingen/kimlik-api/token-service"
 )
 
@@ -11,8 +12,16 @@ const (
 
 // ServiceController implements IServiceController interface by using KimlikService
 type ServiceController struct {
-	Service      service.IKimlikService
+	DataService  ds.IKimlikDataService
 	TokenService token_service.ITokenService
+}
+
+// New generates new ServiceController
+func New(dataService ds.IKimlikDataService, tokenService token_service.ITokenService) controller.IServiceController {
+	return ServiceController{
+		DataService:  dataService,
+		TokenService: tokenService,
+	}
 }
 
 type TokenData struct {

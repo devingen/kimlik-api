@@ -2,13 +2,13 @@ package integrationtests
 
 import (
 	"context"
+	core "github.com/devingen/api-core"
 	"github.com/devingen/api-core/database"
-	"github.com/devingen/api-core/dvnruntime"
-	coremodel "github.com/devingen/api-core/model"
 	"github.com/devingen/api-core/util"
 	"github.com/devingen/kimlik-api/controller"
+	service_controller "github.com/devingen/kimlik-api/controller/service-controller"
+	mongods "github.com/devingen/kimlik-api/data-service/mongo-data-service"
 	"github.com/devingen/kimlik-api/dto"
-	"github.com/devingen/kimlik-api/service"
 	json_web_token_service "github.com/devingen/kimlik-api/token-service/json-web-token-service"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -24,15 +24,15 @@ type LoginTestSuite struct {
 }
 
 func TestLogin(t *testing.T) {
-	db, err := database.NewDatabaseWithURI("mongodb://localhost")
+	db, err := database.New("mongodb://localhost")
 	if err != nil {
 		log.Fatalf("Database connection failed %s", err.Error())
 	}
 
 	testSuite := &LoginTestSuite{
-		controller: controller.NewServiceController(
-			service.NewDatabaseService(db),
-			json_web_token_service.NewTokenService(),
+		controller: service_controller.New(
+			mongods.New("dvn-kimlik-api-integration-test", db),
+			json_web_token_service.New("sample-jwt-sign-key"),
 		),
 		base: "dvn-kimlik-api-integration-test",
 	}
@@ -44,7 +44,7 @@ func TestLogin(t *testing.T) {
 
 func (suite *LoginTestSuite) TestLoginWithNonExistingEmail() {
 	response, _, err := suite.controller.LoginWithEmail(context.Background(),
-		dvnruntime.Request{
+		core.Request{
 			PathParameters: map[string]string{
 				"base": suite.base,
 			},
@@ -54,14 +54,14 @@ func (suite *LoginTestSuite) TestLoginWithNonExistingEmail() {
 
 	assert.Nil(suite.T(), response)
 	assert.NotNil(suite.T(), err)
-	assert.Equal(suite.T(), http.StatusNotFound, err.(*coremodel.DVNError).StatusCode)
+	assert.Equal(suite.T(), http.StatusNotFound, err.(*core.DVNError).StatusCode)
 
 	util.SaveResultFile("login-non-existent-email", err)
 }
 
 func (suite *LoginTestSuite) TestLoginWithWrongPassword() {
 	response, _, err := suite.controller.LoginWithEmail(context.Background(),
-		dvnruntime.Request{
+		core.Request{
 			PathParameters: map[string]string{
 				"base": suite.base,
 			},
@@ -71,14 +71,14 @@ func (suite *LoginTestSuite) TestLoginWithWrongPassword() {
 
 	assert.Nil(suite.T(), response)
 	assert.NotNil(suite.T(), err)
-	assert.Equal(suite.T(), http.StatusUnauthorized, err.(*coremodel.DVNError).StatusCode)
+	assert.Equal(suite.T(), http.StatusUnauthorized, err.(*core.DVNError).StatusCode)
 
 	util.SaveResultFile("login-wrong-email", err)
 }
 
 func (suite *LoginTestSuite) TestLoginSuccessful() {
 	response, _, err := suite.controller.LoginWithEmail(context.Background(),
-		dvnruntime.Request{
+		core.Request{
 			PathParameters: map[string]string{
 				"base": suite.base,
 			},
@@ -98,7 +98,7 @@ func (suite *LoginTestSuite) TestLoginSuccessful() {
 
 func (suite *LoginTestSuite) TestLoginSuccessfulCaseInsensitive() {
 	response, _, err := suite.controller.LoginWithEmail(context.Background(),
-		dvnruntime.Request{
+		core.Request{
 			PathParameters: map[string]string{
 				"base": suite.base,
 			},

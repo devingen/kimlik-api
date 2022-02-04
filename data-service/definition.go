@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-type IKimlikService interface {
+type IKimlikDataService interface {
+	CreateAPIKey(base, name, productId string, scopes []string, keyPrefix, hash string, user *model.User) (*model.ApiKey, error)
 	CreateAuthWithPassword(base, password string, user *model.User) (*model.Auth, error)
 	CreateSession(base, client, userAgent, ip string, user *model.User) (*model.Session, error)
 	CreateUser(base, firstName, lastName, email string) (*model.User, error)

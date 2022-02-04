@@ -2,12 +2,13 @@ package controller
 
 import (
 	"context"
-	"github.com/devingen/api-core/dvnruntime"
+	core "github.com/devingen/api-core"
 )
 
 type IServiceController interface {
-	RegisterWithEmail(ctx context.Context, req dvnruntime.Request) (interface{}, int, error)
-	LoginWithEmail(ctx context.Context, req dvnruntime.Request) (interface{}, int, error)
-	GetSession(ctx context.Context, req dvnruntime.Request) (interface{}, int, error)
-	ChangePassword(ctx context.Context, req dvnruntime.Request) (interface{}, int, error)
+	RegisterWithEmail(ctx context.Context, req core.Request) (interface{}, int, error)
+	LoginWithEmail(ctx context.Context, req core.Request) (interface{}, int, error)
+	GetSession(ctx context.Context, req core.Request) (interface{}, int, error)
+	ChangePassword(ctx context.Context, req core.Request) (interface{}, int, error)
+	CreateAPIKey(ctx context.Context, req core.Request) (interface{}, int, error)
 }

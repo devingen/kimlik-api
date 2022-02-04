@@ -1,7 +1,5 @@
 package token_service
 
-import "github.com/devingen/api-core/dvnruntime"
-
 type Scope string
 
 type TokenPayload struct {
@@ -11,10 +9,6 @@ type TokenPayload struct {
 	SessionId string `bson:"sessionId,omitempty"`
 	Scopes    string `bson:"scopes,omitempty"`
 }
-
-const (
-	ContextKeyTokenPayload dvnruntime.ContextKey = "context-key-token-payload"
-)
 
 type ITokenService interface {
 	GenerateToken(userId, sessionId string, scopes []Scope, duration int32) (string, error)

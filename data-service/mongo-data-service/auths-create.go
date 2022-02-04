@@ -1,4 +1,4 @@
-package database_service
+package mongods
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (service DatabaseService) CreateAuthWithPassword(base, password string, user *model.User) (*model.Auth, error) {
+func (service MongoDataService) CreateAuthWithPassword(base, password string, user *model.User) (*model.Auth, error) {
 	collection, err := service.Database.ConnectToCollection(base, model.CollectionAuths)
 	if err != nil {
 		return nil, err

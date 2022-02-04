@@ -1,7 +1,7 @@
 package json_web_token_service
 
 import (
-	coremodel "github.com/devingen/api-core/model"
+	core "github.com/devingen/api-core"
 	token_service "github.com/devingen/kimlik-api/token-service"
 	"github.com/devingen/kimlik-api/util"
 	"github.com/dgrijalva/jwt-go"
@@ -23,6 +23,13 @@ const envJWTSignKey = "KIMLIK_JWT_SIGN_KEY"
 
 type JWTService struct {
 	signKey string
+}
+
+// New generates new JWTService
+func New(signKey string) *JWTService {
+	return &JWTService{
+		signKey: signKey,
+	}
 }
 
 func (jwtService *JWTService) Init() {
@@ -58,19 +65,19 @@ func (jwtService *JWTService) ParseToken(accessToken string) (*token_service.Tok
 
 	if tokenErr != nil {
 		if tokenErr.Error() == "Token is expired" {
-			return nil, coremodel.NewError(http.StatusUnauthorized, "token-expired")
+			return nil, core.NewError(http.StatusUnauthorized, "token-expired")
 		}
-		return nil, coremodel.NewError(http.StatusUnauthorized, tokenErr.Error())
+		return nil, core.NewError(http.StatusUnauthorized, tokenErr.Error())
 	}
 
 	if !token.Valid {
-		return nil, coremodel.NewError(http.StatusUnauthorized, "invalid-token")
+		return nil, core.NewError(http.StatusUnauthorized, "invalid-token")
 	}
 
 	var data token_service.TokenPayload
 	convertErr := util.ConvertMapToStruct(token.Claims.(jwt.MapClaims), &data)
 	if convertErr != nil {
-		coremodel.NewError(http.StatusInternalServerError, convertErr.Error())
+		core.NewError(http.StatusInternalServerError, convertErr.Error())
 	}
 
 	return &data, nil

@@ -1,4 +1,4 @@
-package database_service
+package mongods
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (service DatabaseService) UpdateAuth(base string, auth *model.Auth) (*time.Time, int, error) {
+func (service MongoDataService) UpdateAuth(base string, auth *model.Auth) (*time.Time, int, error) {
 	collection, err := service.Database.ConnectToCollection(base, model.CollectionAuths)
 	if err != nil {
 		return nil, 0, err

@@ -2,32 +2,35 @@ package service_controller
 
 import (
 	"context"
-	"github.com/devingen/api-core/dvnruntime"
-	coremodel "github.com/devingen/api-core/model"
+	core "github.com/devingen/api-core"
 	"github.com/devingen/kimlik-api/dto"
-	"github.com/devingen/kimlik-api/kimlikruntime"
 	token_service "github.com/devingen/kimlik-api/token-service"
 	"net/http"
 )
 
-func (controller ServiceController) RegisterWithEmail(ctx context.Context, req dvnruntime.Request) (interface{}, int, error) {
+func (controller ServiceController) RegisterWithEmail(ctx context.Context, req core.Request) (interface{}, int, error) {
+
+	base, hasBase := req.PathParameters["base"]
+	if !hasBase {
+		return nil, 0, core.NewError(http.StatusInternalServerError, "missing-path-param-base")
+	}
 
 	var body dto.RegisterWithEmailRequest
-	base, err := kimlikruntime.AssertBaseAndBody(ctx, req, &body)
+	err := req.AssertBody(&body)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	userWithSameEmail, err := controller.Service.FindUserUserWithEmail(base, body.Email)
+	userWithSameEmail, err := controller.DataService.FindUserUserWithEmail(base, body.Email)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	if userWithSameEmail != nil {
-		return nil, 0, coremodel.NewStatusError(http.StatusConflict)
+		return nil, 0, core.NewStatusError(http.StatusConflict)
 	}
 
-	user, err := controller.Service.CreateUser(
+	user, err := controller.DataService.CreateUser(
 		base,
 		body.FirstName,
 		body.LastName,
@@ -37,7 +40,7 @@ func (controller ServiceController) RegisterWithEmail(ctx context.Context, req d
 		return nil, 0, err
 	}
 
-	_, err = controller.Service.CreateAuthWithPassword(base, body.Password, user)
+	_, err = controller.DataService.CreateAuthWithPassword(base, body.Password, user)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -45,7 +48,7 @@ func (controller ServiceController) RegisterWithEmail(ctx context.Context, req d
 	userAgent := req.Headers["User-Agent"]
 	client := req.Headers["Client"]
 	ip := req.IP
-	session, err := controller.Service.CreateSession(base, client, userAgent, ip, user)
+	session, err := controller.DataService.CreateSession(base, client, userAgent, ip, user)
 	if err != nil {
 		return nil, 0, err
 	}

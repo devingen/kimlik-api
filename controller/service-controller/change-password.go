@@ -2,33 +2,38 @@ package service_controller
 
 import (
 	"context"
+	core "github.com/devingen/api-core"
 	core_dto "github.com/devingen/api-core/dto"
-	"github.com/devingen/api-core/dvnruntime"
-	coremodel "github.com/devingen/api-core/model"
+	"github.com/devingen/kimlik-api"
 	"github.com/devingen/kimlik-api/dto"
-	"github.com/devingen/kimlik-api/kimlikruntime"
 	"github.com/devingen/kimlik-api/model"
 	"net/http"
 )
 
-func (controller ServiceController) ChangePassword(ctx context.Context, req dvnruntime.Request) (interface{}, int, error) {
+func (controller ServiceController) ChangePassword(ctx context.Context, req core.Request) (interface{}, int, error) {
+
+	base, hasBase := req.PathParameters["base"]
+	if !hasBase {
+		return nil, 0, core.NewError(http.StatusInternalServerError, "missing-path-param-base")
+	}
+
 	var body dto.ChangePasswordRequest
-	base, token, err := kimlikruntime.AssertAuthenticationAndBody(ctx, req, &body)
+	token, err := kimlik.AssertAuthenticationAndBody(ctx, req, &body)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	auth, err := controller.Service.FindAuthOfUser(base, token.UserId, model.AuthTypePassword)
+	auth, err := controller.DataService.FindAuthOfUser(base, token.UserId, model.AuthTypePassword)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	if auth == nil {
-		return nil, 0, coremodel.NewError(http.StatusInternalServerError, "auth-missing")
+		return nil, 0, core.NewError(http.StatusInternalServerError, "auth-missing")
 	}
 	auth.Password = body.Password
 
-	updatedAt, revision, err := controller.Service.UpdateAuth(base, auth)
+	updatedAt, revision, err := controller.DataService.UpdateAuth(base, auth)
 	if err != nil {
 		return nil, 0, err
 	}

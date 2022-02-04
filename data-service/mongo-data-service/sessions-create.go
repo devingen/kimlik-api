@@ -1,4 +1,4 @@
-package database_service
+package mongods
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (service DatabaseService) CreateSession(base, client, userAgent, ip string, user *model.User) (*model.Session, error) {
+func (service MongoDataService) CreateSession(base, client, userAgent, ip string, user *model.User) (*model.Session, error) {
 	collection, err := service.Database.ConnectToCollection(base, model.CollectionSessions)
 	if err != nil {
 		return nil, err

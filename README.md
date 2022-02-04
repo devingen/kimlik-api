@@ -66,8 +66,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.7 -m "add limit to db query"
+git tag -a v0.0.8 -m "update core package, refactor project structure"
 
 # push new tag
-git push origin v0.0.7
+git push origin v0.0.8
 ```

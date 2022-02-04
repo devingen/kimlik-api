@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	serviceController := aws.GenerateController()
-	lambda.Start(aws.GenerateHandler(serviceController.GetSession))
+	serviceController, wrap := aws.InitDeps()
+	lambda.Start(wrap(serviceController.GetSession))
 }

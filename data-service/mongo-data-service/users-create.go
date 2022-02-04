@@ -1,4 +1,4 @@
-package database_service
+package mongods
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (service DatabaseService) CreateUser(base, firstName, lastName, email string) (*model.User, error) {
+func (service MongoDataService) CreateUser(base, firstName, lastName, email string) (*model.User, error) {
 	collection, err := service.Database.ConnectToCollection(base, model.CollectionUsers)
 	if err != nil {
 		return nil, err

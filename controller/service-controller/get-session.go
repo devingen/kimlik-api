@@ -2,27 +2,31 @@ package service_controller
 
 import (
 	"context"
-	"github.com/devingen/api-core/dvnruntime"
-	coremodel "github.com/devingen/api-core/model"
+	core "github.com/devingen/api-core"
+	"github.com/devingen/kimlik-api"
 	"github.com/devingen/kimlik-api/dto"
-	"github.com/devingen/kimlik-api/kimlikruntime"
 	"net/http"
 )
 
-func (controller ServiceController) GetSession(ctx context.Context, req dvnruntime.Request) (interface{}, int, error) {
+func (controller ServiceController) GetSession(ctx context.Context, req core.Request) (interface{}, int, error) {
 
-	base, token, err := kimlikruntime.AssertAuthentication(ctx, req)
+	base, hasBase := req.PathParameters["base"]
+	if !hasBase {
+		return nil, 0, core.NewError(http.StatusInternalServerError, "missing-path-param-base")
+	}
+
+	token, err := kimlik.AssertAuthentication(ctx)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	user, err := controller.Service.FindUserUserWithId(base, token.UserId)
+	user, err := controller.DataService.FindUserUserWithId(base, token.UserId)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	if user == nil {
-		return nil, 0, coremodel.NewStatusError(http.StatusNotFound)
+		return nil, 0, core.NewStatusError(http.StatusNotFound)
 	}
 
 	return &dto.GetSessionResponse{User: user}, http.StatusOK, err
