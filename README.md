@@ -66,8 +66,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.11 -m "check api key part length"
+git tag -a v0.0.12 -m "check api-key header name case insensitive"
 
 # push new tag
-git push origin v0.0.11
+git push origin v0.0.12
 ```

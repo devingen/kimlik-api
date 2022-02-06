@@ -39,7 +39,10 @@ func WithAPIKeyAuth(ctx context.Context, req core.Request) (context.Context, err
 
 	apiKey, hasApiKey := req.Headers["Api-Key"]
 	if !hasApiKey || apiKey == "" {
-		return ctx, nil
+		apiKey, hasApiKey = req.Headers["api-key"]
+		if !hasApiKey || apiKey == "" {
+			return ctx, nil
+		}
 	}
 
 	apiKeyPayload, err := VerifyApiKey(apiKey)
