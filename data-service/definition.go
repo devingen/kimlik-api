@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"github.com/devingen/kimlik-api/model"
 	"time"
 )
@@ -14,4 +15,7 @@ type IKimlikDataService interface {
 	FindUserUserWithEmail(base, email string) (*model.User, error)
 	FindUserUserWithId(base, id string) (*model.User, error)
 	UpdateAuth(base string, auth *model.Auth) (*time.Time, int, error)
+
+	CreateSAMLConfig(ctx context.Context, base string, item *model.SAMLConfig) (*model.SAMLConfig, error)
+	GetSAMLConfig(ctx context.Context, base, id string) (*model.SAMLConfig, error)
 }

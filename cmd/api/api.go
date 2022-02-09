@@ -12,7 +12,7 @@ import (
 func main() {
 
 	var appConfig config.App
-	err := envconfig.Process("devingen_api", &appConfig)
+	err := envconfig.Process("kimlik_api", &appConfig)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

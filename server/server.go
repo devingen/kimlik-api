@@ -9,6 +9,7 @@ import (
 	"github.com/devingen/kimlik-api/config"
 	service_controller "github.com/devingen/kimlik-api/controller/service-controller"
 	mongods "github.com/devingen/kimlik-api/data-service/mongo-data-service"
+	webhookis "github.com/devingen/kimlik-api/interceptor-service/webhook-interceptor-service"
 	json_web_token_service "github.com/devingen/kimlik-api/token-service/json-web-token-service"
 	kimlikwrapper "github.com/devingen/kimlik-api/wrapper"
 	"github.com/go-playground/validator/v10"
@@ -23,9 +24,10 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 
 	srv := &http.Server{Addr: ":" + appConfig.Port}
 
-	dataService := mongods.New(appConfig.Mongo.Database, db)
+	dataService := mongods.New(db)
 	jwtService := json_web_token_service.New(appConfig.JWTSignKey)
-	serviceController := service_controller.New(dataService, jwtService)
+	interceptorService := webhookis.New(appConfig.Webhook.URL, appConfig.Webhook.Headers)
+	serviceController := service_controller.New(dataService, jwtService, interceptorService)
 
 	wrap := generateWrapper(appConfig)
 
@@ -35,6 +37,10 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	router.HandleFunc("/{base}/session", wrap(serviceController.GetSession)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/auth/password", wrap(serviceController.ChangePassword)).Methods(http.MethodPut)
 	router.HandleFunc("/{base}/api-keys", wrap(serviceController.CreateAPIKey)).Methods(http.MethodPost)
+
+	router.HandleFunc("/{base}/saml-configs", wrap(serviceController.CreateSAMLConfig)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/saml-configs/{id}/build", wrap(serviceController.BuildSAMLAuthURL)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/saml-configs/{id}/consume", wrap(serviceController.ConsumeSAMLAuthResponse)).Methods(http.MethodPost)
 
 	http.Handle("/", &server.CORSRouterDecorator{R: router})
 	return srv
@@ -55,34 +61,3 @@ func generateWrapper(appConfig config.App) func(f core.Controller) func(http.Res
 		return handler
 	}
 }
-
-// Runs the server that contains all the services
-//func main() {
-//
-//	db, err := database.New("mongodb://devingen-services-dev:d3v8ng3ns34v8c3sd3v@mongodb0.mentornity.com/?authSource=admin")
-//	if err != nil {
-//		log.Fatalf("Database connection failed %s", err.Error())
-//	}
-//
-//	databaseService := service.NewDatabaseService(db)
-//	//kimlikService := kimlik_service.NewDatabaseService(db)
-//	serviceController := controller.NewServiceController(*databaseService)
-//
-//	wrap := generateWrapper()
-//
-//	router := mux.NewRouter()
-//	router.HandleFunc("/{base}/products", wrap(serviceController.CreateProduct)).Methods(http.MethodPost)
-//	router.HandleFunc("/{base}/products", wrap(serviceController.GetProducts)).Methods(http.MethodGet)
-//	router.HandleFunc("/{base}/products/{id}", wrap(serviceController.GetProductWithId)).Methods(http.MethodGet)
-//	router.HandleFunc("/{base}/workspaces", wrap(serviceController.CreateWorkspace)).Methods(http.MethodPost)
-//	router.HandleFunc("/{base}/workspace-ownerships", wrap(serviceController.GetWorkspaceOwnerships)).Methods(http.MethodGet)
-//
-//	router.HandleFunc("/webhooks/damga/pre", wrap(serviceController.HandleDamgaPreWebhook)).Methods(http.MethodPost)
-//	router.HandleFunc("/webhooks/damga/final", wrap(serviceController.HandleDamgaFinalWebhook)).Methods(http.MethodPost)
-//
-//	http.Handle("/", &server.CORSRouterDecorator{R: router})
-//	err = http.ListenAndServe(":1002", &server.CORSRouterDecorator{R: router})
-//	if err != nil {
-//		log.Fatalf("Listen and serve failed %s", err.Error())
-//	}
-//}

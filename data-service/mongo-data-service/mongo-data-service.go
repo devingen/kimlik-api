@@ -7,14 +7,12 @@ import (
 
 // MongoDataService implements IKimlikDataService interface with MongoDB connection
 type MongoDataService struct {
-	DatabaseName string
-	Database     *database.Database
+	Database *database.Database
 }
 
 // New generates new MongoDataService
-func New(databaseName string, database *database.Database) ds.IKimlikDataService {
+func New(database *database.Database) ds.IKimlikDataService {
 	return MongoDataService{
-		DatabaseName: databaseName,
-		Database:     database,
+		Database: database,
 	}
 }

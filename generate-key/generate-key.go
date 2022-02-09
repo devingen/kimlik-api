@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	key, hash, _ := GenerateApiKey("damga-proxy")
+	key, hash, _ := GenerateApiKey("devingen-api")
 	fmt.Println(key)
 	fmt.Println(hash)
 }

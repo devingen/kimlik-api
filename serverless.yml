@@ -2,16 +2,16 @@ org: devingen
 app: devingen-io
 service: kimlik-api
 
-frameworkVersion: '>=1.28.0 <2.0.0'
+frameworkVersion: '^3.1.1'
 
 provider:
   name: aws
   runtime: go1.x
   environment:
-    MONGO_ADDRESS: ${param:MONGO_ADDRESS}
-    MONGO_USERNAME: ${param:MONGO_USERNAME}
-    MONGO_PASSWORD: ${param:MONGO_PASSWORD}
-    KIMLIK_JWT_SIGN_KEY: ${param:KIMLIK_JWT_SIGN_KEY}
+    KIMLIK_API_MONGO_URI: ${param:KIMLIK_API_MONGO_URI}
+    KIMLIK_API_JWT_SIGN_KEY: ${param:KIMLIK_API_JWT_SIGN_KEY}
+    KIMLIK_API_WEBHOOK_HEADERS: ${param:KIMLIK_API_WEBHOOK_HEADERS}
+    KIMLIK_API_WEBHOOK_URL: ${param:KIMLIK_API_WEBHOOK_URL}
 
 package:
   exclude:
@@ -68,3 +68,41 @@ functions:
             parameters:
               paths:
                 base: true
+
+  create-saml-config:
+    handler: bin/create-saml-config
+    events:
+      - http:
+          path: /{base}/saml-configs
+          method: post
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+
+  build-saml-auth-url:
+    handler: bin/build-saml-auth-url
+    events:
+      - http:
+          path: /{base}/saml-configs/{id}/build
+          method: post
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+                id: true
+
+  consume-saml-auth-response:
+    handler: bin/consume-saml-auth-response
+    events:
+      - http:
+          path: /{base}/saml-configs/{id}/consume
+          method: post
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+                id: true
