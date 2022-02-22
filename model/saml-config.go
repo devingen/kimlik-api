@@ -17,13 +17,20 @@ type SAMLConfig struct {
 	Revision  int        `json:"_revision,omitempty" bson:"_revision,omitempty"`
 
 	// TODO require either
-	MetadataURL                 *string  `json:"metadataURL" bson:"metadataURL,omitempty" validate:"required"`
-	MetadataContent             *string  `json:"metadataContent" bson:"metadataContent,omitempty" validate:"required"`
-	AssertionConsumerServiceURL *string  `json:"assertionConsumerServiceURL" bson:"assertionConsumerServiceURL,omitempty" validate:"required"`
-	AudienceURI                 *string  `json:"audienceURI" bson:"audienceURI,omitempty" validate:"required"`
-	ServiceProviderIssuer       *string  `json:"serviceProviderIssuer" bson:"serviceProviderIssuer,omitempty" validate:"required"`
-	SAMLResponseValues          []string `json:"samlResponseValues" bson:"samlResponseValues,omitempty"`
+	MetadataURL                 *string                     `json:"metadataURL" bson:"metadataURL,omitempty" validate:"required"`
+	MetadataContent             *string                     `json:"metadataContent" bson:"metadataContent,omitempty" validate:"required"`
+	AssertionConsumerServiceURL *string                     `json:"assertionConsumerServiceURL" bson:"assertionConsumerServiceURL,omitempty" validate:"required"`
+	AudienceURI                 *string                     `json:"audienceURI" bson:"audienceURI,omitempty" validate:"required"`
+	ServiceProviderIssuer       *string                     `json:"serviceProviderIssuer" bson:"serviceProviderIssuer,omitempty" validate:"required"`
+	AttributeKeyMappingTemplate AttributeKeyMappingTemplate `json:"attributeKeyMappingTemplate" bson:"attributeKeyMappingTemplate,omitempty"`
+	MetaAttributeKeyMapping     map[string]string           `json:"metaAttributeKeyMapping" bson:"metaAttributeKeyMapping,omitempty"`
 }
+
+type AttributeKeyMappingTemplate string
+
+const (
+	AttributeKeyMappingTemplateAzureAD = "azure-ad"
+)
 
 func (sc *SAMLConfig) AddCreationFields() {
 	sc.ID = primitive.NewObjectID()
