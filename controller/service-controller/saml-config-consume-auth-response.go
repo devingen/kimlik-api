@@ -19,13 +19,11 @@ import (
 	dsig "github.com/russellhaering/goxmldsig"
 )
 
-func (controller ServiceController) ConsumeSAMLAuthResponse(ctx context.Context, req core.Request) (interface{}, int, error) {
+func (c ServiceController) ConsumeSAMLAuthResponse(ctx context.Context, req core.Request) (*core.Response, error) {
 
-	fmt.Println("ConsumeSAMLAuthResponse", 1)
 	loggerFromContext, err := log.Of(ctx)
 	if err != nil {
-		fmt.Println("ConsumeSAMLAuthResponse", 2)
-		return nil, 0, core.NewError(http.StatusInternalServerError, "missing-logger-in-context")
+		return nil, core.NewError(http.StatusInternalServerError, "missing-logger-in-context")
 	}
 	logger := loggerFromContext.WithFields(logrus.Fields{
 		"function": "consume-saml-auth-response",
@@ -34,57 +32,63 @@ func (controller ServiceController) ConsumeSAMLAuthResponse(ctx context.Context,
 	base, hasBase := req.PathParameters["base"]
 	if !hasBase {
 		logger.WithFields(logrus.Fields{"error": err}).Error("missing-path-param-base")
-		return nil, 0, core.NewError(http.StatusInternalServerError, "missing-path-param-base")
+		return nil, core.NewError(http.StatusInternalServerError, "missing-path-param-base")
 	}
 
 	samlConfigID, hasSamlConfigID := req.PathParameters["id"]
 	if !hasSamlConfigID {
 		logger.WithFields(logrus.Fields{"error": err}).Error("missing-path-param-saml-config-id")
-		return nil, 0, core.NewError(http.StatusInternalServerError, "missing-path-param-saml-config-id")
+		return nil, core.NewError(http.StatusInternalServerError, "missing-path-param-saml-config-id")
 	}
 
 	var body dto.ConsumeSAMLAuthResponseRequest
 	err = req.AssertBody(&body)
 	if err != nil {
 		logger.WithFields(logrus.Fields{"error": err}).Error("invalid-request-body")
-		return nil, 0, err
+		return nil, err
 	}
 
-	samlConfig, err := controller.DataService.GetSAMLConfig(ctx, base, samlConfigID)
+	samlConfig, err := c.DataService.GetSAMLConfig(ctx, base, samlConfigID)
 	if err != nil {
 		logger.WithFields(logrus.Fields{"error": err}).Error("failed-to-get-saml-config")
-		return nil, 0, err
+		return nil, err
 	}
 
 	sp, err := getSp(samlConfig)
 	if err != nil {
 		logger.WithFields(logrus.Fields{"error": err}).Error("failed-to-get-sp")
-		return nil, 0, err
+		return nil, err
 	}
 
 	assertionInfo, err := sp.RetrieveAssertionInfo(*body.SAMLResponse)
 	if err != nil {
 		logger.WithFields(logrus.Fields{"error": err}).Error("saml-response-assertion-failed")
-		return nil, 0, err
+		return nil, err
 	}
 
 	if assertionInfo.WarningInfo.InvalidTime {
 		logger.WithFields(logrus.Fields{"error": err}).Error("invalid-saml-response-time")
-		return nil, 0, err
+		return nil, err
 	}
 
 	if assertionInfo.WarningInfo.NotInAudience {
 		logger.WithFields(logrus.Fields{"error": err}).Error("invalid-saml-response-audience")
-		return nil, 0, err
+		return nil, err
 	}
 
-	interceptorResponse, interceptorStatusCode, interceptorError := controller.InterceptorService.SAMLConsume(ctx, req, samlConfig, assertionInfo)
+	interceptorResponse, interceptorStatusCode, interceptorError := c.InterceptorService.SAMLConsume(ctx, req, samlConfig, assertionInfo)
 	if interceptorError != nil {
 		logger.WithFields(logrus.Fields{"error": interceptorError}).Error("interceptor-returned-error")
-		return interceptorError, interceptorStatusCode, nil
+		return &core.Response{
+			StatusCode: interceptorStatusCode,
+			Body:       interceptorError,
+		}, nil
 	}
 
-	return interceptorResponse, http.StatusOK, nil
+	return &core.Response{
+		StatusCode: interceptorStatusCode,
+		Body:       interceptorResponse,
+	}, nil
 }
 
 func getSp(config *model.SAMLConfig) (*saml2.SAMLServiceProvider, error) {

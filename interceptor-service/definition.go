@@ -10,5 +10,6 @@ import (
 
 // IKimlikInterceptorService defines the functionality of the interceptors
 type IKimlikInterceptorService interface {
+	Pre(ctx context.Context, req core.Request) (*dto.WebhookPreResponse, int, interface{})
 	SAMLConsume(ctx context.Context, req core.Request, samlConfig *model.SAMLConfig, assertionInfo *saml2.AssertionInfo) (*dto.WebhookConsumeSAMLAuthResponseResponse, int, interface{})
 }

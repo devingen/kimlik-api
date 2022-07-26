@@ -2,27 +2,27 @@ package mongods
 
 import (
 	"context"
+	core "github.com/devingen/api-core"
 	"github.com/devingen/kimlik-api/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (service MongoDataService) CreateAPIKey(base, name, productId string, scopes []string, keyPrefix, hash string, user *model.User) (*model.ApiKey, error) {
-	collection, err := service.Database.ConnectToCollection(base, model.CollectionApiKeys)
+func (service MongoDataService) CreateAPIKey(ctx context.Context, base, name string, scopes []string, keyID, hash string, user *model.User) (*model.APIKey, error) {
+	collection, err := service.Database.ConnectToCollection(base, model.CollectionAPIKeys)
 	if err != nil {
 		return nil, err
 	}
 
-	item := &model.ApiKey{
+	item := &model.APIKey{
 		CreatedBy: user.DBRef(base),
-		Hash:      hash,
-		Name:      name,
-		KeyPrefix: keyPrefix,
-		ProductId: productId,
+		Hash:      core.String(hash),
+		Name:      core.String(name),
+		KeyID:     core.String(keyID),
 		Scopes:    scopes,
 	}
 	item.AddCreationFields()
 
-	result, err := collection.InsertOne(context.Background(), item)
+	result, err := collection.InsertOne(ctx, item)
 	if err != nil {
 		return nil, err
 	}

@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (service MongoDataService) CreateSession(base, client, userAgent, ip string, user *model.User) (*model.Session, error) {
+func (service MongoDataService) CreateSession(ctx context.Context, base, client, userAgent, ip string, user *model.User) (*model.Session, error) {
 	collection, err := service.Database.ConnectToCollection(base, model.CollectionSessions)
 	if err != nil {
 		return nil, err
@@ -22,7 +22,7 @@ func (service MongoDataService) CreateSession(base, client, userAgent, ip string
 	}
 	item.AddCreationFields()
 
-	result, err := collection.InsertOne(context.TODO(), item)
+	result, err := collection.InsertOne(ctx, item)
 	if err != nil {
 		return nil, err
 	}

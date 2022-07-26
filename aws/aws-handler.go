@@ -8,8 +8,10 @@ import (
 	"github.com/devingen/kimlik-api/config"
 	"github.com/devingen/kimlik-api/controller"
 	service_controller "github.com/devingen/kimlik-api/controller/service-controller"
+	ds "github.com/devingen/kimlik-api/data-service"
 	mongods "github.com/devingen/kimlik-api/data-service/mongo-data-service"
 	webhookis "github.com/devingen/kimlik-api/interceptor-service/webhook-interceptor-service"
+	token_service "github.com/devingen/kimlik-api/token-service"
 	json_web_token_service "github.com/devingen/kimlik-api/token-service/json-web-token-service"
 	kimlikwrapper "github.com/devingen/kimlik-api/wrapper"
 	"github.com/kelseyhightower/envconfig"
@@ -33,7 +35,7 @@ func InitDeps() (controller.IServiceController, func(f core.Controller) wrapper.
 	interceptorService := webhookis.New(appConfig.Webhook.URL, appConfig.Webhook.Headers)
 	serviceController := service_controller.New(dataService, jwtService, interceptorService)
 
-	wrap := generateWrapper(appConfig)
+	wrap := generateWrapper(appConfig, jwtService, dataService)
 	return serviceController, wrap
 }
 
@@ -53,7 +55,7 @@ func getDatabase(appConfig config.App) *database.Database {
 	return db
 }
 
-func generateWrapper(appConfig config.App) func(f core.Controller) wrapper.AWSLambdaHandler {
+func generateWrapper(appConfig config.App, jwtService token_service.ITokenService, dataService ds.IKimlikDataService) func(f core.Controller) wrapper.AWSLambdaHandler {
 	return func(f core.Controller) wrapper.AWSLambdaHandler {
 		fmt.Println("generateWrapper", 1)
 		ctx := context.Background()
@@ -61,7 +63,7 @@ func generateWrapper(appConfig config.App) func(f core.Controller) wrapper.AWSLa
 		// add logger and auth handler
 		withLogger := wrapper.WithLogger(
 			appConfig.LogLevel,
-			kimlikwrapper.WithAuth(f, appConfig.JWTSignKey),
+			kimlikwrapper.WithAuth(f, jwtService, dataService),
 		)
 		fmt.Println("generateWrapper", 2)
 

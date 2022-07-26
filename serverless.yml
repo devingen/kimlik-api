@@ -69,6 +69,80 @@ functions:
               paths:
                 base: true
 
+  find-users:
+    handler: bin/find-users
+    events:
+      - http:
+          path: /{base}/users
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+
+  create-api-key:
+    handler: bin/create-api-key
+    events:
+      - http:
+          path: /{base}/api-keys
+          method: post
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+
+  find-api-keys:
+    handler: bin/find-api-keys
+    events:
+      - http:
+          path: /{base}/api-keys
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+
+  update-api-key:
+    handler: bin/update-api-key
+    events:
+      - http:
+          path: /{base}/api-keys/{id}
+          method: put
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+                id: true
+
+  delete-api-key:
+    handler: bin/delete-api-key
+    events:
+      - http:
+          path: /{base}/api-keys/{id}
+          method: delete
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+                id: true
+
+  verify-api-key:
+    handler: bin/verify-api-key
+    events:
+      - http:
+          path: /{base}/api-keys/verify
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+
   create-saml-config:
     handler: bin/create-saml-config
     events:
@@ -80,6 +154,44 @@ functions:
             parameters:
               paths:
                 base: true
+
+  find-saml-configs:
+    handler: bin/find-saml-configs
+    events:
+      - http:
+          path: /{base}/saml-configs
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+
+  update-saml-config:
+    handler: bin/update-saml-config
+    events:
+      - http:
+          path: /{base}/saml-configs/{id}
+          method: put
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+                id: true
+
+  delete-saml-config:
+    handler: bin/delete-saml-config
+    events:
+      - http:
+          path: /{base}/saml-configs/{id}
+          method: delete
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+                id: true
 
   build-saml-auth-url:
     handler: bin/build-saml-auth-url

@@ -6,7 +6,7 @@ go 1.12
 
 require (
 	github.com/aws/aws-lambda-go v1.16.0
-	github.com/devingen/api-core v0.0.24
+	github.com/devingen/api-core v0.0.26
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/go-resty/resty/v2 v2.7.0

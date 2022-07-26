@@ -66,8 +66,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.12 -m "check api-key header name case insensitive"
+git tag -a v0.0.13 -m "add saml config endpoints, improve api key functionality"
 
 # push new tag
-git push origin v0.0.12
+git push origin v0.0.13
 ```

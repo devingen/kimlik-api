@@ -8,29 +8,32 @@ import (
 	"net/http"
 )
 
-func (controller ServiceController) BuildSAMLAuthURL(ctx context.Context, req core.Request) (interface{}, int, error) {
+func (c ServiceController) BuildSAMLAuthURL(ctx context.Context, req core.Request) (*core.Response, error) {
 
 	base, hasBase := req.PathParameters["base"]
 	if !hasBase {
-		return nil, 0, core.NewError(http.StatusInternalServerError, "missing-path-param-base")
+		return nil, core.NewError(http.StatusInternalServerError, "missing-path-param-base")
 	}
 
 	samlConfigID, hasSamlConfigID := req.PathParameters["id"]
 	if !hasSamlConfigID {
-		return nil, 0, core.NewError(http.StatusInternalServerError, "missing-path-param-saml-config-id")
+		return nil, core.NewError(http.StatusInternalServerError, "missing-path-param-saml-config-id")
 	}
 
-	samlConfig, err := controller.DataService.GetSAMLConfig(ctx, base, samlConfigID)
+	samlConfig, err := c.DataService.GetSAMLConfig(ctx, base, samlConfigID)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
 	authURL, err := buildSAMLAuthURL(samlConfig)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
-	return dto.BuildSAMLAuthURLResponse{AuthURL: authURL}, http.StatusOK, nil
+	return &core.Response{
+		StatusCode: http.StatusOK,
+		Body:       dto.BuildSAMLAuthURLResponse{AuthURL: authURL},
+	}, nil
 }
 
 func buildSAMLAuthURL(config *model.SAMLConfig) (*string, error) {

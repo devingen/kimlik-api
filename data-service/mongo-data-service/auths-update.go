@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (service MongoDataService) UpdateAuth(base string, auth *model.Auth) (*time.Time, int, error) {
+func (service MongoDataService) UpdateAuth(ctx context.Context, base string, auth *model.Auth) (*time.Time, int, error) {
 	collection, err := service.Database.ConnectToCollection(base, model.CollectionAuths)
 	if err != nil {
 		return nil, 0, err
@@ -20,7 +20,7 @@ func (service MongoDataService) UpdateAuth(base string, auth *model.Auth) (*time
 	}
 
 	var result model.Auth
-	err = collection.FindOneAndUpdate(context.TODO(), bson.M{"_id": auth.ID}, bson.M{
+	err = collection.FindOneAndUpdate(ctx, bson.M{"_id": auth.ID}, bson.M{
 		"$set": auth,
 		"$inc": bson.M{"_revision": 1},
 	}).Decode(&result)

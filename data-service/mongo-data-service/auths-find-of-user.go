@@ -2,13 +2,14 @@ package mongods
 
 import (
 	"context"
+	"github.com/devingen/api-core/database"
 	"github.com/devingen/kimlik-api/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (service MongoDataService) FindAuthOfUser(base, userId string, authType model.AuthType) (*model.Auth, error) {
+func (service MongoDataService) FindAuthOfUser(ctx context.Context, base, userId string, authType model.AuthType) (*model.Auth, error) {
 	id, err := primitive.ObjectIDFromHex(userId)
 	if err != nil {
 		return nil, err
@@ -20,7 +21,7 @@ func (service MongoDataService) FindAuthOfUser(base, userId string, authType mod
 		bson.M{"type": authType},
 	}}
 
-	err = service.Database.Find(context.TODO(), base, model.CollectionAuths, query, 0, func(cur *mongo.Cursor) error {
+	err = service.Database.Find(ctx, base, model.CollectionAuths, query, database.FindOptions{}, func(cur *mongo.Cursor) error {
 		var data model.Auth
 		err := cur.Decode(&data)
 		if err != nil {

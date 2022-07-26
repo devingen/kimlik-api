@@ -1,11 +1,12 @@
 package model
 
 import (
+	"errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
-type ApiKey struct {
+type APIKey struct {
 	// DBRef fields
 	Ref      string             `bson:"_ref,omitempty" json:"_ref,omitempty"`
 	ID       primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
@@ -16,15 +17,14 @@ type ApiKey struct {
 	UpdatedAt *time.Time `json:"_updated,omitempty" bson:"_updated,omitempty"`
 	Revision  int        `json:"_revision,omitempty" bson:"_revision,omitempty"`
 
-	CreatedBy *User    `json:"user" bson:"user,omitempty"`
-	Hash      string   `json:"hash,omitempty" bson:"hash,omitempty"`
-	Name      string   `json:"name,omitempty" bson:"name,omitempty"`
-	KeyPrefix string   `json:"keyPrefix,omitempty" bson:"keyPrefix,omitempty"`
-	ProductId string   `json:"productId,omitempty" bson:"productId,omitempty"`
+	CreatedBy *User    `json:"createdBy" bson:"createdBy,omitempty"`
+	Hash      *string  `json:"hash,omitempty" bson:"hash,omitempty"`
+	Name      *string  `json:"name,omitempty" bson:"name,omitempty"`
+	KeyID     *string  `json:"keyId,omitempty" bson:"keyId,omitempty"`
 	Scopes    []string `json:"scopes,omitempty" bson:"scopes,omitempty"`
 }
 
-func (apiKey *ApiKey) AddCreationFields() {
+func (apiKey *APIKey) AddCreationFields() {
 	apiKey.ID = primitive.NewObjectID()
 	now := time.Now()
 	apiKey.CreatedAt = &now
@@ -34,8 +34,30 @@ func (apiKey *ApiKey) AddCreationFields() {
 
 // PrepareUpdateFields sets the UpdatedAt and deletes the Revision. Giving 0 value to Revision results bson
 // ignoring the revision field in $set function. It's incremented by the $inc command
-func (apiKey *ApiKey) PrepareUpdateFields() {
+func (apiKey *APIKey) PrepareUpdateFields() {
 	apiKey.Revision = 0
 	now := time.Now()
 	apiKey.UpdatedAt = &now
+}
+
+func (apiKey *APIKey) ValidateScope(scope string) error {
+	return apiKey.ValidateScopes([]string{scope})
+}
+
+func (apiKey *APIKey) ValidateScopes(scopes []string) error {
+	if apiKey.Scopes == nil {
+		return errors.New("api-key-has-no-scope")
+	}
+
+	allowedScopes := map[string]bool{}
+	for _, scope := range apiKey.Scopes {
+		allowedScopes[scope] = true
+	}
+
+	for _, expectedScope := range scopes {
+		if !allowedScopes[expectedScope] {
+			return errors.New("api-key-missing-scope:" + expectedScope)
+		}
+	}
+	return nil
 }

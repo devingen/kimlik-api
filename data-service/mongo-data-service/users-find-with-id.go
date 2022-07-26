@@ -2,13 +2,14 @@ package mongods
 
 import (
 	"context"
+	"github.com/devingen/api-core/database"
 	"github.com/devingen/kimlik-api/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (service MongoDataService) FindUserUserWithId(base, id string) (*model.User, error) {
+func (service MongoDataService) FindUserWithId(ctx context.Context, base, id string) (*model.User, error) {
 	result := make([]*model.User, 0)
 
 	mId, mErr := primitive.ObjectIDFromHex(id)
@@ -17,7 +18,7 @@ func (service MongoDataService) FindUserUserWithId(base, id string) (*model.User
 	}
 	query := bson.M{"_id": mId}
 
-	err := service.Database.Find(context.TODO(), base, model.CollectionUsers, query, 0, func(cur *mongo.Cursor) error {
+	err := service.Database.Find(ctx, base, model.CollectionUsers, query, database.FindOptions{}, func(cur *mongo.Cursor) error {
 
 		var data model.User
 		err := cur.Decode(&data)

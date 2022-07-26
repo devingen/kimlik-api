@@ -16,9 +16,10 @@ type SAMLConfig struct {
 	UpdatedAt *time.Time `json:"_updated,omitempty" bson:"_updated,omitempty"`
 	Revision  int        `json:"_revision,omitempty" bson:"_revision,omitempty"`
 
-	// TODO require either
-	MetadataURL                 *string                     `json:"metadataURL" bson:"metadataURL,omitempty" validate:"required"`
-	MetadataContent             *string                     `json:"metadataContent" bson:"metadataContent,omitempty" validate:"required"`
+	CreatedBy                   *User                       `json:"createdBy" bson:"createdBy,omitempty"`
+	Name                        *string                     `json:"name,omitempty" bson:"name,omitempty" validate:"required"`
+	MetadataURL                 *string                     `json:"metadataURL" bson:"metadataURL,omitempty" validate:"required_without=MetadataContent"`
+	MetadataContent             *string                     `json:"metadataContent" bson:"metadataContent,omitempty" validate:"required_without=MetadataURL"`
 	AssertionConsumerServiceURL *string                     `json:"assertionConsumerServiceURL" bson:"assertionConsumerServiceURL,omitempty" validate:"required"`
 	AudienceURI                 *string                     `json:"audienceURI" bson:"audienceURI,omitempty" validate:"required"`
 	ServiceProviderIssuer       *string                     `json:"serviceProviderIssuer" bson:"serviceProviderIssuer,omitempty" validate:"required"`

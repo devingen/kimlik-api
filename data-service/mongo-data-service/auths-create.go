@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (service MongoDataService) CreateAuthWithPassword(base, password string, user *model.User) (*model.Auth, error) {
+func (service MongoDataService) CreateAuthWithPassword(ctx context.Context, base, password string, user *model.User) (*model.Auth, error) {
 	collection, err := service.Database.ConnectToCollection(base, model.CollectionAuths)
 	if err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func (service MongoDataService) CreateAuthWithPassword(base, password string, us
 		return nil, err
 	}
 
-	result, err := collection.InsertOne(context.Background(), item)
+	result, err := collection.InsertOne(ctx, item)
 	if err != nil {
 		return nil, err
 	}

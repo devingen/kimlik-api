@@ -3,6 +3,7 @@ package kimlik
 import (
 	"context"
 	core "github.com/devingen/api-core"
+	ds "github.com/devingen/kimlik-api/data-service"
 	"github.com/devingen/kimlik-api/model"
 	token_service "github.com/devingen/kimlik-api/token-service"
 	"net/http"
@@ -14,11 +15,9 @@ type tokenKey struct{}
 // apiKeyKey type is an opaque type for the api key lookup in a given context.
 type apiKeyKey struct{}
 
-const JWTPrefix = "Bearer"
+func WithJWTAuth(jwtService token_service.ITokenService, ctx context.Context, req core.Request) (context.Context, error) {
 
-func WithJWTAuth(ctx context.Context, req core.Request, signKey string) (context.Context, error) {
-
-	tokenPayload, err := RetrieveToken(req.Headers["Authorization"], signKey)
+	tokenPayload, err := ExtractToken(jwtService, req)
 	if err != nil {
 		return nil, err
 	}
@@ -35,25 +34,18 @@ func Of(ctx context.Context) *token_service.TokenPayload {
 	return token
 }
 
-func WithAPIKeyAuth(ctx context.Context, req core.Request) (context.Context, error) {
+func WithAPIKeyAuth(ctx context.Context, req core.Request, dataService ds.IKimlikDataService) (context.Context, error) {
 
-	apiKey, hasApiKey := req.Headers["Api-Key"]
-	if !hasApiKey || apiKey == "" {
-		apiKey, hasApiKey = req.Headers["api-key"]
-		if !hasApiKey || apiKey == "" {
-			return ctx, nil
-		}
-	}
-
-	apiKeyPayload, err := VerifyApiKey(apiKey)
+	apiKeyPayload, err := ExtractApiKey(req)
 	if err != nil {
-		return nil, core.NewError(http.StatusBadRequest, "invalid-api-key")
+		return nil, core.NewError(http.StatusBadRequest, err.Error())
 	}
 
 	return context.WithValue(ctx, apiKeyKey{}, apiKeyPayload), nil
 }
 
-// OfApiKey function extracts a valid ApiKeyPayload object from a given context.
+// OfApiKey function extracts a valid ApiKeyPayload object
+// from a given context that is created by the WithAPIKeyAuth priorly.
 func OfApiKey(ctx context.Context) *model.ApiKeyPayload {
 	token, ok := ctx.Value(apiKeyKey{}).(*model.ApiKeyPayload)
 	if !ok {

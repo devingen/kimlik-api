@@ -6,13 +6,23 @@ import (
 )
 
 type IServiceController interface {
-	RegisterWithEmail(ctx context.Context, req core.Request) (interface{}, int, error)
-	LoginWithEmail(ctx context.Context, req core.Request) (interface{}, int, error)
-	GetSession(ctx context.Context, req core.Request) (interface{}, int, error)
-	ChangePassword(ctx context.Context, req core.Request) (interface{}, int, error)
-	CreateAPIKey(ctx context.Context, req core.Request) (interface{}, int, error)
+	RegisterWithEmail(ctx context.Context, req core.Request) (*core.Response, error)
+	LoginWithEmail(ctx context.Context, req core.Request) (*core.Response, error)
+	GetSession(ctx context.Context, req core.Request) (*core.Response, error)
+	ChangePassword(ctx context.Context, req core.Request) (*core.Response, error)
 
-	CreateSAMLConfig(ctx context.Context, req core.Request) (interface{}, int, error)
-	BuildSAMLAuthURL(ctx context.Context, req core.Request) (interface{}, int, error)
-	ConsumeSAMLAuthResponse(ctx context.Context, req core.Request) (interface{}, int, error)
+	FindUsers(ctx context.Context, req core.Request) (*core.Response, error)
+
+	CreateAPIKey(ctx context.Context, req core.Request) (*core.Response, error)
+	FindAPIKeys(ctx context.Context, req core.Request) (*core.Response, error)
+	UpdateAPIKey(ctx context.Context, req core.Request) (*core.Response, error)
+	DeleteAPIKey(ctx context.Context, req core.Request) (*core.Response, error)
+	VerifyAPIKey(ctx context.Context, req core.Request) (*core.Response, error)
+
+	CreateSAMLConfig(ctx context.Context, req core.Request) (*core.Response, error)
+	FindSAMLConfigs(ctx context.Context, req core.Request) (*core.Response, error)
+	UpdateSAMLConfig(ctx context.Context, req core.Request) (*core.Response, error)
+	DeleteSAMLConfig(ctx context.Context, req core.Request) (*core.Response, error)
+	BuildSAMLAuthURL(ctx context.Context, req core.Request) (*core.Response, error)
+	ConsumeSAMLAuthResponse(ctx context.Context, req core.Request) (*core.Response, error)
 }

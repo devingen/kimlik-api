@@ -3,9 +3,12 @@ package kimlik
 import (
 	"context"
 	core "github.com/devingen/api-core"
+	ds "github.com/devingen/kimlik-api/data-service"
 	"github.com/devingen/kimlik-api/model"
 	token_service "github.com/devingen/kimlik-api/token-service"
 	"github.com/go-playground/validator/v10"
+	"go.mongodb.org/mongo-driver/bson"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
 
@@ -21,12 +24,35 @@ func AssertAuthentication(ctx context.Context) (*token_service.TokenPayload, err
 	return tokenPayload, nil
 }
 
-func AssertApiKey(ctx context.Context) (*model.ApiKeyPayload, error) {
+func AssertApiKey(ctx context.Context, base string, dataService ds.IKimlikDataService) (*model.APIKey, error) {
+	// retrieve the api key extracted from the 'api-key' header
 	apiKeyPayload := OfApiKey(ctx)
 	if apiKeyPayload == nil {
 		return nil, core.NewStatusError(http.StatusUnauthorized)
 	}
-	return apiKeyPayload, nil
+
+	return AssertApiKeyPayload(ctx, base, dataService, apiKeyPayload)
+}
+
+func AssertApiKeyPayload(ctx context.Context, base string, dataService ds.IKimlikDataService, apiKeyPayload *model.ApiKeyPayload) (*model.APIKey, error) {
+	// retrieve the corresponding api key entry from the database
+	apiKeys, err := dataService.FindAPIKeys(ctx, base, bson.M{
+		"keyId": apiKeyPayload.KeyID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if apiKeys == nil || len(apiKeys) == 0 {
+		return nil, core.NewError(http.StatusUnauthorized, "key-not-found")
+	}
+	apiKey := apiKeys[0]
+
+	// check if the api key sent by the client matches the hash saved in the database
+	if err := bcrypt.CompareHashAndPassword([]byte(*apiKey.Hash), []byte(apiKeyPayload.Key)); err != nil {
+		return nil, core.NewError(http.StatusUnauthorized, "key-mismatch")
+	}
+	return apiKey, nil
 }
 
 func AssertAuthenticationAndBody(ctx context.Context, req core.Request, bodyValue interface{}) (*token_service.TokenPayload, error) {
