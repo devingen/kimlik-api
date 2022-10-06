@@ -22,7 +22,15 @@ func (c ServiceController) FindAPIKeys(ctx context.Context, req core.Request) (*
 		}, nil
 	}
 
-	items, err := c.DataService.FindAPIKeys(ctx, base, nil)
+	query, _, iStatusCode, iErr := PreGetQueryEnhance(c, ctx, req)
+	if iErr != nil {
+		return &core.Response{
+			StatusCode: iStatusCode,
+			Body:       iErr,
+		}, nil
+	}
+
+	items, err := c.DataService.FindAPIKeys(ctx, base, query)
 	if err != nil {
 		return nil, err
 	}

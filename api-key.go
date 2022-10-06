@@ -19,13 +19,9 @@ func ExtractApiKey(req core.Request) (*model.ApiKeyPayload, error) {
 		return nil, nil
 	}
 
-	apiKey, hasApiKey := req.Headers["Api-Key"]
+	apiKey, hasApiKey := req.Headers["api-key"]
 	if !hasApiKey || apiKey == "" {
-		// aws lambda converts the custom headers to lowercase
-		apiKey, hasApiKey = req.Headers["api-key"]
-		if !hasApiKey || apiKey == "" {
-			return nil, nil
-		}
+		return nil, nil
 	}
 
 	decodedKey, err := base64.StdEncoding.DecodeString(apiKey)

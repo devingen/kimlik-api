@@ -7,18 +7,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (service MongoDataService) CreateAPIKey(ctx context.Context, base, name string, scopes []string, keyID, hash string, user *model.User) (*model.APIKey, error) {
+func (service MongoDataService) CreateAPIKey(ctx context.Context, base, name string, scopes []string, keyID, hash string) (*model.APIKey, error) {
 	collection, err := service.Database.ConnectToCollection(base, model.CollectionAPIKeys)
 	if err != nil {
 		return nil, err
 	}
 
 	item := &model.APIKey{
-		CreatedBy: user.DBRef(base),
-		Hash:      core.String(hash),
-		Name:      core.String(name),
-		KeyID:     core.String(keyID),
-		Scopes:    scopes,
+		Hash:   core.String(hash),
+		Name:   core.String(name),
+		KeyID:  core.String(keyID),
+		Scopes: scopes,
 	}
 	item.AddCreationFields()
 

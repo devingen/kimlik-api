@@ -9,7 +9,7 @@ import (
 const JWTPrefix = "Bearer"
 
 func ExtractToken(jwtService token_service.ITokenService, req core.Request) (*token_service.TokenPayload, error) {
-	authHeader, hasAuthHeader := req.Headers["Authorization"]
+	authHeader, hasAuthHeader := req.Headers["authorization"]
 	if !hasAuthHeader || authHeader == "" {
 		// skip if there is no header
 		return nil, nil

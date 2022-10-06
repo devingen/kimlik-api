@@ -34,7 +34,7 @@ type IKimlikDataService interface {
 	// endregion
 
 	// region api key
-	CreateAPIKey(ctx context.Context, base, name string, scopes []string, keyID, hash string, user *model.User) (*model.APIKey, error)
+	CreateAPIKey(ctx context.Context, base, name string, scopes []string, keyID, hash string) (*model.APIKey, error)
 	GetAPIKey(ctx context.Context, base, id string) (*model.APIKey, error)
 	FindAPIKeys(ctx context.Context, base string, query bson.M) ([]*model.APIKey, error)
 	UpdateAPIKey(ctx context.Context, base string, apiKey *model.APIKey) (*time.Time, int, error)

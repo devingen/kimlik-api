@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	core "github.com/devingen/api-core"
-	"github.com/devingen/kimlik-api"
 	"github.com/devingen/kimlik-api/dto"
 	"golang.org/x/crypto/bcrypt"
 	"math/big"
@@ -27,18 +26,9 @@ func (c ServiceController) CreateAPIKey(ctx context.Context, req core.Request) (
 	}
 
 	var body dto.CreateApiKeyRequest
-	token, err := kimlik.AssertAuthenticationAndBody(ctx, req, &body)
+	err := req.AssertBody(&body)
 	if err != nil {
 		return nil, err
-	}
-
-	user, err := c.DataService.FindUserWithId(ctx, base, token.UserId)
-	if err != nil {
-		return nil, err
-	}
-
-	if user == nil {
-		return nil, core.NewStatusError(http.StatusNotFound)
 	}
 
 	keyID, err := GenerateRandomString(20)
@@ -51,13 +41,15 @@ func (c ServiceController) CreateAPIKey(ctx context.Context, req core.Request) (
 		return nil, err
 	}
 
-	apiKey, err := c.DataService.CreateAPIKey(ctx, base, *body.Name, body.Scopes, keyID, hash, user)
+	apiKey, err := c.DataService.CreateAPIKey(ctx, base, *body.Name, body.Scopes, keyID, hash)
 	if err != nil {
 		return nil, err
 	}
 
+	c.InterceptorService.Final(ctx, req, apiKey)
+
 	return &core.Response{
-		StatusCode: http.StatusOK,
+		StatusCode: http.StatusCreated,
 		Body: dto.CreateApiKeyResponse{
 			Key:   key,
 			KeyID: keyID,

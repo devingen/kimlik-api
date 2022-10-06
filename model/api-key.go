@@ -40,6 +40,15 @@ func (apiKey *APIKey) PrepareUpdateFields() {
 	apiKey.UpdatedAt = &now
 }
 
+func (apiKey *APIKey) ContainsScope(scope string) bool {
+	for _, s := range apiKey.Scopes {
+		if s == scope {
+			return true
+		}
+	}
+	return false
+}
+
 func (apiKey *APIKey) ValidateScope(scope string) error {
 	return apiKey.ValidateScopes([]string{scope})
 }

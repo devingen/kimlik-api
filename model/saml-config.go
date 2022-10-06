@@ -16,7 +16,6 @@ type SAMLConfig struct {
 	UpdatedAt *time.Time `json:"_updated,omitempty" bson:"_updated,omitempty"`
 	Revision  int        `json:"_revision,omitempty" bson:"_revision,omitempty"`
 
-	CreatedBy                   *User                       `json:"createdBy" bson:"createdBy,omitempty"`
 	Name                        *string                     `json:"name,omitempty" bson:"name,omitempty" validate:"required"`
 	MetadataURL                 *string                     `json:"metadataURL" bson:"metadataURL,omitempty" validate:"required_without=MetadataContent"`
 	MetadataContent             *string                     `json:"metadataContent" bson:"metadataContent,omitempty" validate:"required_without=MetadataURL"`

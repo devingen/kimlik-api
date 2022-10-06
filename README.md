@@ -66,8 +66,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.14 -m "add saml config endpoints, improve api key functionality"
+git tag -a v0.0.15 -m "add final webhook for api-key operations"
 
 # push new tag
-git push origin v0.0.14
+git push origin v0.0.15
 ```

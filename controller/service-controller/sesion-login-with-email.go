@@ -45,8 +45,8 @@ func (c ServiceController) LoginWithEmail(ctx context.Context, req core.Request)
 		return nil, core.NewError(http.StatusUnauthorized, "password-mismatch")
 	}
 
-	userAgent := req.Headers["User-Agent"]
-	client := req.Headers["Client"]
+	userAgent := req.Headers["user-agent"]
+	client := req.Headers["client"]
 	ip := req.IP
 	session, err := c.DataService.CreateSession(ctx, base, client, userAgent, ip, user)
 	if err != nil {

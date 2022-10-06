@@ -54,7 +54,14 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	router.HandleFunc("/{base}/saml-configs/{id}/build", wrap(serviceController.BuildSAMLAuthURL)).Methods(http.MethodPost)
 	router.HandleFunc("/{base}/saml-configs/{id}/consume", wrap(serviceController.ConsumeSAMLAuthResponse)).Methods(http.MethodPost)
 
-	http.Handle("/", &server.CORSRouterDecorator{R: router})
+	http.Handle("/", &server.CORSRouterDecorator{
+		R: router,
+		Headers: map[string]string{
+			server.CORSAccessControlAllowHeaders: server.CORSAccessControlAllowHeadersDefaultValue + ",devingen-product-id",
+			server.CORSAccessControlAllowMethods: server.CORSAccessControlAllowMethodsDefaultValue,
+		},
+		AllowSenderOrigin: true,
+	})
 	return srv
 }
 

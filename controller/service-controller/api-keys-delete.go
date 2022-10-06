@@ -32,6 +32,8 @@ func (c ServiceController) DeleteAPIKey(ctx context.Context, req core.Request) (
 		return nil, err
 	}
 
+	c.InterceptorService.Final(ctx, req, nil)
+
 	return &core.Response{
 		StatusCode: http.StatusNoContent,
 	}, nil
