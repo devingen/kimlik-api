@@ -112,7 +112,8 @@ functions:
       - http:
           path: /{base}/api-keys/{id}
           method: put
-          cors: true
+          cors:
+            headers: "*"
           request:
             parameters:
               paths:
@@ -125,7 +126,8 @@ functions:
       - http:
           path: /{base}/api-keys/{id}
           method: delete
-          cors: true
+          cors:
+            headers: "*"
           request:
             parameters:
               paths:
@@ -138,7 +140,8 @@ functions:
       - http:
           path: /{base}/api-keys/verify
           method: get
-          cors: true
+          cors:
+            headers: "*"
           request:
             parameters:
               paths:
@@ -150,7 +153,8 @@ functions:
       - http:
           path: /{base}/saml-configs
           method: post
-          cors: true
+          cors:
+            headers: "*"
           request:
             parameters:
               paths:
@@ -162,7 +166,8 @@ functions:
       - http:
           path: /{base}/saml-configs
           method: get
-          cors: true
+          cors:
+            headers: "*"
           request:
             parameters:
               paths:
@@ -174,7 +179,8 @@ functions:
       - http:
           path: /{base}/saml-configs/{id}
           method: put
-          cors: true
+          cors:
+            headers: "*"
           request:
             parameters:
               paths:
@@ -187,7 +193,8 @@ functions:
       - http:
           path: /{base}/saml-configs/{id}
           method: delete
-          cors: true
+          cors:
+            headers: "*"
           request:
             parameters:
               paths:
@@ -200,7 +207,8 @@ functions:
       - http:
           path: /{base}/saml-configs/{id}/build
           method: post
-          cors: true
+          cors:
+            headers: "*"
           request:
             parameters:
               paths:
@@ -213,7 +221,8 @@ functions:
       - http:
           path: /{base}/saml-configs/{id}/consume
           method: post
-          cors: true
+          cors:
+            headers: "*"
           request:
             parameters:
               paths:
