@@ -99,7 +99,8 @@ functions:
       - http:
           path: /{base}/api-keys
           method: get
-          cors: true
+          cors:
+            headers: "*"
           request:
             parameters:
               paths:
