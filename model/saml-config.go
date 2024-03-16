@@ -1,8 +1,9 @@
 package model
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type SAMLConfig struct {
@@ -21,9 +22,11 @@ type SAMLConfig struct {
 	MetadataContent             *string                     `json:"metadataContent" bson:"metadataContent,omitempty" validate:"required_without=MetadataURL"`
 	AssertionConsumerServiceURL *string                     `json:"assertionConsumerServiceURL" bson:"assertionConsumerServiceURL,omitempty" validate:"required"`
 	AudienceURI                 *string                     `json:"audienceURI" bson:"audienceURI,omitempty" validate:"required"`
-	ServiceProviderIssuer       *string                     `json:"serviceProviderIssuer" bson:"serviceProviderIssuer,omitempty" validate:"required"`
 	AttributeKeyMappingTemplate AttributeKeyMappingTemplate `json:"attributeKeyMappingTemplate" bson:"attributeKeyMappingTemplate,omitempty"`
 	MetaAttributeKeyMapping     map[string]string           `json:"metaAttributeKeyMapping" bson:"metaAttributeKeyMapping,omitempty"`
+
+	// Deprecated: ServiceProviderIssuer is deprecated.
+	ServiceProviderIssuer *string `json:"serviceProviderIssuer" bson:"serviceProviderIssuer,omitempty" validate:"required"`
 }
 
 type AttributeKeyMappingTemplate string

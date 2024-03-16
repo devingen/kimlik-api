@@ -6,13 +6,14 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
+	"io"
+	"net/http"
+
 	core "github.com/devingen/api-core"
 	"github.com/devingen/api-core/log"
 	"github.com/devingen/kimlik-api/dto"
 	"github.com/devingen/kimlik-api/model"
 	"github.com/sirupsen/logrus"
-	"io/ioutil"
-	"net/http"
 
 	saml2 "github.com/russellhaering/gosaml2"
 	"github.com/russellhaering/gosaml2/types"
@@ -34,12 +35,18 @@ func (c ServiceController) ConsumeSAMLAuthResponse(ctx context.Context, req core
 		logger.WithFields(logrus.Fields{"error": err}).Error("missing-path-param-base")
 		return nil, core.NewError(http.StatusInternalServerError, "missing-path-param-base")
 	}
+	logger = loggerFromContext.WithFields(logrus.Fields{
+		"base": base,
+	})
 
 	samlConfigID, hasSamlConfigID := req.PathParameters["id"]
 	if !hasSamlConfigID {
 		logger.WithFields(logrus.Fields{"error": err}).Error("missing-path-param-saml-config-id")
 		return nil, core.NewError(http.StatusInternalServerError, "missing-path-param-saml-config-id")
 	}
+	logger = loggerFromContext.WithFields(logrus.Fields{
+		"samlConfigId": samlConfigID,
+	})
 
 	var body dto.ConsumeSAMLAuthResponseRequest
 	err = req.AssertBody(&body)
@@ -99,19 +106,19 @@ func getSp(config *model.SAMLConfig) (*saml2.SAMLServiceProvider, error) {
 	} else if config.MetadataURL != nil {
 		res, err := http.Get(*config.MetadataURL)
 		if err != nil {
-			return nil, err
+			return nil, core.NewError(http.StatusPreconditionFailed, "failed-to-fetch-metadata reason:"+err.Error())
 		}
 
-		rawMetadata, err = ioutil.ReadAll(res.Body)
+		rawMetadata, err = io.ReadAll(res.Body)
 		if err != nil {
-			return nil, err
+			return nil, core.NewError(http.StatusPreconditionFailed, "failed-to-parse-metadata reason:"+err.Error())
 		}
 	}
 
 	metadata := &types.EntityDescriptor{}
 	err := xml.Unmarshal(rawMetadata, metadata)
 	if err != nil {
-		return nil, err
+		return nil, core.NewError(http.StatusPreconditionFailed, "failed-to-read-idp-metadata, from: "+*config.MetadataURL+", reason:"+err.Error())
 	}
 
 	certStore := dsig.MemoryX509CertificateStore{
@@ -126,12 +133,12 @@ func getSp(config *model.SAMLConfig) (*saml2.SAMLServiceProvider, error) {
 
 			certData, err := base64.StdEncoding.DecodeString(xcert.Data)
 			if err != nil {
-				return nil, err
+				return nil, core.NewError(http.StatusPreconditionFailed, "failed-to-decode-xcert-data reason:"+err.Error())
 			}
 
 			idpCert, err := x509.ParseCertificate(certData)
 			if err != nil {
-				return nil, err
+				return nil, core.NewError(http.StatusPreconditionFailed, "failed-to-parse-idp-cert reason:"+err.Error())
 			}
 
 			certStore.Roots = append(certStore.Roots, idpCert)
@@ -144,7 +151,7 @@ func getSp(config *model.SAMLConfig) (*saml2.SAMLServiceProvider, error) {
 	sp := &saml2.SAMLServiceProvider{
 		IdentityProviderSSOURL:      metadata.IDPSSODescriptor.SingleSignOnServices[0].Location,
 		IdentityProviderIssuer:      metadata.EntityID,
-		ServiceProviderIssuer:       *config.ServiceProviderIssuer,
+		ServiceProviderIssuer:       *config.AudienceURI,
 		AssertionConsumerServiceURL: *config.AssertionConsumerServiceURL,
 		SignAuthnRequests:           true,
 		AudienceURI:                 *config.AudienceURI,
