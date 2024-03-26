@@ -28,7 +28,7 @@ Integration test suite connects to the Mongo Database running on `localhost` wit
 Initially, it clears the database and inserts the sample data into the `dvn-atama-api-integration-test` 
 database from the files in `integrationtests/data`.
 
-```
+```shell
 go test ./integrationtests/...
 ```
 
@@ -39,11 +39,13 @@ go test ./integrationtests/...
 This commands executes the command in `Makefile` which clears the previous builds,
 generates executables and deploys the AWS Functions through Serverless Framework.
 
-```
-# dev
+**dev**
+```shell
 make deploy-devingen-dev
+```
 
-# prod
+**prod**
+```shell
 make deploy-devingen
 ```
 
