@@ -17,13 +17,13 @@ func (c ServiceController) LoginWithEmail(ctx context.Context, req core.Request)
 		return nil, core.NewError(http.StatusInternalServerError, "missing-path-param-base")
 	}
 
-	var body dto.LoginWithEmailRequest
+	var body dto.LoginRequest
 	err := req.AssertBody(&body)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := c.DataService.FindUserWithEmail(ctx, base, body.Email)
+	user, err := c.DataService.FindUserWithEmail(ctx, base, *body.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (c ServiceController) LoginWithEmail(ctx context.Context, req core.Request)
 		return nil, core.NewError(http.StatusInternalServerError, "auth-missing")
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(auth.Password), []byte(body.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(auth.Password), []byte(*body.Password)); err != nil {
 		return nil, core.NewError(http.StatusUnauthorized, "password-mismatch")
 	}
 
@@ -65,9 +65,9 @@ func (c ServiceController) LoginWithEmail(ctx context.Context, req core.Request)
 
 	return &core.Response{
 		StatusCode: http.StatusOK,
-		Body: dto.LoginWithEmailResponse{
-			UserID: user.ID.Hex(),
-			JWT:    jwt,
+		Body: dto.LoginResponse{
+			User: user,
+			JWT:  jwt,
 		},
 	}, nil
 }
