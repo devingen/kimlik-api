@@ -157,6 +157,7 @@ func getSp(config *model.SAMLConfig) (*saml2.SAMLServiceProvider, error) {
 		AudienceURI:                 *config.AudienceURI,
 		IDPCertificateStore:         &certStore,
 		SPKeyStore:                  randomKeyStore,
+		NameIdFormat:                "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
 	}
 	return sp, err
 }
