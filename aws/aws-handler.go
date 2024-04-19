@@ -2,7 +2,8 @@ package aws
 
 import (
 	"context"
-	"fmt"
+	"log"
+
 	core "github.com/devingen/api-core"
 	"github.com/devingen/api-core/database"
 	"github.com/devingen/kimlik-api/config"
@@ -15,7 +16,6 @@ import (
 	json_web_token_service "github.com/devingen/kimlik-api/token-service/json-web-token-service"
 	kimlikwrapper "github.com/devingen/kimlik-api/wrapper"
 	"github.com/kelseyhightower/envconfig"
-	"log"
 
 	"github.com/devingen/api-core/wrapper"
 )
@@ -57,7 +57,6 @@ func getDatabase(appConfig config.App) *database.Database {
 
 func generateWrapper(appConfig config.App, jwtService token_service.ITokenService, dataService ds.IKimlikDataService) func(f core.Controller) wrapper.AWSLambdaHandler {
 	return func(f core.Controller) wrapper.AWSLambdaHandler {
-		fmt.Println("generateWrapper", 1)
 		ctx := context.Background()
 
 		// add logger and auth handler
@@ -65,11 +64,9 @@ func generateWrapper(appConfig config.App, jwtService token_service.ITokenServic
 			appConfig.LogLevel,
 			kimlikwrapper.WithAuth(f, jwtService, dataService),
 		)
-		fmt.Println("generateWrapper", 2)
 
 		// convert to HTTP handler
 		handler := wrapper.WithLambdaHandler(ctx, withLogger)
-		fmt.Println("generateWrapper", 3)
 		return handler
 	}
 }

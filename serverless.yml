@@ -6,7 +6,8 @@ frameworkVersion: '^3.1.1'
 
 provider:
   name: aws
-  runtime: go1.x
+  runtime: provided.al2
+  architecture: arm64
   environment:
     KIMLIK_API_MONGO_URI: ${param:KIMLIK_API_MONGO_URI}
     KIMLIK_API_JWT_SIGN_KEY: ${param:KIMLIK_API_JWT_SIGN_KEY}
@@ -14,15 +15,17 @@ provider:
     KIMLIK_API_WEBHOOK_URL: ${param:KIMLIK_API_WEBHOOK_URL}
 
 package:
-  exclude:
-    - ./**
-  include:
+  patterns:
+    - '!./**'
     - ./bin/**
+  individually: true
 
 functions:
 
   register-with-email:
-    handler: bin/register-with-email
+    handler: bootstrap
+    package:
+      artifact: bin/register-with-email.zip
     events:
       - http:
           path: /{base}/register
@@ -34,7 +37,9 @@ functions:
                 base: true
 
   login-with-email:
-    handler: bin/login-with-email
+    handler: bootstrap
+    package:
+      artifact: bin/login-with-email.zip
     events:
       - http:
           path: /{base}/login
@@ -46,7 +51,9 @@ functions:
                 base: true
 
   get-session:
-    handler: bin/get-session
+    handler: bootstrap
+    package:
+      artifact: bin/get-session.zip
     events:
       - http:
           path: /{base}/session
@@ -58,7 +65,9 @@ functions:
                 base: true
 
   change-password:
-    handler: bin/change-password
+    handler: bootstrap
+    package:
+      artifact: bin/change-password.zip
     events:
       - http:
           path: /{base}/auth/password
@@ -70,7 +79,9 @@ functions:
                 base: true
 
   find-users:
-    handler: bin/find-users
+    handler: bootstrap
+    package:
+      artifact: bin/find-users.zip
     events:
       - http:
           path: /{base}/users
@@ -82,7 +93,9 @@ functions:
                 base: true
 
   create-api-key:
-    handler: bin/create-api-key
+    handler: bootstrap
+    package:
+      artifact: bin/create-api-key.zip
     events:
       - http:
           path: /{base}/api-keys
@@ -94,7 +107,9 @@ functions:
                 base: true
 
   find-api-keys:
-    handler: bin/find-api-keys
+    handler: bootstrap
+    package:
+      artifact: bin/find-api-keys.zip
     events:
       - http:
           path: /{base}/api-keys
@@ -107,7 +122,9 @@ functions:
                 base: true
 
   update-api-key:
-    handler: bin/update-api-key
+    handler: bootstrap
+    package:
+      artifact: bin/update-api-key.zip
     events:
       - http:
           path: /{base}/api-keys/{id}
@@ -121,7 +138,9 @@ functions:
                 id: true
 
   delete-api-key:
-    handler: bin/delete-api-key
+    handler: bootstrap
+    package:
+      artifact: bin/delete-api-key.zip
     events:
       - http:
           path: /{base}/api-keys/{id}
@@ -135,7 +154,9 @@ functions:
                 id: true
 
   verify-api-key:
-    handler: bin/verify-api-key
+    handler: bootstrap
+    package:
+      artifact: bin/verify-api-key.zip
     events:
       - http:
           path: /{base}/api-keys/verify
@@ -148,7 +169,9 @@ functions:
                 base: true
 
   create-saml-config:
-    handler: bin/create-saml-config
+    handler: bootstrap
+    package:
+      artifact: bin/create-saml-config.zip
     events:
       - http:
           path: /{base}/saml-configs
@@ -161,7 +184,9 @@ functions:
                 base: true
 
   find-saml-configs:
-    handler: bin/find-saml-configs
+    handler: bootstrap
+    package:
+      artifact: bin/find-saml-configs.zip
     events:
       - http:
           path: /{base}/saml-configs
@@ -174,7 +199,9 @@ functions:
                 base: true
 
   update-saml-config:
-    handler: bin/update-saml-config
+    handler: bootstrap
+    package:
+      artifact: bin/update-saml-config.zip
     events:
       - http:
           path: /{base}/saml-configs/{id}
@@ -188,7 +215,9 @@ functions:
                 id: true
 
   delete-saml-config:
-    handler: bin/delete-saml-config
+    handler: bootstrap
+    package:
+      artifact: bin/delete-saml-config.zip
     events:
       - http:
           path: /{base}/saml-configs/{id}
@@ -202,7 +231,9 @@ functions:
                 id: true
 
   build-saml-auth-url:
-    handler: bin/build-saml-auth-url
+    handler: bootstrap
+    package:
+      artifact: bin/build-saml-auth-url.zip
     events:
       - http:
           path: /{base}/saml-configs/{id}/build
@@ -215,8 +246,26 @@ functions:
                 base: true
                 id: true
 
+  login-with-saml:
+    handler: bootstrap
+    package:
+      artifact: bin/login-with-saml.zip
+    events:
+      - http:
+          path: /{base}/saml-configs/{id}/login
+          method: get
+          cors:
+            headers: "*"
+          request:
+            parameters:
+              paths:
+                base: true
+                id: true
+
   consume-saml-auth-response:
-    handler: bin/consume-saml-auth-response
+    handler: bootstrap
+    package:
+      artifact: bin/consume-saml-auth-response.zip
     events:
       - http:
           path: /{base}/saml-configs/{id}/consume

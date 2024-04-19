@@ -5,7 +5,7 @@ go 1.12
 //replace github.com/devingen/api-core => ../api-core
 
 require (
-	github.com/aws/aws-lambda-go v1.16.0
+	github.com/aws/aws-lambda-go v1.40.0
 	github.com/devingen/api-core v0.0.27
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-playground/validator/v10 v10.4.1
@@ -15,7 +15,7 @@ require (
 	github.com/russellhaering/gosaml2 v0.6.0
 	github.com/russellhaering/goxmldsig v1.1.1
 	github.com/sirupsen/logrus v1.4.2
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.2
 	go.mongodb.org/mongo-driver v1.3.2
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 )

@@ -7,5 +7,5 @@ import (
 
 func main() {
 	serviceController, wrap := aws.InitDeps()
-	lambda.Start(wrap(serviceController.BuildSAMLAuthURL))
+	lambda.Start(wrap(serviceController.LoginWithSAML))
 }
