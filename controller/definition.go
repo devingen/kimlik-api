@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+
 	core "github.com/devingen/api-core"
 )
 
@@ -25,4 +26,5 @@ type IServiceController interface {
 	DeleteSAMLConfig(ctx context.Context, req core.Request) (*core.Response, error)
 	BuildSAMLAuthURL(ctx context.Context, req core.Request) (*core.Response, error)
 	ConsumeSAMLAuthResponse(ctx context.Context, req core.Request) (*core.Response, error)
+	LoginWithSAML(ctx context.Context, req core.Request) (*core.Response, error)
 }

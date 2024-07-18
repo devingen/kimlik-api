@@ -2,6 +2,8 @@ package server
 
 import (
 	"context"
+	"net/http"
+
 	core "github.com/devingen/api-core"
 	"github.com/devingen/api-core/database"
 	"github.com/devingen/api-core/server"
@@ -16,7 +18,6 @@ import (
 	kimlikwrapper "github.com/devingen/kimlik-api/wrapper"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
-	"net/http"
 )
 
 // New creates a new HTTP server
@@ -52,6 +53,7 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	router.HandleFunc("/{base}/saml-configs/{id}", wrap(serviceController.UpdateSAMLConfig)).Methods(http.MethodPut)
 	router.HandleFunc("/{base}/saml-configs/{id}", wrap(serviceController.DeleteSAMLConfig)).Methods(http.MethodDelete)
 	router.HandleFunc("/{base}/saml-configs/{id}/build", wrap(serviceController.BuildSAMLAuthURL)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/saml-configs/{id}/login", wrap(serviceController.LoginWithSAML)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/saml-configs/{id}/consume", wrap(serviceController.ConsumeSAMLAuthResponse)).Methods(http.MethodPost)
 
 	http.Handle("/", &server.CORSRouterDecorator{
