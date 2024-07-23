@@ -2,10 +2,11 @@ package service
 
 import (
 	"context"
+	"time"
+
 	"github.com/devingen/kimlik-api/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 type IKimlikDataService interface {
@@ -21,6 +22,7 @@ type IKimlikDataService interface {
 	// region auth
 
 	CreateAuthWithPassword(ctx context.Context, base, password string, user *model.User) (*model.Auth, error)
+	CreateAuthWithIDToken(ctx context.Context, base string, claims map[string]interface{}, user *model.User) (*model.Auth, error)
 	FindAuthOfUser(ctx context.Context, base, userId string, authType model.AuthType) (*model.Auth, error)
 	UpdateAuth(ctx context.Context, base string, auth *model.Auth) (*time.Time, int, error)
 
@@ -28,7 +30,7 @@ type IKimlikDataService interface {
 
 	// region session
 
-	CreateSession(ctx context.Context, base, client, userAgent, ip string, user *model.User) (*model.Session, error)
+	CreateSession(ctx context.Context, base, client, userAgent, ip, error string, auth *model.Auth, user *model.User) (*model.Session, error)
 	FindSessionWithId(ctx context.Context, base, id string) (*model.Session, error)
 
 	// endregion

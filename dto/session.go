@@ -19,7 +19,16 @@ type LoginWithEmailRequest struct {
 	Password string `json:"password"`
 }
 
-type LoginWithEmailResponse struct {
+type CreateSession struct {
+	// exist if authentication type is 'password'
+	Email    *string `json:"email" validate:"required_without=IDToken,email,omitempty"`
+	Password *string `json:"password"`
+
+	// exist if authentication type is 'openid'
+	IDToken *string `json:"idToken" validate:"required_without=Email Password"`
+}
+
+type LoginResponse struct {
 	UserID string `json:"userId"`
 	JWT    string `json:"jwt"`
 }

@@ -21,6 +21,33 @@ package:
   individually: true
 
 functions:
+  create-session:
+    handler: bootstrap
+    package:
+      artifact: bin/create-session.zip
+    events:
+      - http:
+          path: /{base}/sessions
+          method: post
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+
+  get-session:
+    handler: bootstrap
+    package:
+      artifact: bin/get-session.zip
+    events:
+      - http:
+          path: /{base}/session
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
 
   register-with-email:
     handler: bootstrap
@@ -44,20 +71,6 @@ functions:
       - http:
           path: /{base}/login
           method: post
-          cors: true
-          request:
-            parameters:
-              paths:
-                base: true
-
-  get-session:
-    handler: bootstrap
-    package:
-      artifact: bin/get-session.zip
-    events:
-      - http:
-          path: /{base}/session
-          method: get
           cors: true
           request:
             parameters:
