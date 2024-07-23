@@ -14,17 +14,23 @@ type RegisterWithEmailResponse struct {
 	JWT    string `json:"jwt"`
 }
 
-type LoginRequest struct {
-	Type *string `json:"type,omitempty" validate:"oneof=password"`
+type LoginWithEmailRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password"`
+}
 
-	// type: password
-	Email    *string `json:"email,omitempty" validate:"required,email"`
-	Password *string `json:"password,omitempty"`
+type CreateSession struct {
+	// exist if authentication type is 'password'
+	Email    *string `json:"email" validate:"required_without=IDToken,email,omitempty"`
+	Password *string `json:"password"`
+
+	// exist if authentication type is 'openid'
+	IDToken *string `json:"idToken" validate:"required_without=Email Password"`
 }
 
 type LoginResponse struct {
-	User *model.User `json:"user"`
-	JWT  string      `json:"jwt"`
+	UserID string `json:"userId"`
+	JWT    string `json:"jwt"`
 }
 
 type ChangePasswordRequest struct {

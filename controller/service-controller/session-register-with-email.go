@@ -2,10 +2,11 @@ package service_controller
 
 import (
 	"context"
+	"net/http"
+
 	core "github.com/devingen/api-core"
 	"github.com/devingen/kimlik-api/dto"
 	token_service "github.com/devingen/kimlik-api/token-service"
-	"net/http"
 )
 
 func (c ServiceController) RegisterWithEmail(ctx context.Context, req core.Request) (*core.Response, error) {
@@ -41,7 +42,7 @@ func (c ServiceController) RegisterWithEmail(ctx context.Context, req core.Reque
 		return nil, err
 	}
 
-	_, err = c.DataService.CreateAuthWithPassword(ctx, base, body.Password, user)
+	auth, err := c.DataService.CreateAuthWithPassword(ctx, base, body.Password, user)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +50,7 @@ func (c ServiceController) RegisterWithEmail(ctx context.Context, req core.Reque
 	userAgent := req.Headers["user-agent"]
 	client := req.Headers["client"]
 	ip := req.IP
-	session, err := c.DataService.CreateSession(ctx, base, client, userAgent, ip, user)
+	session, err := c.DataService.CreateSession(ctx, base, client, userAgent, ip, "", auth, user)
 	if err != nil {
 		return nil, err
 	}

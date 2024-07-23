@@ -1,8 +1,9 @@
 package model
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type SessionStatus string
@@ -24,12 +25,13 @@ type Session struct {
 	UpdatedAt *time.Time `json:"_updated,omitempty" bson:"_updated,omitempty"`
 	Revision  int        `json:"_revision,omitempty" bson:"_revision,omitempty"`
 
-	User         *User         `json:"user,omitempty" bson:"user,omitempty"`
-	UserAgent    string        `json:"userAgent,omitempty" bson:"userAgent,omitempty"`
-	Client       string        `json:"client,omitempty" bson:"client,omitempty"`
-	SessionCount float64       `json:"sessionCount,omitempty" bson:"sessionCount,omitempty"`
-	Status       SessionStatus `json:"status,omitempty" bson:"status,omitempty"`
-	IP           string        `json:"ip,omitempty" bson:"ip,omitempty"`
+	Auth      *Auth         `json:"auth,omitempty" bson:"auth,omitempty"`
+	User      *User         `json:"user,omitempty" bson:"user,omitempty"`
+	UserAgent string        `json:"userAgent,omitempty" bson:"userAgent,omitempty"`
+	Client    string        `json:"client,omitempty" bson:"client,omitempty"`
+	Status    SessionStatus `json:"status,omitempty" bson:"status,omitempty"`
+	IP        string        `json:"ip,omitempty" bson:"ip,omitempty"`
+	Error     string        `json:"error,omitempty" bson:"error,omitempty"`
 }
 
 func (s *Session) AddCreationFields() {

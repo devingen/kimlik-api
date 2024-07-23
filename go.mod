@@ -15,7 +15,8 @@ require (
 	github.com/russellhaering/gosaml2 v0.6.0
 	github.com/russellhaering/goxmldsig v1.1.1
 	github.com/sirupsen/logrus v1.4.2
-	github.com/stretchr/testify v1.7.2
-	go.mongodb.org/mongo-driver v1.3.2
-	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	github.com/stretchr/testify v1.9.0
+	go.mongodb.org/mongo-driver v1.16.0
+	golang.org/x/crypto v0.25.0
+	google.golang.org/api v0.188.0 // indirect
 )

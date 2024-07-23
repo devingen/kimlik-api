@@ -2,6 +2,10 @@ package integrationtests
 
 import (
 	"context"
+	"log"
+	"net/http"
+	"testing"
+
 	core "github.com/devingen/api-core"
 	"github.com/devingen/api-core/database"
 	"github.com/devingen/api-core/util"
@@ -12,9 +16,6 @@ import (
 	json_web_token_service "github.com/devingen/kimlik-api/token-service/json-web-token-service"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"log"
-	"net/http"
-	"testing"
 )
 
 type LoginTestSuite struct {
@@ -89,7 +90,7 @@ func (suite *LoginTestSuite) TestLoginSuccessful() {
 	assert.Nil(suite.T(), err)
 	assert.NotNil(suite.T(), response)
 
-	loginResponse := response.(*dto.LoginWithEmailResponse)
+	loginResponse := response.(*dto.LoginResponse)
 	assert.Equal(suite.T(), loginResponse.UserID, "507f191e810c19729de860ea")
 	assert.NotEmpty(suite.T(), loginResponse.JWT)
 
@@ -109,7 +110,7 @@ func (suite *LoginTestSuite) TestLoginSuccessfulCaseInsensitive() {
 	assert.Nil(suite.T(), err)
 	assert.NotNil(suite.T(), response)
 
-	loginResponse := response.(*dto.LoginWithEmailResponse)
+	loginResponse := response.(*dto.LoginResponse)
 	assert.Equal(suite.T(), loginResponse.UserID, "507f191e810c19729de860ea")
 	assert.NotEmpty(suite.T(), loginResponse.JWT)
 
