@@ -35,7 +35,9 @@ func (c ServiceController) CreateSession(ctx context.Context, req core.Request) 
 		return nil, core.NewError(http.StatusBadRequest, "no-authentication-method-found-for-provided-parameters")
 	}
 	if err != nil {
-		c.createFailedSession(ctx, req, base, auth, user, err)
+		if user != nil {
+			c.createFailedSession(ctx, req, base, auth, user, err)
+		}
 		return nil, err
 	}
 
@@ -78,7 +80,7 @@ func (c ServiceController) validateSessionWithIDToken(ctx context.Context, base,
 	}
 
 	if user != nil {
-		auth, err := c.DataService.FindAuthOfUser(ctx, base, user.ID.String(), model.AuthTypeOpenID)
+		auth, err := c.DataService.FindAuthOfUser(ctx, base, user.ID.Hex(), model.AuthTypeOpenID)
 		if err != nil {
 			return nil, nil, false, err
 		}

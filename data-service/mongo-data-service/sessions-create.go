@@ -17,8 +17,12 @@ func (service MongoDataService) CreateSession(ctx context.Context, base, client,
 	if error != "" {
 		status = model.SessionStatusFailed
 	}
+	var authRef *model.Auth
+	if auth != nil {
+		authRef = auth.DBRef(base)
+	}
 	item := &model.Session{
-		Auth:      auth.DBRef(base),
+		Auth:      authRef,
 		User:      user.DBRef(base),
 		UserAgent: userAgent,
 		Client:    client,
