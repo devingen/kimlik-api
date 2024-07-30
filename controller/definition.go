@@ -7,10 +7,10 @@ import (
 )
 
 type IServiceController interface {
-	// GetSession returns the current session details within the authorizarion header.
+	// GetSession returns the current session details within the authorization header.
 	GetSession(ctx context.Context, req core.Request) (*core.Response, error)
 
-	// CreateSession logs in existing user (password) and registers new user (openid connect) and creates/returns new session.
+	// CreateSession logs in existing user (password), registers new user (openid connect) and creates & returns new session.
 	CreateSession(ctx context.Context, req core.Request) (*core.Response, error)
 
 	RegisterWithEmail(ctx context.Context, req core.Request) (*core.Response, error)

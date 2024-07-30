@@ -21,11 +21,11 @@ type LoginWithEmailRequest struct {
 
 type CreateSession struct {
 	// exist if authentication type is 'password'
-	Email    *string `json:"email" validate:"required_without=IDToken,email,omitempty"`
-	Password *string `json:"password"`
+	Email    *string `json:"email" validate:"required_without=IDToken,omitempty,email"`
+	Password *string `json:"password" validate:"required_without=IDToken,omitempty"`
 
 	// exist if authentication type is 'openid'
-	IDToken *string `json:"idToken" validate:"required_without=Email Password"`
+	IDToken *string `json:"idToken" validate:"required_without_all=Email Password"`
 }
 
 type LoginResponse struct {
