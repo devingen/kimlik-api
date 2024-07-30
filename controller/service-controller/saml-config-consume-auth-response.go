@@ -75,12 +75,12 @@ func (c ServiceController) ConsumeSAMLAuthResponse(ctx context.Context, req core
 
 	if assertionInfo.WarningInfo.InvalidTime {
 		logger.WithFields(logrus.Fields{"assertionInfo": assertionInfo}).Error("invalid-saml-response-time")
-		return nil, err
+		return nil, core.NewError(http.StatusBadRequest, "invalid-saml-response-time")
 	}
 
 	if assertionInfo.WarningInfo.NotInAudience {
 		logger.WithFields(logrus.Fields{"assertionInfo": assertionInfo}).Error("invalid-saml-response-audience")
-		return nil, err
+		return nil, core.NewError(http.StatusBadRequest, "invalid-saml-response-audience")
 	}
 
 	interceptorResponse, interceptorStatusCode, interceptorError := c.InterceptorService.SAMLConsume(ctx, req, samlConfig, assertionInfo)
