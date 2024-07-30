@@ -74,12 +74,12 @@ func (c ServiceController) ConsumeSAMLAuthResponse(ctx context.Context, req core
 	}
 
 	if assertionInfo.WarningInfo.InvalidTime {
-		logger.WithFields(logrus.Fields{"error": err}).Error("invalid-saml-response-time")
+		logger.WithFields(logrus.Fields{"assertionInfo": assertionInfo}).Error("invalid-saml-response-time")
 		return nil, err
 	}
 
 	if assertionInfo.WarningInfo.NotInAudience {
-		logger.WithFields(logrus.Fields{"error": err}).Error("invalid-saml-response-audience")
+		logger.WithFields(logrus.Fields{"assertionInfo": assertionInfo}).Error("invalid-saml-response-audience")
 		return nil, err
 	}
 
