@@ -3,6 +3,10 @@ package integrationtests
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
+	"testing"
+
 	core "github.com/devingen/api-core"
 	"github.com/devingen/api-core/database"
 	"github.com/devingen/api-core/util"
@@ -13,9 +17,6 @@ import (
 	json_web_token_service "github.com/devingen/kimlik-api/token-service/json-web-token-service"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"log"
-	"net/http"
-	"testing"
 )
 
 type RegistrationTestSuite struct {
@@ -31,8 +32,9 @@ func TestRegistration(t *testing.T) {
 	}
 	testSuite := &RegistrationTestSuite{
 		controller: service_controller.New(
-			mongods.New("dvn-kimlik-api-integration-test", db),
+			mongods.New(db),
 			json_web_token_service.New("sample-jwt-sign-key"),
+			nil,
 		),
 		base: "dvn-kimlik-api-integration-test",
 	}
@@ -43,7 +45,7 @@ func TestRegistration(t *testing.T) {
 }
 
 func (suite *RegistrationTestSuite) TestRegisterWithExistingEmail() {
-	response, _, err := suite.controller.RegisterWithEmail(context.Background(),
+	response, err := suite.controller.RegisterWithEmail(context.Background(),
 		core.Request{
 			PathParameters: map[string]string{
 				"base": suite.base,
@@ -60,7 +62,7 @@ func (suite *RegistrationTestSuite) TestRegisterWithExistingEmail() {
 }
 
 func (suite *RegistrationTestSuite) TestRegisterWithExistingEmailCaseSensitive() {
-	response, _, err := suite.controller.RegisterWithEmail(context.Background(),
+	response, err := suite.controller.RegisterWithEmail(context.Background(),
 		core.Request{
 			PathParameters: map[string]string{
 				"base": suite.base,
@@ -77,7 +79,7 @@ func (suite *RegistrationTestSuite) TestRegisterWithExistingEmailCaseSensitive()
 }
 
 func (suite *RegistrationTestSuite) TestRegisterWithInvalidEmail() {
-	response, _, err := suite.controller.RegisterWithEmail(context.Background(),
+	response, err := suite.controller.RegisterWithEmail(context.Background(),
 		core.Request{
 			PathParameters: map[string]string{
 				"base": suite.base,
@@ -94,7 +96,7 @@ func (suite *RegistrationTestSuite) TestRegisterWithInvalidEmail() {
 }
 
 func (suite *RegistrationTestSuite) TestRegisterSuccessful() {
-	response, _, err := suite.controller.RegisterWithEmail(context.Background(),
+	response, err := suite.controller.RegisterWithEmail(context.Background(),
 		core.Request{
 			PathParameters: map[string]string{
 				"base": suite.base,
@@ -105,7 +107,7 @@ func (suite *RegistrationTestSuite) TestRegisterSuccessful() {
 	assert.Nil(suite.T(), err)
 	fmt.Println(err)
 	fmt.Println(response)
-	registerResponse := response.(*dto.RegisterWithEmailResponse)
+	registerResponse := response.Body.(dto.RegisterWithEmailResponse)
 
 	assert.NotNil(suite.T(), registerResponse)
 	assert.NotEmpty(suite.T(), registerResponse.UserID)

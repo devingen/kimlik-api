@@ -2,6 +2,7 @@
 
 build:
 	export GO111MODULE=on
+	env GOARCH=arm64 GOOS=linux go build -ldflags="-s -w" -o bin/anonymize-user/bootstrap aws/anonymize-user/main.go
 	env GOARCH=arm64 GOOS=linux go build -ldflags="-s -w" -o bin/create-session/bootstrap aws/create-session/main.go
 	env GOARCH=arm64 GOOS=linux go build -ldflags="-s -w" -o bin/get-session/bootstrap aws/get-session/main.go
 	env GOARCH=arm64 GOOS=linux go build -ldflags="-s -w" -o bin/build-saml-auth-url/bootstrap aws/build-saml-auth-url/main.go
@@ -22,6 +23,7 @@ build:
 	env GOARCH=arm64 GOOS=linux go build -ldflags="-s -w" -o bin/verify-api-key/bootstrap aws/verify-api-key/main.go
 
 zip:
+	zip -j bin/anonymize-user.zip bin/anonymize-user/bootstrap
 	zip -j bin/create-session.zip bin/create-session/bootstrap
 	zip -j bin/get-session.zip bin/get-session/bootstrap
 	zip -j bin/build-saml-auth-url.zip bin/build-saml-auth-url/bootstrap

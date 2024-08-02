@@ -91,6 +91,21 @@ functions:
               paths:
                 base: true
 
+  anonymize-user:
+    handler: bootstrap
+    package:
+      artifact: bin/anonymize-user.zip
+    events:
+      - http:
+          path: /{base}/users/{id}/anonymize
+          method: post
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+                id: true
+
   find-users:
     handler: bootstrap
     package:

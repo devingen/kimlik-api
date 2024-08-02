@@ -32,8 +32,9 @@ func TestLogin(t *testing.T) {
 
 	testSuite := &LoginTestSuite{
 		controller: service_controller.New(
-			mongods.New("dvn-kimlik-api-integration-test", db),
+			mongods.New(db),
 			json_web_token_service.New("sample-jwt-sign-key"),
+			nil,
 		),
 		base: "dvn-kimlik-api-integration-test",
 	}
@@ -44,7 +45,7 @@ func TestLogin(t *testing.T) {
 }
 
 func (suite *LoginTestSuite) TestLoginWithNonExistingEmail() {
-	response, _, err := suite.controller.LoginWithEmail(context.Background(),
+	response, err := suite.controller.LoginWithEmail(context.Background(),
 		core.Request{
 			PathParameters: map[string]string{
 				"base": suite.base,
@@ -61,7 +62,7 @@ func (suite *LoginTestSuite) TestLoginWithNonExistingEmail() {
 }
 
 func (suite *LoginTestSuite) TestLoginWithWrongPassword() {
-	response, _, err := suite.controller.LoginWithEmail(context.Background(),
+	response, err := suite.controller.LoginWithEmail(context.Background(),
 		core.Request{
 			PathParameters: map[string]string{
 				"base": suite.base,
@@ -78,7 +79,7 @@ func (suite *LoginTestSuite) TestLoginWithWrongPassword() {
 }
 
 func (suite *LoginTestSuite) TestLoginSuccessful() {
-	response, _, err := suite.controller.LoginWithEmail(context.Background(),
+	response, err := suite.controller.LoginWithEmail(context.Background(),
 		core.Request{
 			PathParameters: map[string]string{
 				"base": suite.base,
@@ -90,7 +91,7 @@ func (suite *LoginTestSuite) TestLoginSuccessful() {
 	assert.Nil(suite.T(), err)
 	assert.NotNil(suite.T(), response)
 
-	loginResponse := response.(*dto.LoginResponse)
+	loginResponse := response.Body.(dto.LoginResponse)
 	assert.Equal(suite.T(), loginResponse.UserID, "507f191e810c19729de860ea")
 	assert.NotEmpty(suite.T(), loginResponse.JWT)
 
@@ -98,7 +99,7 @@ func (suite *LoginTestSuite) TestLoginSuccessful() {
 }
 
 func (suite *LoginTestSuite) TestLoginSuccessfulCaseInsensitive() {
-	response, _, err := suite.controller.LoginWithEmail(context.Background(),
+	response, err := suite.controller.LoginWithEmail(context.Background(),
 		core.Request{
 			PathParameters: map[string]string{
 				"base": suite.base,
@@ -110,7 +111,7 @@ func (suite *LoginTestSuite) TestLoginSuccessfulCaseInsensitive() {
 	assert.Nil(suite.T(), err)
 	assert.NotNil(suite.T(), response)
 
-	loginResponse := response.(*dto.LoginResponse)
+	loginResponse := response.Body.(dto.LoginResponse)
 	assert.Equal(suite.T(), loginResponse.UserID, "507f191e810c19729de860ea")
 	assert.NotEmpty(suite.T(), loginResponse.JWT)
 
