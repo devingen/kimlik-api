@@ -13,6 +13,9 @@ type IServiceController interface {
 	// CreateSession logs in existing user (password), registers new user (openid connect) and creates & returns new session.
 	CreateSession(ctx context.Context, req core.Request) (*core.Response, error)
 
+	// AnonymizeUser removes all the personal details from the User and deletes all authentication methods of the user
+	AnonymizeUser(ctx context.Context, req core.Request) (*core.Response, error)
+
 	RegisterWithEmail(ctx context.Context, req core.Request) (*core.Response, error)
 	LoginWithEmail(ctx context.Context, req core.Request) (*core.Response, error)
 	ChangePassword(ctx context.Context, req core.Request) (*core.Response, error)

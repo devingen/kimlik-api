@@ -23,6 +23,9 @@ func (c ServiceController) LoginWithEmail(ctx context.Context, req core.Request)
 
 	auth, user, err := c.validateSessionWithPassword(ctx, base, body.Email, body.Password)
 	if err != nil {
+		if user != nil {
+			c.createFailedSession(ctx, req, base, auth, user, err)
+		}
 		return nil, err
 	}
 

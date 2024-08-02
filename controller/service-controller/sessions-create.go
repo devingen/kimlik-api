@@ -129,15 +129,15 @@ func (c ServiceController) validateSessionWithPassword(ctx context.Context, base
 
 	auth, err := c.DataService.FindAuthOfUser(ctx, base, user.ID.Hex(), model.AuthTypePassword)
 	if err != nil {
-		return nil, nil, err
+		return nil, user, err
 	}
 
 	if auth == nil {
-		return nil, nil, core.NewError(http.StatusBadRequest, "authentication-method-not-found-for-user")
+		return nil, user, core.NewError(http.StatusBadRequest, "authentication-method-not-found-for-user")
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(auth.Password), []byte(password)); err != nil {
-		return nil, nil, core.NewError(http.StatusUnauthorized, "password-mismatch")
+		return auth, user, core.NewError(http.StatusUnauthorized, "password-mismatch")
 	}
 
 	return auth, user, nil

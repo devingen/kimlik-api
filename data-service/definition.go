@@ -12,6 +12,7 @@ import (
 type IKimlikDataService interface {
 	// region user
 
+	AnonymizeUser(ctx context.Context, base string, id primitive.ObjectID) error
 	CreateUser(ctx context.Context, base, firstName, lastName, email string) (*model.User, error)
 	FindUserWithEmail(ctx context.Context, base, email string) (*model.User, error)
 	FindUserWithId(ctx context.Context, base, id string) (*model.User, error)
@@ -24,7 +25,9 @@ type IKimlikDataService interface {
 	CreateAuthWithPassword(ctx context.Context, base, password string, user *model.User) (*model.Auth, error)
 	CreateAuthWithIDToken(ctx context.Context, base string, claims map[string]interface{}, user *model.User) (*model.Auth, error)
 	FindAuthOfUser(ctx context.Context, base, userId string, authType model.AuthType) (*model.Auth, error)
+	FindAuthsOfUser(ctx context.Context, base, userId string) ([]*model.Auth, error)
 	UpdateAuth(ctx context.Context, base string, auth *model.Auth) (*time.Time, int, error)
+	DeleteAuth(ctx context.Context, base string, id primitive.ObjectID) error
 
 	// endregion
 
@@ -48,7 +51,7 @@ type IKimlikDataService interface {
 	CreateSAMLConfig(ctx context.Context, base string, item *model.SAMLConfig) (*model.SAMLConfig, error)
 	GetSAMLConfig(ctx context.Context, base, id string) (*model.SAMLConfig, error)
 	FindSAMLConfigs(ctx context.Context, base string, query bson.M) ([]*model.SAMLConfig, error)
-	UpdateSAMLConfig(ctx context.Context, base string, apiKey *model.SAMLConfig) (*time.Time, int, error)
+	UpdateSAMLConfig(ctx context.Context, base string, samlConfig *model.SAMLConfig) (*time.Time, int, error)
 	DeleteSAMLConfig(ctx context.Context, base string, id primitive.ObjectID) error
 
 	// endregion

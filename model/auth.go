@@ -32,7 +32,7 @@ type Auth struct {
 	Password string `json:"password" bson:"password,omitempty"`
 
 	// exists if type is 'openid'
-	OpenID *OpenIDData `json:"openIdData,omitempty"`
+	OpenID *OpenIDData `json:"openIdData,omitempty" bson:"openIdData,omitempty"`
 }
 
 func (auth *Auth) HashPassword() error {

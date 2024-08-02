@@ -43,6 +43,7 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	router.HandleFunc("/{base}/auth/password", wrap(serviceController.ChangePassword)).Methods(http.MethodPut)
 
 	router.HandleFunc("/{base}/users", wrap(serviceController.FindUsers)).Methods(http.MethodGet)
+	router.HandleFunc("/{base}/users/{id}/anonymize", wrap(serviceController.AnonymizeUser)).Methods(http.MethodPost)
 
 	router.HandleFunc("/{base}/api-keys", wrap(serviceController.CreateAPIKey)).Methods(http.MethodPost)
 	router.HandleFunc("/{base}/api-keys", wrap(serviceController.FindAPIKeys)).Methods(http.MethodGet)
