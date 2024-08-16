@@ -2,6 +2,13 @@ package dto
 
 import "github.com/devingen/kimlik-api/model"
 
+type ActivateUserRequest struct {
+	UserActivationToken string `json:"userActivationToken" validate:"required"`
+	FirstName           string `json:"firstName" validate:"min=2,max=32"`
+	LastName            string `json:"lastName" validate:"min=2,max=32"`
+	Password            string `json:"password" validate:"min=6,max=32"`
+}
+
 type RegisterWithEmailRequest struct {
 	FirstName string `json:"firstName" validate:"min=2,max=32"`
 	LastName  string `json:"lastName" validate:"min=2,max=32"`

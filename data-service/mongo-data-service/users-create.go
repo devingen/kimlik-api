@@ -2,20 +2,24 @@ package mongods
 
 import (
 	"context"
+
+	core "github.com/devingen/api-core"
 	"github.com/devingen/kimlik-api/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (service MongoDataService) CreateUser(ctx context.Context, base, firstName, lastName, email string) (*model.User, error) {
+func (service MongoDataService) CreateUser(ctx context.Context, base, firstName, lastName, email string, status model.UserStatus, isEmailVerified bool) (*model.User, error) {
 	collection, err := service.Database.ConnectToCollection(base, model.CollectionUsers)
 	if err != nil {
 		return nil, err
 	}
 
 	item := &model.User{
-		FirstName: firstName,
-		LastName:  lastName,
-		Email:     email,
+		FirstName:       core.String(firstName),
+		LastName:        core.String(lastName),
+		Email:           core.String(email),
+		Status:          &status,
+		IsEmailVerified: &isEmailVerified,
 	}
 	item.AddCreationFields()
 

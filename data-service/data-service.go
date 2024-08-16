@@ -13,10 +13,11 @@ type IKimlikDataService interface {
 	// region user
 
 	AnonymizeUser(ctx context.Context, base string, id primitive.ObjectID) error
-	CreateUser(ctx context.Context, base, firstName, lastName, email string) (*model.User, error)
+	CreateUser(ctx context.Context, base, firstName, lastName, email string, status model.UserStatus, isEmailVerified bool) (*model.User, error)
 	FindUserWithEmail(ctx context.Context, base, email string) (*model.User, error)
 	FindUserWithId(ctx context.Context, base, id string) (*model.User, error)
 	FindUsers(ctx context.Context, base string, query bson.M) ([]*model.User, error)
+	UpdateUser(ctx context.Context, base string, user *model.User) (*time.Time, int, error)
 
 	// endregion
 

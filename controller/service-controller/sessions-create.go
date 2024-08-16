@@ -105,7 +105,20 @@ func (c ServiceController) validateSessionWithIDToken(ctx context.Context, base,
 		return nil, nil, false, core.NewError(http.StatusBadRequest, "last-name-missing-in-token-claims")
 	}
 
-	user, err = c.DataService.CreateUser(ctx, base, firstName, lastName, email)
+	var isEmailVerified bool
+	isEmailVerifiedBoolValue, hasEmailVerifiedBool := payload.Claims["email_verified"].(bool)
+	if hasEmailVerifiedBool {
+		isEmailVerified = isEmailVerifiedBoolValue
+	} else {
+		isEmailVerifiedStringValue, hasEmailVerifiedString := payload.Claims["email_verified"].(string)
+		if hasEmailVerifiedString {
+			isEmailVerified = isEmailVerifiedStringValue == "true"
+		} else {
+			isEmailVerified = false
+		}
+	}
+
+	user, err = c.DataService.CreateUser(ctx, base, firstName, lastName, email, model.UserStatusActive, isEmailVerified)
 	if err != nil {
 		return nil, nil, false, err
 	}

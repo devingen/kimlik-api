@@ -6,7 +6,7 @@ import (
 
 	core "github.com/devingen/api-core"
 	"github.com/devingen/kimlik-api/dto"
-	token_service "github.com/devingen/kimlik-api/token-service"
+	"github.com/devingen/kimlik-api/model"
 )
 
 func (c ServiceController) RegisterWithEmail(ctx context.Context, req core.Request) (*core.Response, error) {
@@ -37,6 +37,8 @@ func (c ServiceController) RegisterWithEmail(ctx context.Context, req core.Reque
 		body.FirstName,
 		body.LastName,
 		body.Email,
+		model.UserStatusActive,
+		false,
 	)
 	if err != nil {
 		return nil, err
@@ -47,20 +49,7 @@ func (c ServiceController) RegisterWithEmail(ctx context.Context, req core.Reque
 		return nil, err
 	}
 
-	userAgent := req.Headers["user-agent"]
-	client := req.Headers["client"]
-	ip := req.IP
-	session, err := c.DataService.CreateSession(ctx, base, client, userAgent, ip, "", auth, user)
-	if err != nil {
-		return nil, err
-	}
-
-	jwt, err := c.TokenService.GenerateToken(
-		user.ID.Hex(),
-		session.ID.Hex(),
-		[]token_service.Scope{ScopeAll},
-		240,
-	)
+	jwt, err := c.createSuccessfulSessionAndGenerateToken(ctx, req, base, auth, user)
 	if err != nil {
 		return nil, err
 	}

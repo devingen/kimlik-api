@@ -18,6 +18,7 @@ type IServiceController interface {
 
 	RegisterWithEmail(ctx context.Context, req core.Request) (*core.Response, error)
 	LoginWithEmail(ctx context.Context, req core.Request) (*core.Response, error)
+	ActivateUser(ctx context.Context, req core.Request) (*core.Response, error)
 	ChangePassword(ctx context.Context, req core.Request) (*core.Response, error)
 
 	FindUsers(ctx context.Context, req core.Request) (*core.Response, error)
