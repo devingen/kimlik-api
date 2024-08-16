@@ -106,6 +106,20 @@ functions:
                 base: true
                 id: true
 
+  activate-user:
+    handler: bootstrap
+    package:
+      artifact: bin/activate-user.zip
+    events:
+      - http:
+          path: /{base}/activate
+          method: post
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+
   find-users:
     handler: bootstrap
     package:

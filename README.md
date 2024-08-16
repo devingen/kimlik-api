@@ -68,8 +68,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.15 -m "add final webhook for api-key operations"
+git tag -a v0.0.16 -m "add user activation, add http client"
 
 # push new tag
-git push origin v0.0.15
+git push origin v0.0.16
 ```
