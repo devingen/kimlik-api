@@ -29,7 +29,7 @@ func (c ServiceController) LoginWithEmail(ctx context.Context, req core.Request)
 		return nil, err
 	}
 
-	jwt, err := c.createSuccessfulSessionAndGenerateToken(ctx, req, base, auth, user)
+	jwt, _, err := c.createSuccessfulSessionAndGenerateToken(ctx, req, base, auth, user)
 	if err != nil {
 		return nil, err
 	}

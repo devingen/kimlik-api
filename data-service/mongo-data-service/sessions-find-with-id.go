@@ -2,6 +2,7 @@ package mongods
 
 import (
 	"context"
+
 	"github.com/devingen/api-core/database"
 	"github.com/devingen/kimlik-api/model"
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,6 +25,22 @@ func (service MongoDataService) FindSessionWithId(ctx context.Context, base, id 
 		if err != nil {
 			return err
 		}
+		return nil
+	})
+	return result, err
+}
+
+func (service MongoDataService) FindSessions(ctx context.Context, base string, query bson.M) ([]*model.Session, error) {
+
+	result := make([]*model.Session, 0)
+
+	err := service.Database.Find(ctx, base, model.CollectionSessions, query, database.FindOptions{}, func(cur *mongo.Cursor) error {
+		var data model.Session
+		err := cur.Decode(&data)
+		if err != nil {
+			return err
+		}
+		result = append(result, &data)
 		return nil
 	})
 	return result, err

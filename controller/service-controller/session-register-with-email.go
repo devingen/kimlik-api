@@ -49,7 +49,7 @@ func (c ServiceController) RegisterWithEmail(ctx context.Context, req core.Reque
 		return nil, err
 	}
 
-	jwt, err := c.createSuccessfulSessionAndGenerateToken(ctx, req, base, auth, user)
+	jwt, _, err := c.createSuccessfulSessionAndGenerateToken(ctx, req, base, auth, user)
 	if err != nil {
 		return nil, err
 	}

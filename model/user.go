@@ -16,6 +16,9 @@ const (
 
 	// UserStatusActive is used when user activated the account by agreeing the terms and conditions explicitly
 	UserStatusActive UserStatus = "active"
+
+	// UserStatusAnonymized is used when user deletes itself
+	UserStatusAnonymized UserStatus = "anonymized"
 )
 
 type User struct {

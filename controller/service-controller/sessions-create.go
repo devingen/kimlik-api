@@ -3,6 +3,7 @@ package service_controller
 import (
 	"context"
 	"net/http"
+	"time"
 
 	core "github.com/devingen/api-core"
 	"github.com/devingen/kimlik-api/dto"
@@ -41,7 +42,7 @@ func (c ServiceController) CreateSession(ctx context.Context, req core.Request) 
 		return nil, err
 	}
 
-	jwt, err := c.createSuccessfulSessionAndGenerateToken(ctx, req, base, auth, user)
+	jwt, _, err := c.createSuccessfulSessionAndGenerateToken(ctx, req, base, auth, user)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +67,7 @@ func (c ServiceController) validateSessionWithIDToken(ctx context.Context, base,
 	// TODO this validate is for Google. Check others later
 	payload, err := idtoken.Validate(ctx, idToken, "")
 	if err != nil {
-		return nil, nil, false, core.NewError(http.StatusBadRequest, "could-not-validate-token")
+		return nil, nil, false, core.NewError(http.StatusBadRequest, "could-not-validate-token:"+err.Error())
 	}
 
 	email, ok := payload.Claims["email"].(string)
@@ -156,31 +157,45 @@ func (c ServiceController) validateSessionWithPassword(ctx context.Context, base
 	return auth, user, nil
 }
 
-func (c ServiceController) createSuccessfulSessionAndGenerateToken(ctx context.Context, req core.Request, base string, auth *model.Auth, user *model.User) (string, error) {
+func (c ServiceController) createSuccessfulSessionAndGenerateToken(ctx context.Context, req core.Request, base string, auth *model.Auth, user *model.User) (string, string, error) {
 	userAgent := req.Headers["user-agent"]
 	client := req.Headers["client"]
 	ip := req.IP
-	session, err := c.DataService.CreateSession(ctx, base, client, userAgent, ip, "", auth, user)
+
+	refreshToken, err := c.generateRefreshToken()
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	jwt, err := c.TokenService.GenerateToken(
-		user.ID.Hex(),
-		session.ID.Hex(),
-		[]token_service.Scope{ScopeAll},
-		240,
-	)
+	session, err := c.DataService.CreateSession(ctx, base, client, userAgent, ip, refreshToken.HashedToken, "", auth, user)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	return jwt, nil
+
+	accessToken, err := c.generateAccessToken(user.ID.Hex(), session.ID.Hex())
+	if err != nil {
+		return "", "", err
+	}
+	return accessToken, refreshToken.RawToken, nil
+}
+
+func (c ServiceController) generateRefreshToken() (*token_service.RefreshToken, error) {
+	return c.TokenService.GenerateRefreshToken()
+}
+
+func (c ServiceController) generateAccessToken(userID, sessionID string) (string, error) {
+	return c.TokenService.GenerateAccessToken(
+		userID,
+		sessionID,
+		[]token_service.Scope{ScopeAll},
+		time.Now().Add(AccessTokenExpirationTime).Unix(),
+	)
 }
 
 func (c ServiceController) createFailedSession(ctx context.Context, req core.Request, base string, auth *model.Auth, user *model.User, err error) {
 	userAgent := req.Headers["user-agent"]
 	client := req.Headers["client"]
 	ip := req.IP
-	c.DataService.CreateSession(ctx, base, client, userAgent, ip, err.Error(), auth, user)
+	c.DataService.CreateSession(ctx, base, client, userAgent, ip, "", err.Error(), auth, user)
 	// TODO print error properly
 }

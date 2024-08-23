@@ -32,11 +32,11 @@ type IKimlikDataService interface {
 
 	// endregion
 
-	// region session
-
-	CreateSession(ctx context.Context, base, client, userAgent, ip, error string, auth *model.Auth, user *model.User) (*model.Session, error)
+	// region sessions
+	CreateSession(ctx context.Context, base, client, userAgent, ip, refreshToken, error string, auth *model.Auth, user *model.User) (*model.Session, error)
 	FindSessionWithId(ctx context.Context, base, id string) (*model.Session, error)
-
+	FindSessions(ctx context.Context, base string, query bson.M) ([]*model.Session, error)
+	UpdateSession(ctx context.Context, base string, session *model.Session) (*time.Time, int, error)
 	// endregion
 
 	// region api key

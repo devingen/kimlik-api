@@ -1,9 +1,10 @@
 package kimlik
 
 import (
+	"strings"
+
 	core "github.com/devingen/api-core"
 	token_service "github.com/devingen/kimlik-api/token-service"
-	"strings"
 )
 
 const JWTPrefix = "Bearer"
@@ -21,7 +22,7 @@ func ExtractToken(jwtService token_service.ITokenService, req core.Request) (*to
 		return nil, nil
 	}
 
-	tokenPayload, err := jwtService.ParseToken(authHeader[len(JWTPrefix)+1:])
+	tokenPayload, err := jwtService.ParseAccessToken(authHeader[len(JWTPrefix)+1:])
 	if err != nil {
 		// return error if the JWT is not a valid or expired
 		return nil, err

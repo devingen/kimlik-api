@@ -1,14 +1,20 @@
 package json_web_token_service
 
 import (
+	"crypto/hmac"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/hex"
+	"errors"
+	"io"
+	"log"
+	"net/http"
+	"os"
+
 	core "github.com/devingen/api-core"
 	token_service "github.com/devingen/kimlik-api/token-service"
 	"github.com/devingen/kimlik-api/util"
 	"github.com/dgrijalva/jwt-go"
-	"log"
-	"net/http"
-	"os"
-	"time"
 )
 
 const (
@@ -40,13 +46,13 @@ func (jwtService *JWTService) Init() {
 	jwtService.signKey = signKey
 }
 
-func (jwtService *JWTService) GenerateToken(userId, sessionId string, scopes []token_service.Scope, duration int32) (string, error) {
+func (jwtService *JWTService) GenerateAccessToken(userId, sessionId string, scopes []token_service.Scope, exp int64) (string, error) {
 
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	mapClaims := token.Claims.(jwt.MapClaims)
 	mapClaims[JWTVersion] = "1.0"
-	mapClaims[JWTExpires] = time.Now().Add(time.Hour * time.Duration(duration)).Unix()
+	mapClaims[JWTExpires] = exp
 	mapClaims[JWTUserID] = userId
 	mapClaims[JWTSessionID] = sessionId
 	mapClaims[JWTScopes] = scopes
@@ -58,7 +64,7 @@ func (jwtService *JWTService) GenerateToken(userId, sessionId string, scopes []t
 	return tokenString, nil
 }
 
-func (jwtService *JWTService) ParseToken(accessToken string) (*token_service.TokenPayload, error) {
+func (jwtService *JWTService) ParseAccessToken(accessToken string) (*token_service.TokenPayload, error) {
 	token, tokenErr := jwt.Parse(accessToken, func(t *jwt.Token) (interface{}, error) {
 		return []byte(jwtService.signKey), nil
 	})
@@ -81,4 +87,37 @@ func (jwtService *JWTService) ParseToken(accessToken string) (*token_service.Tok
 	}
 
 	return &data, nil
+}
+
+func (jwtService *JWTService) GenerateRefreshToken() (*token_service.RefreshToken, error) {
+	// Generate a raw refresh token
+	rawToken, err := GenerateSecureToken(32) // 32 bytes = 64 hex characters
+	if err != nil {
+		return nil, errors.New("Error generating refresh token:" + err.Error())
+	}
+
+	// Hash the token before storing it
+	hashedToken := jwtService.HashRefreshToken(rawToken)
+
+	// Store `hashedToken` in database, and send `rawToken` to the client
+	return &token_service.RefreshToken{
+		HashedToken: hashedToken,
+		RawToken:    rawToken,
+	}, nil
+}
+
+// HashRefreshToken creates a HMAC SHA-256 hash of the token using a secret key
+func (jwtService *JWTService) HashRefreshToken(token string) string {
+	h := hmac.New(sha256.New, []byte(jwtService.signKey))
+	h.Write([]byte(token))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+// GenerateSecureToken generates a cryptographically secure random token
+func GenerateSecureToken(length int) (string, error) {
+	token := make([]byte, length)
+	if _, err := io.ReadFull(rand.Reader, token); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(token), nil
 }

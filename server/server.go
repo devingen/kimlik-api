@@ -35,6 +35,8 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	wrap := generateWrapper(appConfig, jwtService, dataService)
 
 	router := mux.NewRouter()
+	router.HandleFunc("/{base}/oauth/token", wrap(serviceController.OAuthToken)).Methods(http.MethodPost)
+
 	router.HandleFunc("/{base}/session", wrap(serviceController.GetSession)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/sessions", wrap(serviceController.CreateSession)).Methods(http.MethodPost)
 

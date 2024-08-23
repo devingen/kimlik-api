@@ -7,6 +7,9 @@ import (
 )
 
 type IServiceController interface {
+	// OAuthToken is used to get an access token or a refresh token.
+	OAuthToken(ctx context.Context, req core.Request) (*core.Response, error)
+
 	// GetSession returns the current session details within the authorization header.
 	GetSession(ctx context.Context, req core.Request) (*core.Response, error)
 

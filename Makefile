@@ -2,6 +2,7 @@
 
 build:
 	export GO111MODULE=on
+	env GOARCH=arm64 GOOS=linux go build -ldflags="-s -w" -o bin/oauth-token/bootstrap aws/oauth-token/main.go
 	env GOARCH=arm64 GOOS=linux go build -ldflags="-s -w" -o bin/anonymize-user/bootstrap aws/anonymize-user/main.go
 	env GOARCH=arm64 GOOS=linux go build -ldflags="-s -w" -o bin/activate-user/bootstrap aws/activate-user/main.go
 	env GOARCH=arm64 GOOS=linux go build -ldflags="-s -w" -o bin/create-session/bootstrap aws/create-session/main.go
@@ -24,6 +25,7 @@ build:
 	env GOARCH=arm64 GOOS=linux go build -ldflags="-s -w" -o bin/verify-api-key/bootstrap aws/verify-api-key/main.go
 
 zip:
+	zip -j bin/oauth-token.zip bin/oauth-token/bootstrap
 	zip -j bin/anonymize-user.zip bin/anonymize-user/bootstrap
 	zip -j bin/activate-user.zip bin/activate-user/bootstrap
 	zip -j bin/create-session.zip bin/create-session/bootstrap
@@ -54,8 +56,8 @@ deploy-devingen: clean build zip
 teardown-devingen: clean
 	serverless remove --stage prod --region eu-central-1 --verbose
 
-deploy-devingen-dev: clean build
-	serverless deploy --stage dev --region ca-central-1 --verbose
+deploy-devingen-staging: clean build zip
+	serverless deploy --stage staging --region ca-central-1 --verbose
 
-teardown-devingen-dev: clean
-	serverless remove --stage dev --region ca-central-1 --verbose
+teardown-devingen-staging: clean
+	serverless remove --stage staging --region ca-central-1 --verbose

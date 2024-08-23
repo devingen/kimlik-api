@@ -21,6 +21,20 @@ package:
   individually: true
 
 functions:
+  oauth-token:
+    handler: bootstrap
+    package:
+      artifact: bin/oauth-token.zip
+    events:
+      - http:
+          path: /{base}/oauth/token
+          method: post
+          cors: true
+          request:
+            parameters:
+              paths:
+                base: true
+
   create-session:
     handler: bootstrap
     package:

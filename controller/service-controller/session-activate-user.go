@@ -22,7 +22,7 @@ func (c ServiceController) ActivateUser(ctx context.Context, req core.Request) (
 		return nil, err
 	}
 
-	payload, err := c.TokenService.ParseToken(body.UserActivationToken)
+	payload, err := c.TokenService.ParseAccessToken(body.UserActivationToken)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (c ServiceController) ActivateUser(ctx context.Context, req core.Request) (
 		return nil, err
 	}
 
-	jwt, err := c.createSuccessfulSessionAndGenerateToken(ctx, req, base, auth, user)
+	jwt, _, err := c.createSuccessfulSessionAndGenerateToken(ctx, req, base, auth, user)
 	if err != nil {
 		return nil, err
 	}

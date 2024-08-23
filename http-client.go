@@ -1,4 +1,4 @@
-package http_client
+package kimlik
 
 import (
 	"context"
@@ -38,18 +38,18 @@ func New(address string, headersValue string) KimlikAPIClient {
 	}
 }
 
-func (client KimlikAPIClient) CreateSession(ctx context.Context, data dto.CreateSession) (*dto.LoginResponse, error) {
+func (client KimlikAPIClient) OAuthToken(ctx context.Context, data dto.OAuthTokenRequest) (*dto.OAuthTokenResponse, error) {
 
 	resp, err := client.Client.R().EnableTrace().
 		SetBody(data).
-		SetResult(&dto.LoginResponse{}).
+		SetResult(&dto.OAuthTokenResponse{}).
 		SetError(&map[string]interface{}{}).
-		Post("/sessions")
+		Post("/oauth/token")
 
 	if err != nil {
 		switch err.(type) {
 		case *url.Error:
-			return nil, core.NewError(http.StatusInternalServerError, "auth-api-is-unreachable")
+			return nil, core.NewError(http.StatusInternalServerError, "kimlik-api-is-unreachable")
 		}
 		return nil, err
 	}
@@ -62,11 +62,41 @@ func (client KimlikAPIClient) CreateSession(ctx context.Context, data dto.Create
 				return nil, core.NewError(resp.StatusCode(), errorMessage)
 			}
 		}
-		return nil, core.NewError(resp.StatusCode(), "auth-api-returned-error: "+string(resp.Body()))
+		return nil, core.NewError(resp.StatusCode(), "kimlik-api-returned-error: "+string(resp.Body()))
 	}
 
-	return resp.Result().(*dto.LoginResponse), nil
+	return resp.Result().(*dto.OAuthTokenResponse), nil
 }
+
+//func (client KimlikAPIClient) CreateSession(ctx context.Context, data dto.CreateSession) (*dto.LoginResponse, error) {
+//
+//	resp, err := client.Client.R().EnableTrace().
+//		SetBody(data).
+//		SetResult(&dto.LoginResponse{}).
+//		SetError(&map[string]interface{}{}).
+//		Post("/sessions")
+//
+//	if err != nil {
+//		switch err.(type) {
+//		case *url.Error:
+//			return nil, core.NewError(http.StatusInternalServerError, "auth-api-is-unreachable")
+//		}
+//		return nil, err
+//	}
+//	if resp.IsError() {
+//		body := map[string]interface{}{}
+//		unmErr := json.Unmarshal(resp.Body(), &body)
+//		if unmErr == nil {
+//			errorMessage, ok := body["error"].(string)
+//			if ok {
+//				return nil, core.NewError(resp.StatusCode(), errorMessage)
+//			}
+//		}
+//		return nil, core.NewError(resp.StatusCode(), "auth-api-returned-error: "+string(resp.Body()))
+//	}
+//
+//	return resp.Result().(*dto.LoginResponse), nil
+//}
 
 func (client KimlikAPIClient) GetSession(ctx context.Context, headers map[string]string) (*dto.GetSessionResponse, error) {
 
