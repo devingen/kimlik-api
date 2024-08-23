@@ -15,12 +15,14 @@ func (service MongoDataService) AnonymizeUser(ctx context.Context, base string, 
 		return err
 	}
 
+	status := model.UserStatusAnonymized
 	var result model.User
 	err = collection.FindOneAndUpdate(ctx, bson.M{"_id": id}, bson.M{
 		"$set": model.User{
 			FirstName: core.String("-"),
 			LastName:  core.String("-"),
 			Email:     core.String("-"),
+			Status:    &status,
 		},
 		"$inc": bson.M{"_revision": 1},
 	}).Decode(&result)
