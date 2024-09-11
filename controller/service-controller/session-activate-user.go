@@ -40,7 +40,7 @@ func (c ServiceController) ActivateUser(ctx context.Context, req core.Request) (
 		return nil, core.NewError(http.StatusBadRequest, "user-already-activated")
 	}
 
-	auth, err := c.DataService.FindAuthOfUser(ctx, base, payload.UserId, model.AuthTypePassword)
+	auth, err := c.DataService.FindPasswordAuthOfUser(ctx, base, payload.UserId)
 	if err != nil {
 		return nil, err
 	}

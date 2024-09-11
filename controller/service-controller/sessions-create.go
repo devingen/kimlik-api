@@ -10,7 +10,6 @@ import (
 	"github.com/devingen/kimlik-api/model"
 	token_service "github.com/devingen/kimlik-api/token-service"
 	"golang.org/x/crypto/bcrypt"
-	"google.golang.org/api/idtoken"
 )
 
 func (c ServiceController) CreateSession(ctx context.Context, req core.Request) (*core.Response, error) {
@@ -31,7 +30,7 @@ func (c ServiceController) CreateSession(ctx context.Context, req core.Request) 
 	if body.Email != nil && body.Password != nil {
 		auth, user, err = c.validateSessionWithPassword(ctx, base, *body.Email, *body.Password)
 	} else if body.IDToken != nil {
-		auth, user, isNewUser, err = c.validateSessionWithIDToken(ctx, base, *body.IDToken)
+		auth, user, isNewUser, err = c.validateSessionWithIDToken(ctx, base, *body.IDToken, "", "")
 	} else {
 		return nil, core.NewError(http.StatusBadRequest, "no-authentication-method-found-for-provided-parameters")
 	}
@@ -61,17 +60,20 @@ func (c ServiceController) CreateSession(ctx context.Context, req core.Request) 
 	}, nil
 }
 
-func (c ServiceController) validateSessionWithIDToken(ctx context.Context, base, idToken string) (*model.Auth, *model.User, bool, error) {
+func (c ServiceController) validateSessionWithIDToken(ctx context.Context, base, rawIDToken, givenName, familyName string) (*model.Auth, *model.User, bool, error) {
 
-	// TODO find the open id config from database with the audience and issuer in the token
-	// TODO this validate is for Google. Check others later
-	payload, err := idtoken.Validate(ctx, idToken, "")
-	if err != nil {
-		return nil, nil, false, core.NewError(http.StatusBadRequest, "could-not-validate-token:"+err.Error())
+	idToken := IDToken{RawIDToken: rawIDToken}
+	if err := idToken.Parse(); err != nil {
+		return nil, nil, false, core.NewError(http.StatusBadRequest, "could-not-parse-token:"+err.Error())
 	}
 
-	email, ok := payload.Claims["email"].(string)
-	if !ok {
+	// TODO find the open id config from database with the audience and issuer in the token
+	if err := idToken.Verify(ctx); err != nil {
+		return nil, nil, false, core.NewError(http.StatusBadRequest, "could-not-verify-token:"+err.Error())
+	}
+
+	email := idToken.Claims.Email
+	if email == "" {
 		return nil, nil, false, core.NewError(http.StatusBadRequest, "email-missing-in-token-claims")
 	}
 
@@ -81,13 +83,14 @@ func (c ServiceController) validateSessionWithIDToken(ctx context.Context, base,
 	}
 
 	if user != nil {
-		auth, err := c.DataService.FindAuthOfUser(ctx, base, user.ID.Hex(), model.AuthTypeOpenID)
+		auth, err := c.DataService.FindOIDCAuthOfUser(ctx, base, user.ID.Hex(), idToken.Claims.Issuer)
 		if err != nil {
 			return nil, nil, false, err
 		}
 		if auth == nil {
-			// User exists but has no Open ID authentication method meaning that the account is not created via Open ID
-			auth, err = c.DataService.CreateAuthWithIDToken(ctx, base, payload.Claims, user)
+			// User exists but has no Open ID authentication method with this issuer
+			// Meaning that the account is not created via Open ID with this issuer
+			auth, err = c.DataService.CreateAuthWithIDToken(ctx, base, idToken.Claims.ToMap(), user)
 			if err != nil {
 				return nil, nil, false, err
 			}
@@ -96,35 +99,29 @@ func (c ServiceController) validateSessionWithIDToken(ctx context.Context, base,
 		return auth, user, false, nil
 	}
 
-	firstName, ok := payload.Claims["given_name"].(string)
-	if !ok {
-		return nil, nil, false, core.NewError(http.StatusBadRequest, "first-name-missing-in-token-claims")
-	}
-
-	lastName, ok := payload.Claims["family_name"].(string)
-	if !ok {
-		return nil, nil, false, core.NewError(http.StatusBadRequest, "last-name-missing-in-token-claims")
-	}
-
-	var isEmailVerified bool
-	isEmailVerifiedBoolValue, hasEmailVerifiedBool := payload.Claims["email_verified"].(bool)
-	if hasEmailVerifiedBool {
-		isEmailVerified = isEmailVerifiedBoolValue
-	} else {
-		isEmailVerifiedStringValue, hasEmailVerifiedString := payload.Claims["email_verified"].(string)
-		if hasEmailVerifiedString {
-			isEmailVerified = isEmailVerifiedStringValue == "true"
-		} else {
-			isEmailVerified = false
+	firstName := idToken.Claims.GivenName
+	if firstName == "" {
+		if givenName == "" {
+			return nil, nil, false, core.NewError(http.StatusBadRequest, "given-name-must-exist-in-claims-or-body-for-new-users")
 		}
+		firstName = givenName
 	}
+
+	lastName := idToken.Claims.FamilyName
+	if lastName == "" {
+		if familyName == "" {
+			return nil, nil, false, core.NewError(http.StatusBadRequest, "family-name-must-exist-in-claims-or-body-for-new-users")
+		}
+		lastName = familyName
+	}
+	isEmailVerified := idToken.Claims.IsEmailVerified()
 
 	user, err = c.DataService.CreateUser(ctx, base, firstName, lastName, email, model.UserStatusActive, isEmailVerified)
 	if err != nil {
 		return nil, nil, false, err
 	}
 
-	auth, err := c.DataService.CreateAuthWithIDToken(ctx, base, payload.Claims, user)
+	auth, err := c.DataService.CreateAuthWithIDToken(ctx, base, idToken.Claims.ToMap(), user)
 	if err != nil {
 		return nil, nil, false, err
 	}
@@ -138,10 +135,10 @@ func (c ServiceController) validateSessionWithPassword(ctx context.Context, base
 	}
 
 	if user == nil {
-		return nil, nil, core.NewStatusError(http.StatusNotFound)
+		return nil, nil, core.NewError(http.StatusNotFound, "user-not-found")
 	}
 
-	auth, err := c.DataService.FindAuthOfUser(ctx, base, user.ID.Hex(), model.AuthTypePassword)
+	auth, err := c.DataService.FindPasswordAuthOfUser(ctx, base, user.ID.Hex())
 	if err != nil {
 		return nil, user, err
 	}

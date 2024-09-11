@@ -46,6 +46,9 @@ func (c ServiceController) handleGrantTypePassword(ctx context.Context, req core
 		return nil, core.NewError(http.StatusBadRequest, "username-missing")
 	}
 	auth, user, err := c.validateSessionWithPassword(ctx, base, *params.Username, *params.Password)
+	if err != nil {
+		return nil, err
+	}
 
 	accessToken, refreshToken, err := c.createSuccessfulSessionAndGenerateToken(ctx, req, base, auth, user)
 	if err != nil {
@@ -64,7 +67,15 @@ func (c ServiceController) handleGrantTypePassword(ctx context.Context, req core
 }
 
 func (c ServiceController) handleGrantTypeKimlikOIDC(ctx context.Context, req core.Request, base string, params dto.OAuthTokenRequest) (*core.Response, error) {
-	auth, user, isNewUser, err := c.validateSessionWithIDToken(ctx, base, *params.IDToken)
+	givenName := ""
+	if params.GivenName != nil {
+		givenName = *params.GivenName
+	}
+	familyName := ""
+	if params.FamilyName != nil {
+		familyName = *params.FamilyName
+	}
+	auth, user, isNewUser, err := c.validateSessionWithIDToken(ctx, base, *params.IDToken, givenName, familyName)
 	if err != nil {
 		return nil, err
 	}

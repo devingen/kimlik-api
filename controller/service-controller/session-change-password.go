@@ -2,12 +2,12 @@ package service_controller
 
 import (
 	"context"
+	"net/http"
+
 	core "github.com/devingen/api-core"
 	core_dto "github.com/devingen/api-core/dto"
 	"github.com/devingen/kimlik-api"
 	"github.com/devingen/kimlik-api/dto"
-	"github.com/devingen/kimlik-api/model"
-	"net/http"
 )
 
 func (c ServiceController) ChangePassword(ctx context.Context, req core.Request) (*core.Response, error) {
@@ -23,7 +23,7 @@ func (c ServiceController) ChangePassword(ctx context.Context, req core.Request)
 		return nil, err
 	}
 
-	auth, err := c.DataService.FindAuthOfUser(ctx, base, token.UserId, model.AuthTypePassword)
+	auth, err := c.DataService.FindPasswordAuthOfUser(ctx, base, token.UserId)
 	if err != nil {
 		return nil, err
 	}

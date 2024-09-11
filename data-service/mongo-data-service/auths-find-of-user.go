@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (service MongoDataService) FindAuthOfUser(ctx context.Context, base, userId string, authType model.AuthType) (*model.Auth, error) {
+func (service MongoDataService) FindPasswordAuthOfUser(ctx context.Context, base, userId string) (*model.Auth, error) {
 	id, err := primitive.ObjectIDFromHex(userId)
 	if err != nil {
 		return nil, err
@@ -19,7 +19,35 @@ func (service MongoDataService) FindAuthOfUser(ctx context.Context, base, userId
 	result := make([]*model.Auth, 0)
 	query := bson.M{"$and": bson.A{
 		bson.M{"user._id": id},
-		bson.M{"type": authType},
+		bson.M{"type": model.AuthTypePassword},
+	}}
+
+	err = service.Database.Find(ctx, base, model.CollectionAuths, query, database.FindOptions{}, func(cur *mongo.Cursor) error {
+		var data model.Auth
+		err := cur.Decode(&data)
+		if err != nil {
+			return err
+		}
+		result = append(result, &data)
+		return nil
+	})
+	if len(result) > 0 {
+		return result[0], err
+	}
+	return nil, err
+}
+
+func (service MongoDataService) FindOIDCAuthOfUser(ctx context.Context, base, userId, issuer string) (*model.Auth, error) {
+	id, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*model.Auth, 0)
+	query := bson.M{"$and": bson.A{
+		bson.M{"user._id": id},
+		bson.M{"openIdData.iss": issuer},
+		bson.M{"type": model.AuthTypeOpenID},
 	}}
 
 	err = service.Database.Find(ctx, base, model.CollectionAuths, query, database.FindOptions{}, func(cur *mongo.Cursor) error {

@@ -26,6 +26,12 @@ type OAuthTokenRequest struct {
 	// IDToken is required if grant type is GrantTypeOIDC
 	IDToken *string `json:"id_token"`
 
+	// GivenName is required if grant type is GrantTypeOIDC, user is new and id token claims doesn't contain given_name
+	GivenName *string `json:"given_name"`
+
+	// FamilyName is required if grant type is GrantTypeOIDC, user is new and id token claims doesn't contain family_name
+	FamilyName *string `json:"family_name"`
+
 	// Username is required if grant type is GrantTypePassword
 	Username *string `json:"username" validate:"required_if=GrantType password"`
 
