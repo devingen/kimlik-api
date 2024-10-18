@@ -49,7 +49,7 @@ func (client KimlikAPIClient) OAuthToken(ctx context.Context, data dto.OAuthToke
 	if err != nil {
 		switch err.(type) {
 		case *url.Error:
-			return nil, core.NewError(http.StatusInternalServerError, "kimlik-api-is-unreachable")
+			return nil, core.NewError(http.StatusInternalServerError, "kimlik-api-is-unreachable:"+err.Error())
 		}
 		return nil, err
 	}
