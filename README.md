@@ -34,6 +34,32 @@ go test ./integrationtests/...
 
 ## Deployment
 
+### Docker
+
+Docker build needs to access private repositories under github.com/devingen.
+
+To let it pull the repos, you need to [generate a personal access token](https://github.com/settings/tokens)
+and pass GIT_TOKEN to the command as follows.
+
+```shell
+GIT_TOKEN=GITHUB_TOKEN_GENERATED_ON_WEBSITE
+make release-docker GIT_TOKEN=$GIT_TOKEN IMAGE_TAG=0.1.0
+make release-docker GIT_TOKEN=$GIT_TOKEN IMAGE_TAG=latest
+```
+
+```shell
+docker run -d \
+  --restart always \
+  --name devingen-api \
+  -e KIMLIK_API_JWT_SIGN_KEY=... \
+  -e KIMLIK_API_MONGO_URI=... \
+  -e KIMLIK_API_MONGO_USER_DATABASE=... \
+  -e KIMLIK_API_WEBHOOK_HEADERS=... \
+  -e KIMLIK_API_WEBHOOK_URL=... \
+  -p 1001:1001 \
+  devingen/kimlik-api:latest
+```
+
 ### AWS Lambda with Serverless Framework
 
 This commands executes the command in `Makefile` which clears the previous builds,
