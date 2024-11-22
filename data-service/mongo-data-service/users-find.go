@@ -11,7 +11,9 @@ import (
 func (service MongoDataService) FindUsers(ctx context.Context, base string, query bson.M) ([]*model.User, error) {
 	result := make([]*model.User, 0)
 
-	err := service.Database.Find(ctx, base, model.CollectionUsers, query, database.FindOptions{}, func(cur *mongo.Cursor) error {
+	err := service.Database.Find(ctx, base, model.CollectionUsers, query, database.FindOptions{
+		Sort: bson.D{{"_created", -1}},
+	}, func(cur *mongo.Cursor) error {
 
 		var data model.User
 		err := cur.Decode(&data)

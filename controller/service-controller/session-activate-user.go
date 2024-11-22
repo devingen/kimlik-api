@@ -31,7 +31,7 @@ func (c ServiceController) ActivateUser(ctx context.Context, req core.Request) (
 		return nil, core.NewError(http.StatusUnauthorized, "invalid-scope")
 	}
 
-	user, err := c.DataService.FindUserWithId(ctx, base, payload.UserId)
+	user, err := c.DataService.FindUserWithId(ctx, base, payload.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (c ServiceController) ActivateUser(ctx context.Context, req core.Request) (
 		return nil, core.NewError(http.StatusBadRequest, "user-already-activated")
 	}
 
-	auth, err := c.DataService.FindPasswordAuthOfUser(ctx, base, payload.UserId)
+	auth, err := c.DataService.FindPasswordAuthOfUser(ctx, base, payload.UserID)
 	if err != nil {
 		return nil, err
 	}

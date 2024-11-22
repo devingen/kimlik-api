@@ -58,4 +58,13 @@ type IKimlikDataService interface {
 
 	// endregion
 
+	// region tenant info
+	CreateTenantInfo(ctx context.Context, base string, item *model.TenantInfo) (*model.TenantInfo, error)
+	GetTenantInfo(ctx context.Context, base string) (*model.TenantInfo, error)
+	UpdateTenantInfo(ctx context.Context, base string, item *model.TenantInfo) (*time.Time, int, error)
+	//endregion
+
+	// region oauth
+	CreateOAuthAccessCode(ctx context.Context, base string, item *model.OAuthAccessCode) (*model.OAuthAccessCode, error)
+	// endregion
 }

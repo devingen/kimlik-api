@@ -38,20 +38,20 @@ func New(address string, headersValue string) KimlikAPIClient {
 	}
 }
 
-func (client KimlikAPIClient) OAuthToken(ctx context.Context, data dto.OAuthTokenRequest) (*dto.OAuthTokenResponse, error) {
+func (client KimlikAPIClient) OAuth2Token(ctx context.Context, data dto.OAuth2TokenRequest) (*dto.OAuth2TokenResponse, int, error) {
 
 	resp, err := client.Client.R().EnableTrace().
 		SetBody(data).
-		SetResult(&dto.OAuthTokenResponse{}).
+		SetResult(&dto.OAuth2TokenResponse{}).
 		SetError(&map[string]interface{}{}).
-		Post("/oauth/token")
+		Post("/oauth2/token")
 
 	if err != nil {
 		switch err.(type) {
 		case *url.Error:
-			return nil, core.NewError(http.StatusInternalServerError, "kimlik-api-is-unreachable:"+err.Error())
+			return nil, http.StatusInternalServerError, core.NewError(http.StatusInternalServerError, "kimlik-api-is-unreachable:"+err.Error())
 		}
-		return nil, err
+		return nil, http.StatusInternalServerError, err
 	}
 	if resp.IsError() {
 		body := map[string]interface{}{}
@@ -59,13 +59,13 @@ func (client KimlikAPIClient) OAuthToken(ctx context.Context, data dto.OAuthToke
 		if unmErr == nil {
 			errorMessage, ok := body["error"].(string)
 			if ok {
-				return nil, core.NewError(resp.StatusCode(), errorMessage)
+				return nil, resp.StatusCode(), core.NewError(resp.StatusCode(), errorMessage)
 			}
 		}
-		return nil, core.NewError(resp.StatusCode(), "kimlik-api-returned-error: "+string(resp.Body()))
+		return nil, resp.StatusCode(), core.NewError(resp.StatusCode(), "kimlik-api-returned-error: "+string(resp.Body()))
 	}
 
-	return resp.Result().(*dto.OAuthTokenResponse), nil
+	return resp.Result().(*dto.OAuth2TokenResponse), resp.StatusCode(), nil
 }
 
 //func (client KimlikAPIClient) CreateSession(ctx context.Context, data dto.CreateSession) (*dto.LoginResponse, error) {
@@ -97,6 +97,31 @@ func (client KimlikAPIClient) OAuthToken(ctx context.Context, data dto.OAuthToke
 //
 //	return resp.Result().(*dto.LoginResponse), nil
 //}
+
+func (client KimlikAPIClient) GetUserInfo(ctx context.Context, headers map[string]string) (*dto.GetUserInfoResponse, error) {
+
+	requestHeaders := map[string]string{
+		"authorization": headers["authorization"],
+	}
+	resp, err := client.Client.R().EnableTrace().
+		SetHeaders(requestHeaders).
+		SetResult(&dto.GetUserInfoResponse{}).
+		SetError(&map[string]interface{}{}).
+		Get("/userinfo")
+
+	if err != nil {
+		switch err.(type) {
+		case *url.Error:
+			return nil, core.NewError(http.StatusInternalServerError, "auth-api-is-unreachable")
+		}
+		return nil, err
+	}
+	if resp.StatusCode() != 200 {
+		return nil, core.NewError(resp.StatusCode(), "auth-api-returned-error:"+resp.String())
+	}
+
+	return resp.Result().(*dto.GetUserInfoResponse), nil
+}
 
 func (client KimlikAPIClient) GetSession(ctx context.Context, headers map[string]string) (*dto.GetSessionResponse, error) {
 

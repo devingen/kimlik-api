@@ -13,8 +13,8 @@ import (
 
 const AccessTokenExpirationTime = 240 * time.Hour
 
-// OAuthToken authenticates user and returns access token with given grant type.
-func (c ServiceController) OAuthToken(ctx context.Context, req core.Request) (*core.Response, error) {
+// OAuth2Token authenticates user and returns access token with given grant type.
+func (c ServiceController) OAuth2Token(ctx context.Context, req core.Request) (*core.Response, error) {
 	// TODO check client ID and secrets
 	// TODO get these values as "Content-Type: application/x-www-form-urlencoded" ?????
 
@@ -23,25 +23,27 @@ func (c ServiceController) OAuthToken(ctx context.Context, req core.Request) (*c
 		return nil, core.NewError(http.StatusInternalServerError, "missing-path-param-base")
 	}
 
-	var params dto.OAuthTokenRequest
+	var params dto.OAuth2TokenRequest
 	err := req.AssertBody(&params)
 	if err != nil {
 		return nil, err
 	}
 
 	switch params.GrantType {
-	case dto.GrantTypeOIDC:
+	case dto.OAuth2GrantTypeAuthorizationCode:
+		return c.handleGrantTypeAuthorizationCode(ctx, req, base, params)
+	case dto.OAuth2GrantTypeOIDC:
 		return c.handleGrantTypeKimlikOIDC(ctx, req, base, params)
-	case dto.GrantTypePassword:
+	case dto.OAuth2GrantTypePassword:
 		return c.handleGrantTypePassword(ctx, req, base, params)
-	case dto.GrantTypeRefreshToken:
+	case dto.OAuth2GrantTypeRefreshToken:
 		return c.handleGrantTypeRefreshToken(ctx, base, params)
 	}
 
 	return nil, core.NewError(http.StatusBadRequest, "invalid-grant-type")
 }
 
-func (c ServiceController) handleGrantTypePassword(ctx context.Context, req core.Request, base string, params dto.OAuthTokenRequest) (*core.Response, error) {
+func (c ServiceController) handleGrantTypePassword(ctx context.Context, req core.Request, base string, params dto.OAuth2TokenRequest) (*core.Response, error) {
 	if params.Username == nil {
 		return nil, core.NewError(http.StatusBadRequest, "username-missing")
 	}
@@ -57,7 +59,7 @@ func (c ServiceController) handleGrantTypePassword(ctx context.Context, req core
 
 	return &core.Response{
 		StatusCode: http.StatusOK,
-		Body: dto.OAuthTokenResponse{
+		Body: dto.OAuth2TokenResponse{
 			AccessToken:  accessToken,
 			TokenType:    "Bearer",
 			ExpiresIn:    AccessTokenExpirationTime.Seconds(),
@@ -66,7 +68,11 @@ func (c ServiceController) handleGrantTypePassword(ctx context.Context, req core
 	}, nil
 }
 
-func (c ServiceController) handleGrantTypeKimlikOIDC(ctx context.Context, req core.Request, base string, params dto.OAuthTokenRequest) (*core.Response, error) {
+func (c ServiceController) handleGrantTypeAuthorizationCode(ctx context.Context, req core.Request, base string, params dto.OAuth2TokenRequest) (*core.Response, error) {
+	return nil, core.NewError(http.StatusBadRequest, "invalid-grant-type")
+}
+
+func (c ServiceController) handleGrantTypeKimlikOIDC(ctx context.Context, req core.Request, base string, params dto.OAuth2TokenRequest) (*core.Response, error) {
 	givenName := ""
 	if params.GivenName != nil {
 		givenName = *params.GivenName
@@ -92,7 +98,7 @@ func (c ServiceController) handleGrantTypeKimlikOIDC(ctx context.Context, req co
 
 	return &core.Response{
 		StatusCode: responseStatusCode,
-		Body: dto.OAuthTokenResponse{
+		Body: dto.OAuth2TokenResponse{
 			AccessToken:  accessToken,
 			TokenType:    "Bearer",
 			ExpiresIn:    AccessTokenExpirationTime.Seconds(),
@@ -102,7 +108,7 @@ func (c ServiceController) handleGrantTypeKimlikOIDC(ctx context.Context, req co
 
 }
 
-func (c ServiceController) handleGrantTypeRefreshToken(ctx context.Context, base string, params dto.OAuthTokenRequest) (*core.Response, error) {
+func (c ServiceController) handleGrantTypeRefreshToken(ctx context.Context, base string, params dto.OAuth2TokenRequest) (*core.Response, error) {
 	sessions, err := c.DataService.FindSessions(ctx, base, bson.M{
 		"refreshToken": c.TokenService.HashRefreshToken(*params.RefreshToken),
 	})
@@ -134,7 +140,7 @@ func (c ServiceController) handleGrantTypeRefreshToken(ctx context.Context, base
 
 	return &core.Response{
 		StatusCode: http.StatusOK,
-		Body: dto.OAuthTokenResponse{
+		Body: dto.OAuth2TokenResponse{
 			AccessToken:  accessToken,
 			TokenType:    "Bearer",
 			ExpiresIn:    AccessTokenExpirationTime.Seconds(),

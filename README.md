@@ -94,8 +94,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.16 -m "add user activation, add http client"
+git tag -a v0.0.17 -m "Add user info endpoint."
 
 # push new tag
-git push origin v0.0.16
+git push origin v0.0.17
 ```

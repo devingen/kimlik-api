@@ -20,12 +20,12 @@ func (c ServiceController) GetSession(ctx context.Context, req core.Request) (*c
 		return nil, err
 	}
 
-	session, err := c.DataService.FindSessionWithId(ctx, base, token.SessionId)
+	session, err := c.DataService.FindSessionWithId(ctx, base, token.SessionID)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := c.DataService.FindUserWithId(ctx, base, token.UserId)
+	user, err := c.DataService.FindUserWithId(ctx, base, token.UserID)
 	if err != nil {
 		return nil, err
 	}

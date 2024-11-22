@@ -5,8 +5,8 @@ type Scope string
 type TokenPayload struct {
 	Version   string  `bson:"ver,omitempty"`
 	Expires   string  `bson:"exp,omitempty"`
-	UserId    string  `bson:"userId,omitempty"`
-	SessionId string  `bson:"sessionId,omitempty"`
+	UserID    string  `bson:"userId,omitempty"`
+	SessionID string  `bson:"sessionId,omitempty"`
 	Scopes    []Scope `bson:"scopes,omitempty"`
 }
 
@@ -31,4 +31,7 @@ type ITokenService interface {
 
 	// ParseAccessToken validates the token and returns the token payload.
 	ParseAccessToken(accessToken string) (*TokenPayload, error)
+
+	// GenerateAuthorizationCode generates random authorization code.
+	GenerateAuthorizationCode() (*string, error)
 }

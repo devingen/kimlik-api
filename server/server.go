@@ -35,7 +35,10 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	wrap := generateWrapper(appConfig, jwtService, dataService)
 
 	router := mux.NewRouter()
-	router.HandleFunc("/{base}/oauth/token", wrap(serviceController.OAuthToken)).Methods(http.MethodPost)
+	//router.HandleFunc("/{base}/oauth2/authorize", wrap(serviceController.OAuth2Token)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/oauth2/token", wrap(serviceController.OAuth2Token)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/oauth/token", wrap(serviceController.OAuth2Token)).Methods(http.MethodPost) // TODO remove
+	router.HandleFunc("/{base}/userinfo", wrap(serviceController.GetUserInfo)).Methods(http.MethodGet)
 
 	router.HandleFunc("/{base}/session", wrap(serviceController.GetSession)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/sessions", wrap(serviceController.CreateSession)).Methods(http.MethodPost)
@@ -61,6 +64,10 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	router.HandleFunc("/{base}/saml-configs/{id}/build", wrap(serviceController.BuildSAMLAuthURL)).Methods(http.MethodPost)
 	router.HandleFunc("/{base}/saml-configs/{id}/login", wrap(serviceController.LoginWithSAML)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/saml-configs/{id}/consume", wrap(serviceController.ConsumeSAMLAuthResponse)).Methods(http.MethodPost)
+
+	router.HandleFunc("/{base}/setup", wrap(serviceController.Setup)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/tenant-info", wrap(serviceController.GetTenantInfo)).Methods(http.MethodGet)
+	router.HandleFunc("/{base}/tenant-info", wrap(serviceController.UpdateTenantInfo)).Methods(http.MethodPut)
 
 	http.Handle("/", &server.CORSRouterDecorator{
 		R: router,

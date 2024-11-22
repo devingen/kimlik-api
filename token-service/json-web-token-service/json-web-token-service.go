@@ -113,6 +113,16 @@ func (jwtService *JWTService) HashRefreshToken(token string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
+func (jwtService *JWTService) GenerateAuthorizationCode() (*string, error) {
+	// Generate random code
+	code, err := GenerateSecureToken(32) // 32 bytes = 64 hex characters
+	if err != nil {
+		return nil, errors.New("Error generating code:" + err.Error())
+	}
+
+	return &code, nil
+}
+
 // GenerateSecureToken generates a cryptographically secure random token
 func GenerateSecureToken(length int) (string, error) {
 	token := make([]byte, length)

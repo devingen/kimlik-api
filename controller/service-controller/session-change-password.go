@@ -23,7 +23,7 @@ func (c ServiceController) ChangePassword(ctx context.Context, req core.Request)
 		return nil, err
 	}
 
-	auth, err := c.DataService.FindPasswordAuthOfUser(ctx, base, token.UserId)
+	auth, err := c.DataService.FindPasswordAuthOfUser(ctx, base, token.UserID)
 	if err != nil {
 		return nil, err
 	}

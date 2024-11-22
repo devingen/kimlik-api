@@ -7,8 +7,20 @@ import (
 )
 
 type IServiceController interface {
-	// OAuthToken is used to get an access token or a refresh token.
-	OAuthToken(ctx context.Context, req core.Request) (*core.Response, error)
+	// Setup creates initial configuration.
+	Setup(ctx context.Context, req core.Request) (*core.Response, error)
+
+	// OAuth2Token is used to get an access token or a refresh token.
+	// https://datatracker.ietf.org/doc/html/rfc6749#section-2.3
+	OAuth2Token(ctx context.Context, req core.Request) (*core.Response, error)
+
+	// OAuth2Authorize is used to generate authorization code and redirect users to client redirect uri.
+	// https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.1
+	OAuth2Authorize(ctx context.Context, req core.Request) (*core.Response, error)
+
+	// GetUserInfo is used as userinfo endpoint for OpenID protocol and returns user's details.
+	// https://openid.net/specs/openid-connect-core-1_0.html#UserInfo
+	GetUserInfo(ctx context.Context, req core.Request) (*core.Response, error)
 
 	// GetSession returns the current session details within the authorization header.
 	GetSession(ctx context.Context, req core.Request) (*core.Response, error)
@@ -39,4 +51,7 @@ type IServiceController interface {
 	BuildSAMLAuthURL(ctx context.Context, req core.Request) (*core.Response, error)
 	ConsumeSAMLAuthResponse(ctx context.Context, req core.Request) (*core.Response, error)
 	LoginWithSAML(ctx context.Context, req core.Request) (*core.Response, error)
+
+	GetTenantInfo(ctx context.Context, req core.Request) (*core.Response, error)
+	UpdateTenantInfo(ctx context.Context, req core.Request) (*core.Response, error)
 }

@@ -62,3 +62,8 @@ func (u *User) PrepareUpdateFields() {
 	now := time.Now()
 	u.UpdatedAt = &now
 }
+
+// FullName returns full name of the user.
+func (u *User) FullName() string {
+	return *u.FirstName + " " + *u.LastName
+}
