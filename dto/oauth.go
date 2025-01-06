@@ -17,21 +17,13 @@ const (
 	OAuth2GrantTypeRefreshToken OAuth2GrantType = "refresh_token"
 )
 
-type OAuth2AuthorizeRequest struct {
-	ClientID     *string `json:"client_id" validate:"required,oneof=refresh_token"`
-	ResponseType *string `json:"response_type" validate:"required,oneof=code"`
-	RedirectURI  *string `json:"redirect_uri" validate:"required"`
-	Scope        *string `json:"scope"`
-	State        *string `json:"state"`
-}
-
 type OAuth2TokenRequest struct {
 	//ClientID     *string `json:"client_id" validate:"required,oneof=refresh_token"`
 	//ClientSecret *string `json:"client_secret" validate:"required,oneof=refresh_token"`
 
 	// GrantType defines the way to authenticate.
 	// See https://auth0.com/docs/get-started/applications/application-grant-types
-	GrantType    OAuth2GrantType `json:"grant_type" validate:"required,oneof=password refresh_token https://kimlik.devingen.io/oauth/grant-type/oidc"`
+	GrantType    OAuth2GrantType `json:"grant_type" validate:"required,oneof=password authorization_code refresh_token https://kimlik.devingen.io/oauth/grant-type/oidc"`
 	RefreshToken *string         `json:"refresh_token" validate:"required_if=GrantType refresh_token"`
 
 	// IDToken is required if grant type is OAuth2GrantTypeOIDC
@@ -48,11 +40,24 @@ type OAuth2TokenRequest struct {
 
 	// Password is required if grant type is OAuth2GrantTypePassword
 	Password *string `json:"password" validate:"required_if=GrantType password"`
+
+	// ClientID is required if grant type is OAuth2GrantTypeAuthorizationCode
+	ClientID *string `json:"client_id" validate:"required_if=GrantType authorization_code"`
+
+	// RedirectURI is required if grant type is OAuth2GrantTypeAuthorizationCode
+	RedirectURI *string `json:"redirect_uri" validate:"required_if=GrantType authorization_code"`
+
+	// Code is required if grant type is OAuth2GrantTypeAuthorizationCode
+	Code *string `json:"code" validate:"required_if=GrantType authorization_code"`
+
+	// CodeVerifier is required if grant type is OAuth2GrantTypeAuthorizationCode
+	CodeVerifier *string `json:"code_verifier" validate:"required_if=GrantType authorization_code"`
 }
 
 type OAuth2TokenResponse struct {
-	AccessToken  string  `json:"access_token"`
-	TokenType    string  `json:"token_type"`
-	ExpiresIn    float64 `json:"expires_in"`
-	RefreshToken string  `json:"refresh_token"`
+	AccessToken  string  `json:"access_token,omitempty"`
+	TokenType    string  `json:"token_type,omitempty"`
+	ExpiresIn    float64 `json:"expires_in,omitempty"`
+	RefreshToken string  `json:"refresh_token,omitempty"`
+	IDToken      string  `json:"id_token,omitempty"`
 }

@@ -1,8 +1,8 @@
 module github.com/devingen/kimlik-api
 
-go 1.21
+go 1.23
 
-toolchain go1.22.1
+toolchain go1.23.0
 
 //replace github.com/devingen/api-core => ../api-core
 

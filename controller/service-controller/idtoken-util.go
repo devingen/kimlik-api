@@ -48,6 +48,7 @@ type IDTokenClaims struct {
 	Audience   audience `json:"aud"`
 	Subject    string   `json:"sub"`
 	Email      string   `json:"email"`
+	Name       string   `json:"name"`
 	GivenName  string   `json:"given_name"`
 	FamilyName string   `json:"family_name"`
 
@@ -55,6 +56,14 @@ type IDTokenClaims struct {
 	// https://forums.aws.amazon.com/thread.jspa?messageID=949441&#949441 and
 	// https://discuss.elastic.co/t/openid-error-after-authenticating-against-aws-cognito/206018/11
 	EmailVerified stringAsBool `json:"email_verified"`
+
+	Expiration int64 `json:"exp"`
+	IssuedAt   int64 `json:"iat"`
+}
+
+func (c IDTokenClaims) Valid() error {
+	// TODO implement
+	return nil
 }
 
 type IDToken struct {

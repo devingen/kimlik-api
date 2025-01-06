@@ -4,9 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/devingen/kimlik-api/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	"github.com/devingen/kimlik-api/model"
 )
 
 type IKimlikDataService interface {
@@ -48,6 +49,24 @@ type IKimlikDataService interface {
 	DeleteAPIKey(ctx context.Context, base string, id primitive.ObjectID) error
 	// endregion
 
+	// region app-integrations
+
+	CreateAppIntegration(ctx context.Context, base string, item *model.AppIntegration) (*model.AppIntegration, error)
+	FindAppIntegrations(ctx context.Context, base string, query bson.M) ([]*model.AppIntegration, error)
+	UpdateAppIntegration(ctx context.Context, base string, samlConfig *model.AppIntegration) (*time.Time, int, error)
+	DeleteAppIntegration(ctx context.Context, base string, id primitive.ObjectID) error
+
+	// endregion
+
+	// region oauth2
+
+	CreateOAuth2Config(ctx context.Context, base string, item *model.OAuth2Config) (*model.OAuth2Config, error)
+	FindOAuth2Configs(ctx context.Context, base string, query bson.M) ([]*model.OAuth2Config, error)
+	UpdateOAuth2Config(ctx context.Context, base string, samlConfig *model.OAuth2Config) (*time.Time, int, error)
+	DeleteOAuth2Config(ctx context.Context, base string, id primitive.ObjectID) error
+
+	// endregion
+
 	// region saml
 
 	CreateSAMLConfig(ctx context.Context, base string, item *model.SAMLConfig) (*model.SAMLConfig, error)
@@ -64,7 +83,13 @@ type IKimlikDataService interface {
 	UpdateTenantInfo(ctx context.Context, base string, item *model.TenantInfo) (*time.Time, int, error)
 	//endregion
 
-	// region oauth
-	CreateOAuthAccessCode(ctx context.Context, base string, item *model.OAuthAccessCode) (*model.OAuthAccessCode, error)
+	// region oauth/sp
+	CreateOAuth2AuthenticationRequest(ctx context.Context, base string, item *model.OAuth2AuthenticationRequest) (*model.OAuth2AuthenticationRequest, error)
+	FindOAuth2AuthenticationRequests(ctx context.Context, base string, query bson.M) ([]*model.OAuth2AuthenticationRequest, error)
+	// endregion
+
+	// region oauth/idp
+	CreateOAuth2AccessCode(ctx context.Context, base string, item *model.OAuth2AccessCode) (*model.OAuth2AccessCode, error)
+	FindOAuth2AccessCodes(ctx context.Context, base string, query bson.M) ([]*model.OAuth2AccessCode, error)
 	// endregion
 }

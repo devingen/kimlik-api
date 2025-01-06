@@ -1,11 +1,12 @@
 package model
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type OAuthAccessCode struct {
+type OAuth2AccessCode struct {
 	// DBRef fields
 	Ref      string `bson:"_ref,omitempty" json:"_ref,omitempty"`
 	ID       string `bson:"_id,omitempty" json:"_id,omitempty"`
@@ -16,14 +17,16 @@ type OAuthAccessCode struct {
 	UpdatedAt *time.Time `json:"_updated,omitempty" bson:"_updated,omitempty"`
 	Revision  int        `json:"_revision,omitempty" bson:"_revision,omitempty"`
 
-	CreatedBy   *User   `json:"createdBy" bson:"createdBy,omitempty"`
-	Code        *string `json:"code,omitempty" bson:"code,omitempty"`
-	ClientID    *string `json:"clientId,omitempty" bson:"clientId,omitempty"`
-	RedirectURI *string `json:"redirectUri,omitempty" bson:"redirectUri,omitempty"`
-	Scope       *string `json:"scope,omitempty" bson:"scope,omitempty"`
+	CreatedBy           *User    `json:"createdBy" bson:"createdBy,omitempty"`
+	Code                *string  `json:"code,omitempty" bson:"code,omitempty"`
+	ClientID            *string  `json:"clientId,omitempty" bson:"clientId,omitempty"`
+	RedirectURI         *string  `json:"redirectUri,omitempty" bson:"redirectUri,omitempty"`
+	Scopes              []string `json:"scopes,omitempty" bson:"scopes,omitempty"`
+	CodeChallenge       string   `json:"code_challenge"`
+	CodeChallengeMethod string   `json:"code_challenge_method"`
 }
 
-func (oac *OAuthAccessCode) AddCreationFields() {
+func (oac *OAuth2AccessCode) AddCreationFields() {
 	oac.ID = primitive.NewObjectID().Hex()
 	now := time.Now()
 	oac.CreatedAt = &now
@@ -33,7 +36,7 @@ func (oac *OAuthAccessCode) AddCreationFields() {
 
 // PrepareUpdateFields sets the UpdatedAt and deletes the Revision. Giving 0 value to Revision results bson
 // ignoring the revision field in $set function. It's incremented by the $inc command
-func (oac *OAuthAccessCode) PrepareUpdateFields() {
+func (oac *OAuth2AccessCode) PrepareUpdateFields() {
 	oac.Revision = 0
 	now := time.Now()
 	oac.UpdatedAt = &now

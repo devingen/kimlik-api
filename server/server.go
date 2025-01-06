@@ -8,6 +8,9 @@ import (
 	"github.com/devingen/api-core/database"
 	"github.com/devingen/api-core/server"
 	"github.com/devingen/api-core/wrapper"
+	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/mux"
+
 	"github.com/devingen/kimlik-api/config"
 	service_controller "github.com/devingen/kimlik-api/controller/service-controller"
 	ds "github.com/devingen/kimlik-api/data-service"
@@ -16,8 +19,6 @@ import (
 	token_service "github.com/devingen/kimlik-api/token-service"
 	json_web_token_service "github.com/devingen/kimlik-api/token-service/json-web-token-service"
 	kimlikwrapper "github.com/devingen/kimlik-api/wrapper"
-	"github.com/go-playground/validator/v10"
-	"github.com/gorilla/mux"
 )
 
 // New creates a new HTTP server
@@ -35,18 +36,20 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	wrap := generateWrapper(appConfig, jwtService, dataService)
 
 	router := mux.NewRouter()
-	//router.HandleFunc("/{base}/oauth2/authorize", wrap(serviceController.OAuth2Token)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/oauth2/authorize", wrap(serviceController.OAuth2Authorize)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/oauth2/token", wrap(serviceController.OAuth2Token)).Methods(http.MethodPost)
-	router.HandleFunc("/{base}/oauth/token", wrap(serviceController.OAuth2Token)).Methods(http.MethodPost) // TODO remove
-	router.HandleFunc("/{base}/userinfo", wrap(serviceController.GetUserInfo)).Methods(http.MethodGet)
+	router.HandleFunc("/{base}/oauth2/certs", wrap(serviceController.OAuth2GetJWKS)).Methods(http.MethodGet)
+	router.HandleFunc("/{base}/.well-known/openid-configuration", wrap(serviceController.OAuth2GetOIDCConfiguration)).Methods(http.MethodGet)
 
-	router.HandleFunc("/{base}/session", wrap(serviceController.GetSession)).Methods(http.MethodGet)
-	router.HandleFunc("/{base}/sessions", wrap(serviceController.CreateSession)).Methods(http.MethodPost)
-
+	router.HandleFunc("/{base}/authenticate", wrap(serviceController.Authenticate)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/authorization-url", wrap(serviceController.GetAuthorizationURL)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/register", wrap(serviceController.RegisterWithEmail)).Methods(http.MethodPost)
-	router.HandleFunc("/{base}/login", wrap(serviceController.LoginWithEmail)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/userinfo", wrap(serviceController.GetUserInfo)).Methods(http.MethodGet)
+	router.HandleFunc("/{base}/session", wrap(serviceController.GetSession)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/activate", wrap(serviceController.ActivateUser)).Methods(http.MethodPost)
 	router.HandleFunc("/{base}/auth/password", wrap(serviceController.ChangePassword)).Methods(http.MethodPut)
+	router.HandleFunc("/{base}/login", wrap(serviceController.LoginWithEmail)).Methods(http.MethodPost)   // TODO delete
+	router.HandleFunc("/{base}/sessions", wrap(serviceController.CreateSession)).Methods(http.MethodPost) // TODO delete
 
 	router.HandleFunc("/{base}/users", wrap(serviceController.FindUsers)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/users/{id}/anonymize", wrap(serviceController.AnonymizeUser)).Methods(http.MethodPost)
@@ -56,6 +59,16 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	router.HandleFunc("/{base}/api-keys/{id}", wrap(serviceController.UpdateAPIKey)).Methods(http.MethodPut)
 	router.HandleFunc("/{base}/api-keys/{id}", wrap(serviceController.DeleteAPIKey)).Methods(http.MethodDelete)
 	router.HandleFunc("/{base}/api-keys/verify", wrap(serviceController.VerifyAPIKey)).Methods(http.MethodGet)
+
+	router.HandleFunc("/{base}/app-integrations", wrap(serviceController.CreateAppIntegration)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/app-integrations", wrap(serviceController.FindAppIntegrations)).Methods(http.MethodGet)
+	router.HandleFunc("/{base}/app-integrations/{id}", wrap(serviceController.UpdateAppIntegration)).Methods(http.MethodPut)
+	router.HandleFunc("/{base}/app-integrations/{id}", wrap(serviceController.DeleteAppIntegration)).Methods(http.MethodDelete)
+
+	router.HandleFunc("/{base}/oauth2-configs", wrap(serviceController.CreateOAuth2Config)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/oauth2-configs", wrap(serviceController.FindOAuth2Configs)).Methods(http.MethodGet)
+	router.HandleFunc("/{base}/oauth2-configs/{id}", wrap(serviceController.UpdateOAuth2Config)).Methods(http.MethodPut)
+	router.HandleFunc("/{base}/oauth2-configs/{id}", wrap(serviceController.DeleteOAuth2Config)).Methods(http.MethodDelete)
 
 	router.HandleFunc("/{base}/saml-configs", wrap(serviceController.CreateSAMLConfig)).Methods(http.MethodPost)
 	router.HandleFunc("/{base}/saml-configs", wrap(serviceController.FindSAMLConfigs)).Methods(http.MethodGet)

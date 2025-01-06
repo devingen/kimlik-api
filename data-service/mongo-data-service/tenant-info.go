@@ -2,13 +2,15 @@ package mongods
 
 import (
 	"context"
-	core "github.com/devingen/api-core"
-	"github.com/devingen/api-core/database"
-	"github.com/devingen/kimlik-api/model"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 	"time"
+
+	core "github.com/devingen/api-core"
+	"github.com/devingen/api-core/database"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+
+	"github.com/devingen/kimlik-api/model"
 )
 
 func (service MongoDataService) CreateTenantInfo(ctx context.Context, base string, item *model.TenantInfo) (*model.TenantInfo, error) {
@@ -45,12 +47,14 @@ func (service MongoDataService) UpdateTenantInfo(ctx context.Context, base strin
 
 	// generate update entry model, ignore the fields that shouldn't be updated
 	data := &model.TenantInfo{
-		Name:             item.Name,
-		LogoURL:          item.LogoURL,
-		TermsOfUseURL:    item.TermsOfUseURL,
-		PrivacyPolicyURL: item.PrivacyPolicyURL,
-		SupportURL:       item.SupportURL,
-		SupportEmail:     item.SupportEmail,
+		Name:                   item.Name,
+		LogoURL:                item.LogoURL,
+		TermsOfUseURL:          item.TermsOfUseURL,
+		PrivacyPolicyURL:       item.PrivacyPolicyURL,
+		SupportURL:             item.SupportURL,
+		SupportEmail:           item.SupportEmail,
+		OAuth2RedirectionURL:   item.OAuth2RedirectionURL,
+		OAuth2IssuerIdentifier: item.OAuth2IssuerIdentifier,
 	}
 
 	collection, err := service.Database.ConnectToCollection(base, model.CollectionTenantInfo)

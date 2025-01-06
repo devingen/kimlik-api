@@ -1,8 +1,9 @@
 package model
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type TenantInfo struct {
@@ -16,12 +17,17 @@ type TenantInfo struct {
 	UpdatedAt *time.Time `json:"_updated,omitempty" bson:"_updated,omitempty"`
 	Revision  int        `json:"_revision,omitempty" bson:"_revision,omitempty"`
 
-	Name             *string `json:"name,omitempty" bson:"name,omitempty"`
-	LogoURL          *string `json:"logoUrl,omitempty" bson:"logoUrl,omitempty"`
-	TermsOfUseURL    *string `json:"termsOfUseUrl,omitempty" bson:"termsOfUseUrl,omitempty"`
-	PrivacyPolicyURL *string `json:"privacyPolicyUrl,omitempty" bson:"privacyPolicyUrl,omitempty"`
-	SupportURL       *string `json:"supportUrl,omitempty" bson:"supportUrl,omitempty"`
-	SupportEmail     *string `json:"supportEmail,omitempty" bson:"supportEmail,omitempty"`
+	// Domain is used to generate OAuth2 redirect URLs
+	Name                    *string `json:"name,omitempty" bson:"name,omitempty"`
+	LogoURL                 *string `json:"logoUrl,omitempty" bson:"logoUrl,omitempty"`
+	TermsOfUseURL           *string `json:"termsOfUseUrl,omitempty" bson:"termsOfUseUrl,omitempty"`
+	PrivacyPolicyURL        *string `json:"privacyPolicyUrl,omitempty" bson:"privacyPolicyUrl,omitempty"`
+	SupportURL              *string `json:"supportUrl,omitempty" bson:"supportUrl,omitempty"`
+	SupportEmail            *string `json:"supportEmail,omitempty" bson:"supportEmail,omitempty"`
+	OAuth2IssuerIdentifier  *string `json:"oAuth2IssuerIdentifier,omitempty" bson:"oAuth2IssuerIdentifier,omitempty"`
+	OAuth2RedirectionURL    *string `json:"oAuth2RedirectionUrl,omitempty" bson:"oAuth2RedirectionUrl,omitempty"`
+	OAuth2SigningPrivateKey *string `json:"oAuth2SigningPrivateKey,omitempty" bson:"oAuth2SigningPrivateKey,omitempty"`
+	OAuth2SigningPublicKey  *string `json:"oAuth2SigningPublicKey,omitempty" bson:"oAuth2SigningPublicKey,omitempty"`
 }
 
 func (ti *TenantInfo) AddCreationFields() {
