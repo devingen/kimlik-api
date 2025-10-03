@@ -69,6 +69,7 @@ func (c ServiceController) UpdateTenantInfo(ctx context.Context, req core.Reques
 		Name:                   body.Name,
 		OAuth2IssuerIdentifier: body.OAuth2IssuerIdentifier,
 		OAuth2RedirectionURL:   body.OAuth2RedirectionURL,
+		OAuth2AuthorizationURL: body.OAuth2AuthorizationURL,
 		LogoURL:                body.LogoURL,
 		TermsOfUseURL:          body.TermsOfUseURL,
 		PrivacyPolicyURL:       body.PrivacyPolicyURL,

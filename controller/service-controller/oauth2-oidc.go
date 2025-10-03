@@ -30,17 +30,20 @@ func (c ServiceController) OAuth2GetOIDCConfiguration(ctx context.Context, req c
 		return nil, core.NewError(http.StatusInternalServerError, "missing-path-param-base")
 	}
 
+	tenantInfo, err := c.DataService.GetTenantInfo(ctx, base)
+	if err != nil {
+		return nil, err
+	}
+
 	return &core.Response{
 		StatusCode: http.StatusOK,
 		Body: OpenIDConfiguration{
-			//Issuer:  "http://localhost:1001/devingen",
-			//JwksUri: "http://localhost:1001/devingen/oauth2/certs",
-			Issuer:                 "https://" + base + ".devingen.io",
-			AuthorizationEndpoint:  "https://" + base + "/oauth2/authorize",
-			JwksUri:                "https://kimlik.api.das.devingen.io/" + base + "/oauth2/certs",
-			TokenEndpoint:          "https://kimlik.api.das.devingen.io/" + base + "/oauth2/token",
-			UserinfoEndpoint:       "https://kimlik.api.das.devingen.io/" + base + "/oauth2/userinfo",
-			RegistrationEndpoint:   "https://kimlik.api.das.devingen.io/" + base + "/oauth2/register",
+			Issuer:                 *tenantInfo.OAuth2IssuerIdentifier,
+			AuthorizationEndpoint:  *tenantInfo.OAuth2AuthorizationURL,
+			JwksUri:                "https://api.kimlik.das.devingen.io/" + base + "/oauth2/certs",
+			TokenEndpoint:          "https://api.kimlik.das.devingen.io/" + base + "/oauth2/token",
+			UserinfoEndpoint:       "https://api.kimlik.das.devingen.io/" + base + "/oauth2/userinfo",
+			RegistrationEndpoint:   "https://api.kimlik.das.devingen.io/" + base + "/oauth2/register",
 			ScopesSupported:        []string{"openid", "profile", "email"},
 			ResponseTypesSupported: []string{"code", "id_token", "token"},
 			GrantTypesSupported:    []string{"refresh_token", "authorization_code", "client_credentials"},

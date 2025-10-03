@@ -2,7 +2,6 @@ package service_controller
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"slices"
 	"strings"
@@ -16,12 +15,6 @@ import (
 
 // OAuth2Authorize handles the OAuth2 authorization process.
 func (c ServiceController) OAuth2Authorize(ctx context.Context, req core.Request) (*core.Response, error) {
-	cookies, err := http.ParseCookie(req.Headers["cookie"])
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(cookies)
-
 	base, hasBase := req.PathParameters["base"]
 	if !hasBase {
 		return nil, core.NewError(http.StatusInternalServerError, "missing-path-param-base")

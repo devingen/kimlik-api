@@ -21,15 +21,21 @@ type OAuth2Config struct {
 	UpdatedAt *time.Time `json:"_updated,omitempty" bson:"_updated,omitempty"`
 	Revision  int        `json:"_revision,omitempty" bson:"_revision,omitempty"`
 
-	Name                  *string  `json:"name" bson:"name,omitempty" validate:"required"`
-	Scopes                []string `json:"scopes" bson:"scopes,omitempty" validate:"required"`
-	ClientID              *string  `json:"clientId" bson:"clientId,omitempty" validate:"required"`
-	ClientSecret          *string  `json:"clientSecret" bson:"clientSecret,omitempty"`
-	Issuer                *string  `json:"issuer" bson:"issuer,omitempty"`
-	AuthorizationEndpoint *string  `json:"authorizationEndpoint" bson:"authorizationEndpoint,omitempty"`
-	TokenEndpoint         *string  `json:"tokenEndpoint" bson:"tokenEndpoint,omitempty"`
-	JWKSEndpoint          *string  `json:"jwksEndpoint" bson:"jwksEndpoint,omitempty"`
-	UserinfoEndpoint      *string  `json:"userinfoEndpoint" bson:"userinfoEndpoint,omitempty"`
+	Name   *string  `json:"name" bson:"name,omitempty" validate:"required"`
+	Scopes []string `json:"scopes" bson:"scopes,omitempty" validate:"required"`
+
+	// ClientID of the Service Provider that matches the records in Identity Provider
+	ClientID     *string `json:"clientId" bson:"clientId,omitempty" validate:"required"`
+	ClientSecret *string `json:"clientSecret" bson:"clientSecret,omitempty"`
+	Issuer       *string `json:"issuer" bson:"issuer,omitempty"`
+
+	// AuthorizationEndpoint is the UI in Identity Provider where user consents views the authorization page
+	AuthorizationEndpoint *string `json:"authorizationEndpoint" bson:"authorizationEndpoint,omitempty"`
+
+	// TokenEndpoint is the endpoint of the Identity Provider api to exchange the code with the token
+	TokenEndpoint    *string `json:"tokenEndpoint" bson:"tokenEndpoint,omitempty"`
+	JWKSEndpoint     *string `json:"jwksEndpoint" bson:"jwksEndpoint,omitempty"`
+	UserinfoEndpoint *string `json:"userinfoEndpoint" bson:"userinfoEndpoint,omitempty"`
 }
 
 func (sc *OAuth2Config) AddCreationFields() {

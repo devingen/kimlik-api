@@ -17,7 +17,6 @@ type TenantInfo struct {
 	UpdatedAt *time.Time `json:"_updated,omitempty" bson:"_updated,omitempty"`
 	Revision  int        `json:"_revision,omitempty" bson:"_revision,omitempty"`
 
-	// Domain is used to generate OAuth2 redirect URLs
 	Name                    *string `json:"name,omitempty" bson:"name,omitempty"`
 	LogoURL                 *string `json:"logoUrl,omitempty" bson:"logoUrl,omitempty"`
 	TermsOfUseURL           *string `json:"termsOfUseUrl,omitempty" bson:"termsOfUseUrl,omitempty"`
@@ -26,6 +25,7 @@ type TenantInfo struct {
 	SupportEmail            *string `json:"supportEmail,omitempty" bson:"supportEmail,omitempty"`
 	OAuth2IssuerIdentifier  *string `json:"oAuth2IssuerIdentifier,omitempty" bson:"oAuth2IssuerIdentifier,omitempty"`
 	OAuth2RedirectionURL    *string `json:"oAuth2RedirectionUrl,omitempty" bson:"oAuth2RedirectionUrl,omitempty"`
+	OAuth2AuthorizationURL  *string `json:"oAuth2AuthorizationUrl,omitempty" bson:"oAuth2AuthorizationUrl,omitempty"`
 	OAuth2SigningPrivateKey *string `json:"oAuth2SigningPrivateKey,omitempty" bson:"oAuth2SigningPrivateKey,omitempty"`
 	OAuth2SigningPublicKey  *string `json:"oAuth2SigningPublicKey,omitempty" bson:"oAuth2SigningPublicKey,omitempty"`
 }
