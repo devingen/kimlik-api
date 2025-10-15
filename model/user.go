@@ -37,6 +37,7 @@ type User struct {
 	Email           *string     `json:"email,omitempty" bson:"email,omitempty"`
 	FirstName       *string     `json:"firstName,omitempty" bson:"firstName,omitempty"`
 	LastName        *string     `json:"lastName,omitempty" bson:"lastName,omitempty"`
+	Name            *string     `json:"name,omitempty" bson:"name,omitempty"`
 }
 
 func (u *User) DBRef(database string) *User {

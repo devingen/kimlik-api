@@ -17,6 +17,7 @@ func (service MongoDataService) CreateUser(ctx context.Context, base, firstName,
 	item := &model.User{
 		FirstName:       core.String(firstName),
 		LastName:        core.String(lastName),
+		Name:            core.String(firstName + " " + lastName),
 		Email:           core.String(email),
 		Status:          &status,
 		IsEmailVerified: &isEmailVerified,

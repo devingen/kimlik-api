@@ -80,9 +80,9 @@ func (c ServiceController) generateOAuth2AuthorizationURL(ctx context.Context, r
 		return "", core.NewError(http.StatusNotAcceptable, "tenant-info-oauth2-redirection-url-missing")
 	}
 
-	redirectURL, err := url.Parse(*tenantInfo.OAuth2RedirectionURL)
-	if err != nil {
-		return "", err
+	redirectURI, hasRedirectURI := req.GetQueryStringParameter("redirectURI")
+	if !hasRedirectURI {
+		redirectURI = *tenantInfo.OAuth2RedirectionURL
 	}
 
 	state, err := GenerateRandomString(16)
@@ -103,7 +103,7 @@ func (c ServiceController) generateOAuth2AuthorizationURL(ctx context.Context, r
 	authorizationURLQuery.Add("scope", strings.Join(config.Scopes, " "))
 	authorizationURLQuery.Add("response_type", "code")
 	authorizationURLQuery.Add("client_id", clientID)
-	authorizationURLQuery.Add("redirect_uri", redirectURL.String())
+	authorizationURLQuery.Add("redirect_uri", redirectURI)
 	authorizationURLQuery.Add("state", state)
 	authorizationURLQuery.Add("code_challenge", codeChallenge)
 	authorizationURLQuery.Add("code_challenge_method", "S256")
