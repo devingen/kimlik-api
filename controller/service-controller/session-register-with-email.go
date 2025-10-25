@@ -3,6 +3,7 @@ package service_controller
 import (
 	"context"
 	"net/http"
+	"net/mail"
 
 	core "github.com/devingen/api-core"
 	"github.com/devingen/kimlik-api/dto"
@@ -20,6 +21,10 @@ func (c ServiceController) RegisterWithEmail(ctx context.Context, req core.Reque
 	err := req.AssertBody(&body)
 	if err != nil {
 		return nil, err
+	}
+
+	if _, err := mail.ParseAddress(body.Email); err != nil {
+		return nil, core.NewError(http.StatusBadRequest, "invalid-email")
 	}
 
 	userWithSameEmail, err := c.DataService.FindUserWithEmail(ctx, base, body.Email)
