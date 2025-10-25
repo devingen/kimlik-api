@@ -94,8 +94,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.17 -m "Add user info endpoint."
+git tag -a v0.0.18 -m "Populate name field"
 
 # push new tag
-git push origin v0.0.17
+git push origin v0.0.18
 ```
