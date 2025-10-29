@@ -43,7 +43,7 @@ and pass GIT_TOKEN to the command as follows.
 
 ```shell
 GIT_TOKEN=GITHUB_TOKEN_GENERATED_ON_WEBSITE
-make release-docker GIT_TOKEN=$GIT_TOKEN IMAGE_TAG=0.1.10
+make release-docker GIT_TOKEN=$GIT_TOKEN IMAGE_TAG=0.1.9
 make release-docker GIT_TOKEN=$GIT_TOKEN IMAGE_TAG=latest
 ```
 
@@ -94,8 +94,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.18 -m "Populate name field"
+git tag -a v0.0.19 -m "Change user activation flow, change active user status enum"
 
 # push new tag
-git push origin v0.0.18
+git push origin v0.0.19
 ```
