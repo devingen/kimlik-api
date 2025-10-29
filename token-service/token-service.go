@@ -1,13 +1,20 @@
 package token_service
 
-type Scope string
-
 type TokenPayload struct {
-	Version   string  `bson:"ver,omitempty"`
-	Expires   string  `bson:"exp,omitempty"`
-	UserID    string  `bson:"userId,omitempty"`
-	SessionID string  `bson:"sessionId,omitempty"`
-	Scopes    []Scope `bson:"scopes,omitempty"`
+	Version   string   `bson:"ver,omitempty"`
+	Expires   string   `bson:"exp,omitempty"`
+	UserID    string   `bson:"userId,omitempty"`
+	SessionID string   `bson:"sessionId,omitempty"`
+	Scopes    []string `bson:"scopes,omitempty"`
+}
+
+func (token *TokenPayload) ContainsScope(scope string) bool {
+	for _, s := range token.Scopes {
+		if s == scope {
+			return true
+		}
+	}
+	return false
 }
 
 type RefreshToken struct {
@@ -27,7 +34,7 @@ type ITokenService interface {
 	HashRefreshToken(token string) string
 
 	// GenerateAccessToken returns access token with given user and session details.
-	GenerateAccessToken(userId, sessionId string, scopes []Scope, exp int64) (string, error)
+	GenerateAccessToken(userId, sessionId string, scopes []string, exp int64) (string, error)
 
 	// ParseAccessToken validates the token and returns the token payload.
 	ParseAccessToken(accessToken string) (*TokenPayload, error)

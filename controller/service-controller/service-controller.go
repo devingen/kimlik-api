@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	ScopeAll token_service.Scope = "all"
+	ScopeAll string = "all"
 )
 
 // ServiceController implements IServiceController interface by using KimlikService

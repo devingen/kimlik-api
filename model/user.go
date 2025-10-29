@@ -11,11 +11,11 @@ type UserStatus string
 const (
 	// UserStatusNotActivated is used when a user is created but s/he never activated the account.
 	//   This state can occur if the user is invited by an admin to the system.
-	//   The status is updated later to active after s/he activates the account.
+	//   The status is updated later to activated after s/he activates the account.
 	UserStatusNotActivated UserStatus = "not-activated"
 
 	// UserStatusActive is used when user activated the account by agreeing the terms and conditions explicitly
-	UserStatusActive UserStatus = "active"
+	UserStatusActive UserStatus = "activated"
 
 	// UserStatusAnonymized is used when user deletes itself
 	UserStatusAnonymized UserStatus = "anonymized"

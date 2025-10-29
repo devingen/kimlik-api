@@ -46,7 +46,7 @@ func (jwtService *JWTService) Init() {
 	jwtService.signKey = signKey
 }
 
-func (jwtService *JWTService) GenerateAccessToken(userId, sessionId string, scopes []token_service.Scope, exp int64) (string, error) {
+func (jwtService *JWTService) GenerateAccessToken(userId, sessionId string, scopes []string, exp int64) (string, error) {
 
 	token := jwt.New(jwt.SigningMethodHS256)
 

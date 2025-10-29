@@ -184,7 +184,7 @@ func (c ServiceController) generateAccessToken(userID, sessionID string) (string
 	return c.TokenService.GenerateAccessToken(
 		userID,
 		sessionID,
-		[]token_service.Scope{ScopeAll},
+		[]string{ScopeAll},
 		time.Now().Add(AccessTokenExpirationTime).Unix(),
 	)
 }

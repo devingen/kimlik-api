@@ -27,7 +27,7 @@ func (c ServiceController) ActivateUser(ctx context.Context, req core.Request) (
 		return nil, err
 	}
 
-	if payload.Scopes[0] != "activate" {
+	if !payload.ContainsScope("activate") {
 		return nil, core.NewError(http.StatusUnauthorized, "invalid-scope")
 	}
 
@@ -55,13 +55,18 @@ func (c ServiceController) ActivateUser(ctx context.Context, req core.Request) (
 	}
 
 	status := model.UserStatusActive
-	_, _, err = c.DataService.UpdateUser(ctx, base, &model.User{
-		ID:              user.ID,
-		Status:          &status,
-		IsEmailVerified: core.Bool(true), // email is verified because 'userActivationToken' is only sent by email
-		FirstName:       core.String(body.FirstName),
-		LastName:        core.String(body.LastName),
-	})
+	data := &model.User{
+		ID:        user.ID,
+		Status:    &status,
+		FirstName: core.String(body.FirstName),
+		LastName:  core.String(body.LastName),
+	}
+
+	if payload.ContainsScope("verify-email") {
+		user.IsEmailVerified = core.Bool(true)
+	}
+
+	_, _, err = c.DataService.UpdateUser(ctx, base, data)
 	if err != nil {
 		return nil, err
 	}
