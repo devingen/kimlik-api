@@ -2,6 +2,8 @@ package mongods
 
 import (
 	"context"
+	"regexp"
+
 	"github.com/devingen/api-core/database"
 	"github.com/devingen/kimlik-api/model"
 	"go.mongodb.org/mongo-driver/bson"
@@ -10,7 +12,7 @@ import (
 
 func (service MongoDataService) FindUserWithEmail(ctx context.Context, base, email string) (*model.User, error) {
 	result := make([]*model.User, 0)
-	query := bson.M{"email": bson.M{"$regex": `^` + email + `$`, "$options": "i"}}
+	query := bson.M{"email": bson.M{"$regex": `^` + regexp.QuoteMeta(email) + `$`, "$options": "i"}}
 
 	err := service.Database.Find(ctx, base, model.CollectionUsers, query, database.FindOptions{}, func(cur *mongo.Cursor) error {
 
