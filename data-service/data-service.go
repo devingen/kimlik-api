@@ -83,6 +83,11 @@ type IKimlikDataService interface {
 	UpdateTenantInfo(ctx context.Context, base string, item *model.TenantInfo) (*time.Time, int, error)
 	//endregion
 
+	// region integration settings
+	GetIntegrationSettings(ctx context.Context, base string) (*model.IntegrationSettings, error)
+	UpdateIntegrationSettings(ctx context.Context, base string, item *model.IntegrationSettings) (*time.Time, int, error)
+	//endregion
+
 	// region oauth/sp
 	CreateOAuth2AuthenticationRequest(ctx context.Context, base string, item *model.OAuth2AuthenticationRequest) (*model.OAuth2AuthenticationRequest, error)
 	FindOAuth2AuthenticationRequests(ctx context.Context, base string, query bson.M) ([]*model.OAuth2AuthenticationRequest, error)

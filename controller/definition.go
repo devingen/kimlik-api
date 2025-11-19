@@ -77,4 +77,7 @@ type IServiceController interface {
 
 	GetTenantInfo(ctx context.Context, req core.Request) (*core.Response, error)
 	UpdateTenantInfo(ctx context.Context, req core.Request) (*core.Response, error)
+
+	GetIntegrationSettings(ctx context.Context, req core.Request) (*core.Response, error)
+	UpdateIntegrationSettings(ctx context.Context, req core.Request) (*core.Response, error)
 }

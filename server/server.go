@@ -83,6 +83,9 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	router.HandleFunc("/{base}/tenant-info", wrap(serviceController.GetTenantInfo)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/tenant-info", wrap(serviceController.UpdateTenantInfo)).Methods(http.MethodPut)
 
+	router.HandleFunc("/{base}/integration-settings", wrap(serviceController.GetIntegrationSettings)).Methods(http.MethodGet)
+	router.HandleFunc("/{base}/integration-settings", wrap(serviceController.UpdateIntegrationSettings)).Methods(http.MethodPut)
+
 	http.Handle("/", &server.CORSRouterDecorator{
 		R: router,
 		Headers: map[string]string{

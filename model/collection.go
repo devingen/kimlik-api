@@ -11,4 +11,5 @@ const (
 	CollectionOAuth2AccessCodes            = "kimlik-oauth2-access-codes"
 	CollectionSAMLConfigs                  = "kimlik-saml-configs"
 	CollectionTenantInfo                   = "kimlik-tenant-info"
+	CollectionIntegrationSettings          = "kimlik-integration-settings"
 )
