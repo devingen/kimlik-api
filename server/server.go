@@ -43,6 +43,7 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 
 	router.HandleFunc("/{base}/authenticate", wrap(serviceController.Authenticate)).Methods(http.MethodPost)
 	router.HandleFunc("/{base}/authorization-url", wrap(serviceController.GetAuthorizationURL)).Methods(http.MethodGet)
+	router.HandleFunc("/{base}/auth-methods", wrap(serviceController.GetAuthMethods)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/register", wrap(serviceController.RegisterWithEmail)).Methods(http.MethodPost)
 	router.HandleFunc("/{base}/userinfo", wrap(serviceController.GetUserInfo)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/session", wrap(serviceController.GetSession)).Methods(http.MethodGet)

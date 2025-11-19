@@ -39,6 +39,10 @@ type IServiceController interface {
 
 	// GetAuthorizationURL generates and returns authentication URL for SSO login.
 	GetAuthorizationURL(ctx context.Context, req core.Request) (*core.Response, error)
+
+	// GetAuthMethods returns available authentication methods for a given email address.
+	GetAuthMethods(ctx context.Context, req core.Request) (*core.Response, error)
+
 	Authenticate(ctx context.Context, req core.Request) (*core.Response, error)
 	RegisterWithEmail(ctx context.Context, req core.Request) (*core.Response, error)
 	LoginWithEmail(ctx context.Context, req core.Request) (*core.Response, error)
