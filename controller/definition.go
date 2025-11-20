@@ -80,4 +80,7 @@ type IServiceController interface {
 
 	GetIntegrationSettings(ctx context.Context, req core.Request) (*core.Response, error)
 	UpdateIntegrationSettings(ctx context.Context, req core.Request) (*core.Response, error)
+
+	RequestPasswordReset(ctx context.Context, req core.Request) (*core.Response, error)
+	ResetPassword(ctx context.Context, req core.Request) (*core.Response, error)
 }

@@ -8,15 +8,17 @@ toolchain go1.23.0
 
 require (
 	github.com/aws/aws-lambda-go v1.40.0
+	github.com/coreos/go-oidc/v3 v3.11.0
 	github.com/devingen/api-core v0.0.27
+	github.com/devingen/ulak-api v0.0.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-playground/validator/v10 v10.4.1
-	github.com/go-resty/resty/v2 v2.7.0
-	github.com/gorilla/mux v1.7.4
+	github.com/go-resty/resty/v2 v2.11.0
+	github.com/gorilla/mux v1.8.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/russellhaering/gosaml2 v0.6.0
 	github.com/russellhaering/goxmldsig v1.1.1
-	github.com/sirupsen/logrus v1.4.2
+	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
 	go.mongodb.org/mongo-driver v1.16.0
 	golang.org/x/crypto v0.26.0
@@ -29,7 +31,6 @@ require (
 	cloud.google.com/go/compute/metadata v0.5.0 // indirect
 	github.com/Timothylock/go-signin-with-apple v0.2.3 // indirect
 	github.com/beevik/etree v1.1.0 // indirect
-	github.com/coreos/go-oidc/v3 v3.11.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.2 // indirect

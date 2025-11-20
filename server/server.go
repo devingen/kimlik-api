@@ -86,6 +86,9 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	router.HandleFunc("/{base}/integration-settings", wrap(serviceController.GetIntegrationSettings)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/integration-settings", wrap(serviceController.UpdateIntegrationSettings)).Methods(http.MethodPut)
 
+	router.HandleFunc("/{base}/request-password-reset", wrap(serviceController.RequestPasswordReset)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/reset-password", wrap(serviceController.ResetPassword)).Methods(http.MethodPost)
+
 	http.Handle("/", &server.CORSRouterDecorator{
 		R: router,
 		Headers: map[string]string{
