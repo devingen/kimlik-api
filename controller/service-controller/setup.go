@@ -45,9 +45,17 @@ func (c ServiceController) Setup(ctx context.Context, req core.Request) (*core.R
 		return nil, err
 	}
 
+	integrationSettings, err := c.DataService.CreateIntegrationSettings(ctx, base, &model.IntegrationSettings{})
+	if err != nil {
+		return nil, err
+	}
+
 	return &core.Response{
 		StatusCode: http.StatusOK,
-		Body:       item,
+		Body: map[string]interface{}{
+			"tenantInfo":          item,
+			"integrationSettings": integrationSettings,
+		},
 	}, nil
 }
 

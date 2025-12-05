@@ -94,8 +94,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.19 -m "Change user activation flow, change active user status enum"
+git tag -a v0.0.20 -m "Add create integration settings to data service"
 
 # push new tag
-git push origin v0.0.19
+git push origin v0.0.20
 ```

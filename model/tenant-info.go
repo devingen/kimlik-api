@@ -3,14 +3,15 @@ package model
 import (
 	"time"
 
+	core "github.com/devingen/api-core"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type TenantInfo struct {
 	// DBRef fields
-	Ref      string `bson:"_ref,omitempty" json:"_ref,omitempty"`
-	ID       string `bson:"_id,omitempty" json:"_id,omitempty"`
-	Database string `bson:"_db,omitempty" json:"_db,omitempty"`
+	Ref      *string `bson:"_ref,omitempty" json:"_ref,omitempty"`
+	ID       *string `bson:"_id,omitempty" json:"_id,omitempty"`
+	Database *string `bson:"_db,omitempty" json:"_db,omitempty"`
 
 	// common model fields
 	CreatedAt *time.Time `json:"_created,omitempty" bson:"_created,omitempty"`
@@ -31,7 +32,7 @@ type TenantInfo struct {
 }
 
 func (ti *TenantInfo) AddCreationFields() {
-	ti.ID = primitive.NewObjectID().Hex()
+	ti.ID = core.String(primitive.NewObjectID().Hex())
 	now := time.Now()
 	ti.CreatedAt = &now
 	ti.UpdatedAt = &now

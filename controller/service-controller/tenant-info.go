@@ -83,7 +83,7 @@ func (c ServiceController) UpdateTenantInfo(ctx context.Context, req core.Reques
 	return &core.Response{
 		StatusCode: http.StatusOK,
 		Body: core_dto.UpdateEntryResponse{
-			ID:        item.ID,
+			ID:        *item.ID,
 			UpdatedAt: *updatedAt,
 			Revision:  revision,
 		},

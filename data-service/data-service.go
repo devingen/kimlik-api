@@ -84,6 +84,7 @@ type IKimlikDataService interface {
 	//endregion
 
 	// region integration settings
+	CreateIntegrationSettings(ctx context.Context, base string, item *model.IntegrationSettings) (*model.IntegrationSettings, error)
 	GetIntegrationSettings(ctx context.Context, base string) (*model.IntegrationSettings, error)
 	UpdateIntegrationSettings(ctx context.Context, base string, item *model.IntegrationSettings) (*time.Time, int, error)
 	//endregion

@@ -35,7 +35,7 @@ func (service MongoDataService) CreateTenantInfo(ctx context.Context, base strin
 		return nil, err
 	}
 
-	item.ID = result.InsertedID.(string)
+	item.ID = core.String(result.InsertedID.(string))
 	return item, nil
 }
 
