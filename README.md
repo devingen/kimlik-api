@@ -94,8 +94,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.20 -m "Add create integration settings to data service"
+git tag -a v0.0.21 -m "Add register with email to http client"
 
 # push new tag
-git push origin v0.0.20
+git push origin v0.0.21
 ```

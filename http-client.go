@@ -68,6 +68,36 @@ func (client KimlikAPIClient) OAuth2Token(ctx context.Context, data dto.OAuth2To
 	return resp.Result().(*dto.OAuth2TokenResponse), resp.StatusCode(), nil
 }
 
+func (client KimlikAPIClient) RegisterWithEmail(ctx context.Context, data dto.RegisterWithEmailRequest) (*dto.RegisterWithEmailResponse, int, error) {
+
+	resp, err := client.Client.R().EnableTrace().
+		SetBody(data).
+		SetResult(&dto.RegisterWithEmailResponse{}).
+		SetError(&map[string]interface{}{}).
+		Post("/register")
+
+	if err != nil {
+		switch err.(type) {
+		case *url.Error:
+			return nil, http.StatusInternalServerError, core.NewError(http.StatusInternalServerError, "kimlik-api-is-unreachable:"+err.Error())
+		}
+		return nil, http.StatusInternalServerError, err
+	}
+	if resp.IsError() {
+		body := map[string]interface{}{}
+		unmErr := json.Unmarshal(resp.Body(), &body)
+		if unmErr == nil {
+			errorMessage, ok := body["error"].(string)
+			if ok {
+				return nil, resp.StatusCode(), core.NewError(resp.StatusCode(), errorMessage)
+			}
+		}
+		return nil, resp.StatusCode(), core.NewError(resp.StatusCode(), "kimlik-api-returned-error: "+string(resp.Body()))
+	}
+
+	return resp.Result().(*dto.RegisterWithEmailResponse), resp.StatusCode(), nil
+}
+
 //func (client KimlikAPIClient) CreateSession(ctx context.Context, data dto.CreateSession) (*dto.LoginResponse, error) {
 //
 //	resp, err := client.Client.R().EnableTrace().
