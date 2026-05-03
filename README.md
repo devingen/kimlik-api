@@ -94,8 +94,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.21 -m "Add register with email to http client"
+git tag -a v0.0.22 -m "Implement password authentication and add Authenticate to http client"
 
 # push new tag
-git push origin v0.0.21
+git push origin v0.0.22
 ```
