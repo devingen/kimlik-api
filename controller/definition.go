@@ -44,12 +44,14 @@ type IServiceController interface {
 	GetAuthMethods(ctx context.Context, req core.Request) (*core.Response, error)
 
 	Authenticate(ctx context.Context, req core.Request) (*core.Response, error)
-	LinkAuthenticationMethod(ctx context.Context, req core.Request) (*core.Response, error)
+	LinkAuthMethod(ctx context.Context, req core.Request) (*core.Response, error)
+	DeleteAuthMethod(ctx context.Context, req core.Request) (*core.Response, error)
 	RegisterWithEmail(ctx context.Context, req core.Request) (*core.Response, error)
 	LoginWithEmail(ctx context.Context, req core.Request) (*core.Response, error)
 	ActivateUser(ctx context.Context, req core.Request) (*core.Response, error)
 	ChangePassword(ctx context.Context, req core.Request) (*core.Response, error)
 
+	UpdateUser(ctx context.Context, req core.Request) (*core.Response, error)
 	FindUsers(ctx context.Context, req core.Request) (*core.Response, error)
 
 	CreateAPIKey(ctx context.Context, req core.Request) (*core.Response, error)

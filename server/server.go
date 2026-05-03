@@ -42,7 +42,9 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	router.HandleFunc("/{base}/.well-known/openid-configuration", wrap(serviceController.OAuth2GetOIDCConfiguration)).Methods(http.MethodGet)
 
 	router.HandleFunc("/{base}/authenticate", wrap(serviceController.Authenticate)).Methods(http.MethodPost)
-	router.HandleFunc("/{base}/link-authentication", wrap(serviceController.LinkAuthenticationMethod)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/link-authentication", wrap(serviceController.LinkAuthMethod)).Methods(http.MethodPost)
+	router.HandleFunc("/{base}/auths/{id}", wrap(serviceController.DeleteAuthMethod)).Methods(http.MethodDelete)
+	router.HandleFunc("/{base}/users/{id}", wrap(serviceController.UpdateUser)).Methods(http.MethodPut)
 	router.HandleFunc("/{base}/authorization-url", wrap(serviceController.GetAuthorizationURL)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/auth-methods", wrap(serviceController.GetAuthMethods)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/register", wrap(serviceController.RegisterWithEmail)).Methods(http.MethodPost)

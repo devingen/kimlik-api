@@ -31,7 +31,7 @@ type IKimlikDataService interface {
 	FindOIDCAuthByIssuerAndSubject(ctx context.Context, base, issuer, subject string) (*model.Auth, error)
 	FindAuthsOfUser(ctx context.Context, base, userId string) ([]*model.Auth, error)
 	UpdateAuth(ctx context.Context, base string, auth *model.Auth) (*time.Time, int, error)
-	DeleteAuth(ctx context.Context, base string, id primitive.ObjectID) error
+	DeleteAuthMethod(ctx context.Context, base string, id primitive.ObjectID) error
 
 	// endregion
 

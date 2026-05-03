@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (service MongoDataService) DeleteAuth(ctx context.Context, base string, id primitive.ObjectID) error {
+func (service MongoDataService) DeleteAuthMethod(ctx context.Context, base string, id primitive.ObjectID) error {
 	collection, err := service.Database.ConnectToCollection(base, model.CollectionAuths)
 	if err != nil {
 		return err

@@ -44,7 +44,7 @@ func (c ServiceController) AnonymizeUser(ctx context.Context, req core.Request) 
 	}
 
 	for _, auth := range auths {
-		err = c.DataService.DeleteAuth(ctx, base, auth.ID)
+		err = c.DataService.DeleteAuthMethod(ctx, base, auth.ID)
 		if err != nil {
 			return nil, err
 		}

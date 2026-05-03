@@ -79,6 +79,30 @@ type LoginResponse struct {
 	JWT    string `json:"jwt"`
 }
 
+type LinkAuthMethodRequest struct {
+	IDToken string `json:"id_token" validate:"required"`
+}
+
+type OIDCIdentity struct {
+	GivenName  string `json:"given_name"`
+	FamilyName string `json:"family_name"`
+	Email      string `json:"email"`
+}
+
+type LinkAuthMethodResponse struct {
+	// User contains the current state of the user record in the database.
+	User GetUserInfoResponse `json:"user"`
+
+	// LinkedAuth contains the identity details extracted from the linked ID token.
+	LinkedAuth OIDCIdentity `json:"linked_auth"`
+}
+
+type UpdateUserRequest struct {
+	FirstName string `json:"firstName" validate:"min=2,max=32"`
+	LastName  string `json:"lastName" validate:"min=2,max=32"`
+	Email     string `json:"email" validate:"required,email"`
+}
+
 type ChangePasswordRequest struct {
 	Password string `json:"password" validate:"min=6,max=32"`
 }

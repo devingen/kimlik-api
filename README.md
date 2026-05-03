@@ -94,8 +94,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.24 -m "Implement OIDC support in Authenticate endpoint"
+git tag -a v0.0.25 -m "Add link authentication, delete password auth and update user endpoints"
 
 # push new tag
-git push origin v0.0.24
+git push origin v0.0.25
 ```

@@ -9,12 +9,12 @@ import (
 	"github.com/devingen/kimlik-api/dto"
 )
 
-type LinkAuthenticationMethodRequest struct {
+type LinkAuthMethodRequest struct {
 	IDToken string `json:"id_token" validate:"required"`
 }
 
-// LinkAuthenticationMethod links an OIDC identity to the authenticated user's account.
-func (c ServiceController) LinkAuthenticationMethod(ctx context.Context, req core.Request) (*core.Response, error) {
+// LinkAuthMethod links an OIDC identity to the authenticated user's account.
+func (c ServiceController) LinkAuthMethod(ctx context.Context, req core.Request) (*core.Response, error) {
 	base, hasBase := req.PathParameters["base"]
 	if !hasBase {
 		return nil, core.NewError(http.StatusInternalServerError, "missing-path-param-base")
@@ -25,7 +25,7 @@ func (c ServiceController) LinkAuthenticationMethod(ctx context.Context, req cor
 		return nil, err
 	}
 
-	var body LinkAuthenticationMethodRequest
+	var body LinkAuthMethodRequest
 	err = req.AssertBody(&body)
 	if err != nil {
 		return nil, err
@@ -72,12 +72,19 @@ func (c ServiceController) LinkAuthenticationMethod(ctx context.Context, req cor
 
 	return &core.Response{
 		StatusCode: http.StatusOK,
-		Body: dto.GetUserInfoResponse{
-			Sub:        user.ID.Hex(),
-			Name:       user.FullName(),
-			GivenName:  *user.FirstName,
-			FamilyName: *user.LastName,
-			Email:      *user.Email,
+		Body: dto.LinkAuthMethodResponse{
+			User: dto.GetUserInfoResponse{
+				Sub:        user.ID.Hex(),
+				Name:       user.FullName(),
+				GivenName:  *user.FirstName,
+				FamilyName: *user.LastName,
+				Email:      *user.Email,
+			},
+			LinkedAuth: dto.OIDCIdentity{
+				GivenName:  idToken.Claims.GivenName,
+				FamilyName: idToken.Claims.FamilyName,
+				Email:      idToken.Claims.Email,
+			},
 		},
 	}, nil
 }
