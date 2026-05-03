@@ -28,7 +28,7 @@ func (c ServiceController) Authenticate(ctx context.Context, req core.Request) (
 
 	switch body.AuthType {
 	case dto.AuthorizationTypePassword:
-		return nil, core.NewError(http.StatusNotImplemented, "not-implemented")
+		return c.handleAuthTypePassword(ctx, req, base, body)
 	case dto.AuthorizationTypeCode:
 		return c.handleAuthTypeCode(ctx, req, base, body)
 	case dto.AuthorizationTypeOIDC:
@@ -106,6 +106,38 @@ func (c ServiceController) handleAuthTypeCode(ctx context.Context, req core.Requ
 
 	return &core.Response{
 		StatusCode: responseStatusCode,
+		Body: dto.OAuth2TokenResponse{
+			AccessToken:  accessToken,
+			TokenType:    "Bearer",
+			ExpiresIn:    AccessTokenExpirationTime.Seconds(),
+			RefreshToken: refreshToken,
+		},
+	}, nil
+}
+
+func (c ServiceController) handleAuthTypePassword(ctx context.Context, req core.Request, base string, body dto.AuthorizeRequest) (*core.Response, error) {
+	if body.Username == nil {
+		return nil, core.NewError(http.StatusBadRequest, "username-missing")
+	}
+	if body.Password == nil {
+		return nil, core.NewError(http.StatusBadRequest, "password-missing")
+	}
+
+	auth, user, err := c.validateSessionWithPassword(ctx, base, *body.Username, *body.Password)
+	if err != nil {
+		if user != nil {
+			c.createFailedSession(ctx, req, base, auth, user, err)
+		}
+		return nil, err
+	}
+
+	accessToken, refreshToken, err := c.createSuccessfulSessionAndGenerateToken(ctx, req, base, auth, user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &core.Response{
+		StatusCode: http.StatusOK,
 		Body: dto.OAuth2TokenResponse{
 			AccessToken:  accessToken,
 			TokenType:    "Bearer",
