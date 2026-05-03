@@ -45,6 +45,7 @@ type IServiceController interface {
 
 	Authenticate(ctx context.Context, req core.Request) (*core.Response, error)
 	LinkAuthMethod(ctx context.Context, req core.Request) (*core.Response, error)
+	FindAuths(ctx context.Context, req core.Request) (*core.Response, error)
 	DeleteAuthMethod(ctx context.Context, req core.Request) (*core.Response, error)
 	RegisterWithEmail(ctx context.Context, req core.Request) (*core.Response, error)
 	LoginWithEmail(ctx context.Context, req core.Request) (*core.Response, error)

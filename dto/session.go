@@ -79,6 +79,11 @@ type LoginResponse struct {
 	JWT    string `json:"jwt"`
 }
 
+type AuthResponse struct {
+	ID   string `json:"id"`
+	Type string `json:"type"`
+}
+
 type LinkAuthMethodRequest struct {
 	IDToken string `json:"id_token" validate:"required"`
 }

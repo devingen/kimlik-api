@@ -129,6 +129,36 @@ func (client KimlikAPIClient) LinkAuthMethod(ctx context.Context, headers map[st
 	return resp.Result().(*dto.LinkAuthMethodResponse), resp.StatusCode(), nil
 }
 
+func (client KimlikAPIClient) FindAuths(ctx context.Context, headers map[string]string) ([]dto.AuthResponse, int, error) {
+
+	resp, err := client.Client.R().EnableTrace().
+		SetHeaders(headers).
+		SetResult(&[]dto.AuthResponse{}).
+		SetError(&map[string]interface{}{}).
+		Get("/auths")
+
+	if err != nil {
+		switch err.(type) {
+		case *url.Error:
+			return nil, http.StatusInternalServerError, core.NewError(http.StatusInternalServerError, "kimlik-api-is-unreachable:"+err.Error())
+		}
+		return nil, http.StatusInternalServerError, err
+	}
+	if resp.IsError() {
+		body := map[string]interface{}{}
+		unmErr := json.Unmarshal(resp.Body(), &body)
+		if unmErr == nil {
+			errorMessage, ok := body["error"].(string)
+			if ok {
+				return nil, resp.StatusCode(), core.NewError(resp.StatusCode(), errorMessage)
+			}
+		}
+		return nil, resp.StatusCode(), core.NewError(resp.StatusCode(), "kimlik-api-returned-error: "+string(resp.Body()))
+	}
+
+	return *resp.Result().(*[]dto.AuthResponse), resp.StatusCode(), nil
+}
+
 func (client KimlikAPIClient) DeleteAuthMethod(ctx context.Context, headers map[string]string, id string) error {
 
 	resp, err := client.Client.R().EnableTrace().

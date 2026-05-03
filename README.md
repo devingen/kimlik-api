@@ -94,8 +94,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.25 -m "Add link authentication, delete password auth and update user endpoints"
+git tag -a v0.0.26 -m "Add find auths endpoint"
 
 # push new tag
-git push origin v0.0.25
+git push origin v0.0.26
 ```
