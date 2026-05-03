@@ -28,6 +28,7 @@ type IKimlikDataService interface {
 	CreateAuthWithIDToken(ctx context.Context, base string, claims map[string]interface{}, user *model.User) (*model.Auth, error)
 	FindPasswordAuthOfUser(ctx context.Context, base, userId string) (*model.Auth, error)
 	FindOIDCAuthOfUser(ctx context.Context, base, userId string, issuer string) (*model.Auth, error)
+	FindOIDCAuthByIssuerAndSubject(ctx context.Context, base, issuer, subject string) (*model.Auth, error)
 	FindAuthsOfUser(ctx context.Context, base, userId string) ([]*model.Auth, error)
 	UpdateAuth(ctx context.Context, base string, auth *model.Auth) (*time.Time, int, error)
 	DeleteAuth(ctx context.Context, base string, id primitive.ObjectID) error

@@ -44,6 +44,7 @@ type IServiceController interface {
 	GetAuthMethods(ctx context.Context, req core.Request) (*core.Response, error)
 
 	Authenticate(ctx context.Context, req core.Request) (*core.Response, error)
+	LinkAuthenticationMethod(ctx context.Context, req core.Request) (*core.Response, error)
 	RegisterWithEmail(ctx context.Context, req core.Request) (*core.Response, error)
 	LoginWithEmail(ctx context.Context, req core.Request) (*core.Response, error)
 	ActivateUser(ctx context.Context, req core.Request) (*core.Response, error)

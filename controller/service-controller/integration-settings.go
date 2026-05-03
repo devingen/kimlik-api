@@ -50,7 +50,7 @@ func (c ServiceController) UpdateIntegrationSettings(ctx context.Context, req co
 	return &core.Response{
 		StatusCode: http.StatusOK,
 		Body: core_dto.UpdateEntryResponse{
-			ID:        body.ID,
+			ID:        *body.ID,
 			UpdatedAt: *updatedAt,
 			Revision:  revision,
 		},
