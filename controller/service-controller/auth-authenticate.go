@@ -32,7 +32,7 @@ func (c ServiceController) Authenticate(ctx context.Context, req core.Request) (
 	case dto.AuthorizationTypeCode:
 		return c.handleAuthTypeCode(ctx, req, base, body)
 	case dto.AuthorizationTypeOIDC:
-		return nil, core.NewError(http.StatusNotImplemented, "not-implemented")
+		return c.handleAuthTypeOIDC(ctx, req, base, body)
 	}
 
 	return nil, core.NewError(http.StatusBadRequest, "invalid-grant-type")
@@ -138,6 +138,46 @@ func (c ServiceController) handleAuthTypePassword(ctx context.Context, req core.
 
 	return &core.Response{
 		StatusCode: http.StatusOK,
+		Body: dto.OAuth2TokenResponse{
+			AccessToken:  accessToken,
+			TokenType:    "Bearer",
+			ExpiresIn:    AccessTokenExpirationTime.Seconds(),
+			RefreshToken: refreshToken,
+		},
+	}, nil
+}
+
+func (c ServiceController) handleAuthTypeOIDC(ctx context.Context, req core.Request, base string, body dto.AuthorizeRequest) (*core.Response, error) {
+	if body.IDToken == nil {
+		return nil, core.NewError(http.StatusBadRequest, "id-token-missing")
+	}
+
+	givenName := ""
+	if body.GivenName != nil {
+		givenName = *body.GivenName
+	}
+	familyName := ""
+	if body.FamilyName != nil {
+		familyName = *body.FamilyName
+	}
+
+	auth, user, isNewUser, err := c.validateSessionWithIDToken(ctx, base, *body.IDToken, givenName, familyName)
+	if err != nil {
+		return nil, err
+	}
+
+	accessToken, refreshToken, err := c.createSuccessfulSessionAndGenerateToken(ctx, req, base, auth, user)
+	if err != nil {
+		return nil, err
+	}
+
+	responseStatusCode := http.StatusOK
+	if isNewUser {
+		responseStatusCode = http.StatusCreated
+	}
+
+	return &core.Response{
+		StatusCode: responseStatusCode,
 		Body: dto.OAuth2TokenResponse{
 			AccessToken:  accessToken,
 			TokenType:    "Bearer",
