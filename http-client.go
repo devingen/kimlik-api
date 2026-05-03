@@ -68,13 +68,13 @@ func (client KimlikAPIClient) OAuth2Token(ctx context.Context, data dto.OAuth2To
 	return resp.Result().(*dto.OAuth2TokenResponse), resp.StatusCode(), nil
 }
 
-func (client KimlikAPIClient) Authenticate(ctx context.Context, base string, data dto.AuthorizeRequest) (*dto.OAuth2TokenResponse, int, error) {
+func (client KimlikAPIClient) Authenticate(ctx context.Context, data dto.AuthorizeRequest) (*dto.OAuth2TokenResponse, int, error) {
 
 	resp, err := client.Client.R().EnableTrace().
 		SetBody(data).
 		SetResult(&dto.OAuth2TokenResponse{}).
 		SetError(&map[string]interface{}{}).
-		Post("/" + base + "/authenticate")
+		Post("/authenticate")
 
 	if err != nil {
 		switch err.(type) {
