@@ -185,7 +185,7 @@ func (client KimlikAPIClient) UpdateUser(ctx context.Context, headers map[string
 	resp, err := client.Client.R().EnableTrace().
 		SetHeaders(client.mergeHeaders(headers)).
 		SetBody(data).
-		SetResult(&dto.GetUserInfoResponse{}).
+		SetResult(&core_dto.UpdateEntryResponse{}).
 		SetError(&map[string]interface{}{}).
 		Put("/users/" + id)
 
