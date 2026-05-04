@@ -101,7 +101,7 @@ func (client KimlikAPIClient) Authenticate(ctx context.Context, data dto.Authori
 func (client KimlikAPIClient) LinkAuthMethod(ctx context.Context, headers map[string]string, data dto.LinkAuthMethodRequest) (*dto.LinkAuthMethodResponse, int, error) {
 
 	resp, err := client.Client.R().EnableTrace().
-		SetHeaders(headers).
+		SetHeaders(client.mergeHeaders(headers)).
 		SetBody(data).
 		SetResult(&dto.LinkAuthMethodResponse{}).
 		SetError(&map[string]interface{}{}).
@@ -182,7 +182,7 @@ func (client KimlikAPIClient) DeleteAuthMethod(ctx context.Context, headers map[
 func (client KimlikAPIClient) UpdateUser(ctx context.Context, headers map[string]string, id string, data dto.UpdateUserRequest) (*dto.GetUserInfoResponse, int, error) {
 
 	resp, err := client.Client.R().EnableTrace().
-		SetHeaders(headers).
+		SetHeaders(client.mergeHeaders(headers)).
 		SetBody(data).
 		SetResult(&dto.GetUserInfoResponse{}).
 		SetError(&map[string]interface{}{}).
@@ -239,36 +239,6 @@ func (client KimlikAPIClient) RegisterWithEmail(ctx context.Context, data dto.Re
 
 	return resp.Result().(*dto.RegisterWithEmailResponse), resp.StatusCode(), nil
 }
-
-//func (client KimlikAPIClient) CreateSession(ctx context.Context, data dto.CreateSession) (*dto.LoginResponse, error) {
-//
-//	resp, err := client.Client.R().EnableTrace().
-//		SetBody(data).
-//		SetResult(&dto.LoginResponse{}).
-//		SetError(&map[string]interface{}{}).
-//		Post("/sessions")
-//
-//	if err != nil {
-//		switch err.(type) {
-//		case *url.Error:
-//			return nil, core.NewError(http.StatusInternalServerError, "auth-api-is-unreachable")
-//		}
-//		return nil, err
-//	}
-//	if resp.IsError() {
-//		body := map[string]interface{}{}
-//		unmErr := json.Unmarshal(resp.Body(), &body)
-//		if unmErr == nil {
-//			errorMessage, ok := body["error"].(string)
-//			if ok {
-//				return nil, core.NewError(resp.StatusCode(), errorMessage)
-//			}
-//		}
-//		return nil, core.NewError(resp.StatusCode(), "auth-api-returned-error: "+string(resp.Body()))
-//	}
-//
-//	return resp.Result().(*dto.LoginResponse), nil
-//}
 
 func (client KimlikAPIClient) GetUserInfo(ctx context.Context, headers map[string]string) (*dto.GetUserInfoResponse, error) {
 
@@ -342,4 +312,18 @@ func (client KimlikAPIClient) AnonymizeUser(ctx context.Context, headers map[str
 	}
 
 	return nil
+}
+
+func (client KimlikAPIClient) mergeHeaders(headers map[string]string) map[string]string {
+
+	merged := make(map[string]string, len(headers)+len(client.Client.Header))
+	for k, vals := range client.Client.Header {
+		if len(vals) > 0 {
+			merged[k] = vals[0]
+		}
+	}
+	for k, v := range headers {
+		merged[k] = v
+	}
+	return merged
 }
