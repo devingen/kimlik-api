@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	core "github.com/devingen/api-core"
+	core_dto "github.com/devingen/api-core/dto"
 	"github.com/devingen/kimlik-api/dto"
 	"github.com/go-resty/resty/v2"
 )
@@ -179,7 +180,7 @@ func (client KimlikAPIClient) DeleteAuthMethod(ctx context.Context, headers map[
 	return nil
 }
 
-func (client KimlikAPIClient) UpdateUser(ctx context.Context, headers map[string]string, id string, data dto.UpdateUserRequest) (*dto.GetUserInfoResponse, int, error) {
+func (client KimlikAPIClient) UpdateUser(ctx context.Context, headers map[string]string, id string, data dto.UpdateUserRequest) (*core_dto.UpdateEntryResponse, int, error) {
 
 	resp, err := client.Client.R().EnableTrace().
 		SetHeaders(client.mergeHeaders(headers)).
@@ -207,7 +208,7 @@ func (client KimlikAPIClient) UpdateUser(ctx context.Context, headers map[string
 		return nil, resp.StatusCode(), core.NewError(resp.StatusCode(), "kimlik-api-returned-error: "+string(resp.Body()))
 	}
 
-	return resp.Result().(*dto.GetUserInfoResponse), resp.StatusCode(), nil
+	return resp.Result().(*core_dto.UpdateEntryResponse), resp.StatusCode(), nil
 }
 
 func (client KimlikAPIClient) RegisterWithEmail(ctx context.Context, data dto.RegisterWithEmailRequest) (*dto.RegisterWithEmailResponse, int, error) {
