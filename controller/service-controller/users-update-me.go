@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	core "github.com/devingen/api-core"
+	core_dto "github.com/devingen/api-core/dto"
 	kimlik "github.com/devingen/kimlik-api"
 	"github.com/devingen/kimlik-api/dto"
 	"github.com/devingen/kimlik-api/model"
@@ -45,26 +46,28 @@ func (c ServiceController) UpdateUser(ctx context.Context, req core.Request) (*c
 		return nil, core.NewError(http.StatusNotFound, "user-not-found")
 	}
 
-	fullName := body.FirstName + " " + body.LastName
-	_, _, err = c.DataService.UpdateUser(ctx, base, &model.User{
+	update := &model.User{
 		ID:        user.ID,
-		FirstName: &body.FirstName,
-		LastName:  &body.LastName,
-		Email:     &body.Email,
-		Name:      &fullName,
-	})
+		FirstName: body.FirstName,
+		LastName:  body.LastName,
+		Email:     body.Email,
+	}
+	if body.FirstName != nil && body.LastName != nil {
+		fullName := *body.FirstName + " " + *body.LastName
+		update.Name = &fullName
+	}
+
+	updatedAt, revision, err := c.DataService.UpdateUser(ctx, base, update)
 	if err != nil {
 		return nil, err
 	}
 
 	return &core.Response{
 		StatusCode: http.StatusOK,
-		Body: dto.GetUserInfoResponse{
-			Sub:        user.ID.Hex(),
-			Name:       fullName,
-			GivenName:  body.FirstName,
-			FamilyName: body.LastName,
-			Email:      body.Email,
+		Body: core_dto.UpdateEntryResponse{
+			ID:        user.ID.Hex(),
+			UpdatedAt: *updatedAt,
+			Revision:  revision,
 		},
 	}, nil
 }

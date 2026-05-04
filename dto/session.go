@@ -103,9 +103,9 @@ type LinkAuthMethodResponse struct {
 }
 
 type UpdateUserRequest struct {
-	FirstName string `json:"firstName" validate:"min=2,max=32"`
-	LastName  string `json:"lastName" validate:"min=2,max=32"`
-	Email     string `json:"email" validate:"required,email"`
+	FirstName *string `json:"firstName" validate:"omitempty,min=2,max=32"`
+	LastName  *string `json:"lastName" validate:"omitempty,min=2,max=32"`
+	Email     *string `json:"email" validate:"omitempty,email"`
 }
 
 type ChangePasswordRequest struct {
