@@ -241,7 +241,7 @@ func (client KimlikAPIClient) RegisterWithEmail(ctx context.Context, data dto.Re
 	return resp.Result().(*dto.RegisterWithEmailResponse), resp.StatusCode(), nil
 }
 
-func (client KimlikAPIClient) GetUserInfo(ctx context.Context, headers map[string]string) (*dto.GetUserInfoResponse, error) {
+func (client KimlikAPIClient) GetUserInfoOIDC(ctx context.Context, headers map[string]string) (*dto.GetUserInfoResponse, error) {
 
 	requestHeaders := map[string]string{
 		"authorization": headers["authorization"],

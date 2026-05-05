@@ -24,9 +24,12 @@ type IServiceController interface {
 	// https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.1
 	OAuth2Authorize(ctx context.Context, req core.Request) (*core.Response, error)
 
-	// GetUserInfo is used as userinfo endpoint for OpenID protocol and returns user's details.
+	// GetUserInfoOIDC is used as userinfo endpoint for OpenID protocol and returns user's details.
 	// https://openid.net/specs/openid-connect-core-1_0.html#UserInfo
-	GetUserInfo(ctx context.Context, req core.Request) (*core.Response, error)
+	GetUserInfoOIDC(ctx context.Context, req core.Request) (*core.Response, error)
+
+	// GetCurrentUser returns the full user record for the authenticated user.
+	GetCurrentUser(ctx context.Context, req core.Request) (*core.Response, error)
 
 	// GetSession returns the current session details within the authorization header.
 	GetSession(ctx context.Context, req core.Request) (*core.Response, error)

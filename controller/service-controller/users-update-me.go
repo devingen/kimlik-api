@@ -12,6 +12,7 @@ import (
 )
 
 // UpdateUser updates a user's name and email. Only the authenticated user can update their own record.
+// TODO change this to allow admins to update other users' details.
 func (c ServiceController) UpdateUser(ctx context.Context, req core.Request) (*core.Response, error) {
 	base, hasBase := req.PathParameters["base"]
 	if !hasBase {
@@ -51,10 +52,6 @@ func (c ServiceController) UpdateUser(ctx context.Context, req core.Request) (*c
 		FirstName: body.FirstName,
 		LastName:  body.LastName,
 		Email:     body.Email,
-	}
-	if body.FirstName != nil && body.LastName != nil {
-		fullName := *body.FirstName + " " + *body.LastName
-		update.Name = &fullName
 	}
 
 	updatedAt, revision, err := c.DataService.UpdateUser(ctx, base, update)

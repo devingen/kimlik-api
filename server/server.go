@@ -40,6 +40,7 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	router.HandleFunc("/{base}/oauth2/token", wrap(serviceController.OAuth2Token)).Methods(http.MethodPost)
 	router.HandleFunc("/{base}/oauth2/certs", wrap(serviceController.OAuth2GetJWKS)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/.well-known/openid-configuration", wrap(serviceController.OAuth2GetOIDCConfiguration)).Methods(http.MethodGet)
+	router.HandleFunc("/{base}/userinfo", wrap(serviceController.GetUserInfoOIDC)).Methods(http.MethodGet)
 
 	router.HandleFunc("/{base}/authenticate", wrap(serviceController.Authenticate)).Methods(http.MethodPost)
 	router.HandleFunc("/{base}/link-authentication", wrap(serviceController.LinkAuthMethod)).Methods(http.MethodPost)
@@ -49,7 +50,7 @@ func New(appConfig config.App, db *database.Database) *http.Server {
 	router.HandleFunc("/{base}/authorization-url", wrap(serviceController.GetAuthorizationURL)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/auth-methods", wrap(serviceController.GetAuthMethods)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/register", wrap(serviceController.RegisterWithEmail)).Methods(http.MethodPost)
-	router.HandleFunc("/{base}/userinfo", wrap(serviceController.GetUserInfo)).Methods(http.MethodGet)
+	router.HandleFunc("/{base}/users/me", wrap(serviceController.GetCurrentUser)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/session", wrap(serviceController.GetSession)).Methods(http.MethodGet)
 	router.HandleFunc("/{base}/activate", wrap(serviceController.ActivateUser)).Methods(http.MethodPost)
 	router.HandleFunc("/{base}/auth/password", wrap(serviceController.ChangePassword)).Methods(http.MethodPut)

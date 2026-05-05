@@ -9,7 +9,7 @@ import (
 	core "github.com/devingen/api-core"
 )
 
-func (c ServiceController) GetUserInfo(ctx context.Context, req core.Request) (*core.Response, error) {
+func (c ServiceController) GetUserInfoOIDC(ctx context.Context, req core.Request) (*core.Response, error) {
 
 	base, err := req.AssertPathParameter("base")
 	if err != nil {

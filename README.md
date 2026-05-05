@@ -43,7 +43,7 @@ and pass GIT_TOKEN to the command as follows.
 
 ```shell
 GIT_TOKEN=GITHUB_TOKEN_GENERATED_ON_WEBSITE
-make release-docker GIT_TOKEN=$GIT_TOKEN IMAGE_TAG=0.1.15
+make release-docker GIT_TOKEN=$GIT_TOKEN IMAGE_TAG=0.1.16
 make release-docker GIT_TOKEN=$GIT_TOKEN IMAGE_TAG=latest
 ```
 
