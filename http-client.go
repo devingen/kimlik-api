@@ -10,6 +10,7 @@ import (
 	core "github.com/devingen/api-core"
 	core_dto "github.com/devingen/api-core/dto"
 	"github.com/devingen/kimlik-api/dto"
+	"github.com/devingen/kimlik-api/model"
 	"github.com/go-resty/resty/v2"
 )
 
@@ -264,6 +265,31 @@ func (client KimlikAPIClient) GetUserInfoOIDC(ctx context.Context, headers map[s
 	}
 
 	return resp.Result().(*dto.GetUserInfoResponse), nil
+}
+
+func (client KimlikAPIClient) GetCurrentUser(ctx context.Context, headers map[string]string) (*model.User, error) {
+
+	requestHeaders := map[string]string{
+		"authorization": headers["authorization"],
+	}
+	resp, err := client.Client.R().EnableTrace().
+		SetHeaders(requestHeaders).
+		SetResult(&model.User{}).
+		SetError(&map[string]interface{}{}).
+		Get("/users/me")
+
+	if err != nil {
+		switch err.(type) {
+		case *url.Error:
+			return nil, core.NewError(http.StatusInternalServerError, "kimlik-api-is-unreachable")
+		}
+		return nil, err
+	}
+	if resp.StatusCode() != 200 {
+		return nil, core.NewError(resp.StatusCode(), "kimlik-api-returned-error:"+resp.String())
+	}
+
+	return resp.Result().(*model.User), nil
 }
 
 func (client KimlikAPIClient) GetSession(ctx context.Context, headers map[string]string) (*dto.GetSessionResponse, error) {
